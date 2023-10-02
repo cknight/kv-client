@@ -6,7 +6,7 @@ import { KvKeyInput } from "../components/KvKeyInput.tsx";
 import { parseKvKey } from "../utils/kvKeyParser.ts";
 import DarkMode from "../islands/DarkMode.tsx";
 import { useSignal } from "@preact/signals";
-import { KvEntry, SearchData, State, TW_TABLE, TW_TBODY, TW_TH, TW_THEAD, TW_TR } from "../types.ts";
+import { KvEntry, SearchData, State, TW_TABLE, TW_TABLE_WRAPPER, TW_TBODY, TW_TH, TW_THEAD, TW_TR } from "../types.ts";
 import { SearchBox } from "../islands/SearchBox.tsx";
 import { state } from "../utils/state.ts";
 import { TabBar } from "../islands/TabBar.tsx";
@@ -119,7 +119,7 @@ export default function Home(data: PageProps<SearchData>) {
           {data.data?.validationError && 
             <p class="text-2xl text-red-500">{data.data?.validationError}</p>
           }
-          { results.length > 0 && <div class="inline-block shadow rounded-lg overflow-hidden mt-2">
+          { results.length > 0 && <div class={TW_TABLE_WRAPPER}>
             <table class={TW_TABLE}>
               <thead class={TW_THEAD}>
                 <tr>

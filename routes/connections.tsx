@@ -1,23 +1,51 @@
-import { PageProps } from "$fresh/server.ts";
+import { Handlers, PageProps } from "$fresh/server.ts";
+import { signal } from "@preact/signals";
 import { ConnectionList } from "../islands/ConnectionList.tsx";
 import { CONNECTIONS_KEY_PREFIX, KvConnection } from "../types.ts";
+import { peekAtLocalKvInstances } from "../utils/autoDiscoverKv.ts";
+import { getConnections } from "../utils/connections.ts";
+import { ulid } from "$std/ulid/mod.ts";
+import { connections } from "./_layout.tsx";
 
-export default async function Connections(data: PageProps<string>) {
-  const kv = await Deno.openKv();
-  const connectionList = kv.list<KvConnection>({prefix: [CONNECTIONS_KEY_PREFIX]});
-  const connections: KvConnection[] = [];
-  for await (const connection of connectionList) {
-    connections.push(connection.value);
+
+
+export const handler: Handlers = {
+  async POST(req, ctx) {
+    const formData = await req.formData();
+    const kv = await Deno.openKv();
+
+    if (formData.has("connectionName")) {
+      const connectionName = formData.get("connectionName")?.toString() || "";
+      const kvLocation = formData.get("connectionLocation")?.toString() || "";
+      const connectionId = formData.get("connectionId")?.toString() || ulid();
+      const connection: KvConnection = {
+        name: connectionName,
+        kvLocation,
+        id: connectionId
+      };
+      connections.value.push(connection);
+      await kv.set([CONNECTIONS_KEY_PREFIX, connection.id], connection);
+    } else if (formData.has("connectionAction")) {
+      if (formData.get("connectionAction") === "delete") {
+        const connectionId = formData.get("connectionId")?.toString() || "";
+        const kv = await Deno.openKv();
+        await kv.delete([CONNECTIONS_KEY_PREFIX, connectionId]);
+        console.log("Deleted connection", connectionId);
+      }
+    } else {
+      console.error("Unrecognized POST data");
+    }
+
+    return ctx.render();
   }
-  connections.push({
-    name: "Local KV",
-    kvLocation: "/home/chris/.cache/deno/location_data/b958a7b6616019fada6dc92805fdb95b1f7de6bd338b9b2a67bbc6cbe39a7eef/kv.sqlite3",
-    id: "b958a7b6616019fada6dc92805fdb95b1f7de6bd338b9b2a67bbc6cbe39a7eef"
-  });
+};
 
+export default async function Connections() {
+  const localKVInstances = await peekAtLocalKvInstances();
+  
   return (
     <div>
-      <ConnectionList connections={connections}/>      
+      <ConnectionList connections={connections} localKvInstances={localKVInstances}/>      
     </div>
   );
 }

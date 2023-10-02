@@ -3,7 +3,7 @@ import { join } from "$std/path/mod.ts";
 import cache_dir from "https://deno.land/x/dir@1.5.1/home_dir/mod.ts";
 import { KvEntry, KvInstance } from "../types.ts";
 
-const MAX_ROWS = 6;
+const MAX_ROWS = 6;  //should be even number
 const CACHE_DIR = ".cache";
 const DENO_CACHE_DIR = "deno";
 const LOCATION_DATA_DIR = "location_data";
@@ -21,6 +21,7 @@ const DEFAULT_KV_FILENAME = "kv.sqlite3";
  * @returns <KvInstance[]> containing the full file path and a partial array of data
  */
 export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
+  const start = Date.now();
   const denoDir = Deno.env.get("DENO_DIR");
   const cacheDir = denoDir || join(cache_dir() || "", CACHE_DIR, DENO_CACHE_DIR);
   const locationDir = join(cacheDir, LOCATION_DATA_DIR); 
@@ -45,7 +46,7 @@ export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
       let i=0;
 
       // Get first set of entries
-      for await (const entry of kv.list({prefix: []})) {
+      for await (const entry of kv.list({prefix: []}, {limit: MAX_ROWS/2})) {
         const val = typeof entry.value === 'string' ? entry.value.slice(0,100) : JSON.stringify(entry.value).slice(0,100);
         const kvEntry: KvEntry = {
           key: entry.key.toString(),
@@ -61,7 +62,7 @@ export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
       i=0;
 
       // Get last set of entries
-      for await (const entry of kv.list({prefix: []}, {reverse: true})) {
+      for await (const entry of kv.list({prefix: []}, {reverse: true, limit: MAX_ROWS/2})) {
         const val = typeof entry.value === 'string' ? entry.value.slice(0,100) : JSON.stringify(entry.value).slice(0,100);
         const kvEntry: KvEntry = {
           key: entry.key.toString(),
@@ -74,6 +75,7 @@ export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
         }
         if (++i >= MAX_ROWS/2) break;
       }
+
       if (output.length > 0) {
         instances.push({
           kvLocation: walkEntry.path,
@@ -83,7 +85,6 @@ export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
       kv.close();
     }
   }
+  console.log(`Auto-discovered ${instances.length} KV instances in ${Date.now() - start}ms`);
   return instances;
 }
-
-console.log(await autoDiscoverLocalKvInstances());

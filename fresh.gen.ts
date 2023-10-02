@@ -10,10 +10,11 @@ import * as $4 from "./routes/delete.tsx";
 import * as $5 from "./routes/index.tsx";
 import * as $6 from "./routes/insertUpdate.tsx";
 import * as $7 from "./routes/search.tsx";
-import * as $$0 from "./islands/ConnectionList.tsx";
-import * as $$1 from "./islands/DarkMode.tsx";
-import * as $$2 from "./islands/SearchBox.tsx";
-import * as $$3 from "./islands/TabBar.tsx";
+import * as $$0 from "./islands/ConnectionDropDown.tsx";
+import * as $$1 from "./islands/ConnectionList.tsx";
+import * as $$2 from "./islands/DarkMode.tsx";
+import * as $$3 from "./islands/SearchBox.tsx";
+import * as $$4 from "./islands/TabBar.tsx";
 
 const manifest = {
   routes: {
@@ -27,10 +28,11 @@ const manifest = {
     "./routes/search.tsx": $7,
   },
   islands: {
-    "./islands/ConnectionList.tsx": $$0,
-    "./islands/DarkMode.tsx": $$1,
-    "./islands/SearchBox.tsx": $$2,
-    "./islands/TabBar.tsx": $$3,
+    "./islands/ConnectionDropDown.tsx": $$0,
+    "./islands/ConnectionList.tsx": $$1,
+    "./islands/DarkMode.tsx": $$2,
+    "./islands/SearchBox.tsx": $$3,
+    "./islands/TabBar.tsx": $$4,
   },
   baseUrl: import.meta.url,
 };
