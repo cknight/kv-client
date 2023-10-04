@@ -14,7 +14,8 @@ import * as $$0 from "./islands/ConnectionDropDown.tsx";
 import * as $$1 from "./islands/ConnectionList.tsx";
 import * as $$2 from "./islands/DarkMode.tsx";
 import * as $$3 from "./islands/SearchBox.tsx";
-import * as $$4 from "./islands/TabBar.tsx";
+import * as $$4 from "./islands/SearchResults.tsx";
+import * as $$5 from "./islands/TabBar.tsx";
 
 const manifest = {
   routes: {
@@ -32,7 +33,8 @@ const manifest = {
     "./islands/ConnectionList.tsx": $$1,
     "./islands/DarkMode.tsx": $$2,
     "./islands/SearchBox.tsx": $$3,
-    "./islands/TabBar.tsx": $$4,
+    "./islands/SearchResults.tsx": $$4,
+    "./islands/TabBar.tsx": $$5,
   },
   baseUrl: import.meta.url,
 };

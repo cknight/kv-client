@@ -1,8 +1,6 @@
 import { Signal } from "@preact/signals";
 
 export interface SearchData {
-  kvUrl: string;
-  pat: string;
   prefix: string;
   start: string;
   end: string;
@@ -35,6 +33,15 @@ export interface KvConnection {
   kvLocation: string;
   name: string;
   id: string;
+}
+
+export interface KvSearchOptions {
+  kv: Deno.Kv;
+  prefix: string;
+  start: string;
+  end: string;
+  limit: string;
+  reverse: boolean;
 }
 
 export const CONNECTIONS_KEY_PREFIX = "connections";

@@ -9,23 +9,15 @@ export function SearchBox(data: SearchData) {
   const end = data.end;
   const limit = data.limit;
   const reverse = data.reverse;
-  const kvUrl = data.kvUrl;
-  const pat = data.pat;
   const results = data.results;
 
+  function preSubmit() {
+    const connection = (document.getElementById("connection") as HTMLSelectElement).value;
+    (document.getElementById("kvConnection") as HTMLInputElement).value = connection;
+  }
+  
   return (
-    <form method="post" class="w-full m-8 border-1 border-gray-400 rounded p-5 bg-white">
-      <div class="flex mb-2">
-        <div class="w-full mr-4 flex items-center">
-          <label for="kvUrl" class="w-24">KV location</label>
-          <input id="kvUrl" type="text" name="kvUrl" class="rounded bg-blue-100 w-full ml-2 p-2" value={kvUrl}/>
-        </div>
-        <div class="flex items-center mr-[13px]">
-          <label for="pat">PAT</label>
-          <input id="pat" type="password" name="pat" class="rounded bg-blue-100 w-full ml-2 p-2" value={pat}/>
-        </div>
-      </div>
-
+    <form method="post" onSubmit={preSubmit} class="w-full m-8 border-1 border-gray-400 rounded p-5 bg-white">
       <div class="flex">
         <div class="w-2/3">
           <div class="w-full flex items-center">
@@ -66,6 +58,7 @@ export function SearchBox(data: SearchData) {
         <button type="submit" class="px-2 py-1 rounded mx-4 bg-[#6b6bff]">Search</button>
         <button type="submit" class="px-2 py-1 rounded mx-4 bg-[#6b6bff]">Delete</button>
       </div>
+      <input type="hidden" id="kvConnection" name="kvConnection" value=""/>
     </form>
   );
 }

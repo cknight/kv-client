@@ -29,7 +29,7 @@ export function AddEditConnectionDialog() {
           <input id="connectionLocation" name="connectionLocation" class="rounded bg-blue-100 w-96 mx-2 p-2" />
         </div>
         <div class="flex mt-3 justify-center">
-          <button class={BUTTON} type="submit"><span data-type="addEdit">Add</span></button>
+          <button class={BUTTON} type="submit" name="connectionAction" value="addEdit"><span data-type="addEdit">Add</span></button>
           <button class={BUTTON} onClick={cancelDialog}>Cancel</button>
         </div>
       </form>

@@ -42,7 +42,7 @@ export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
     if (walkEntry.isFile && walkEntry.name === DEFAULT_KV_FILENAME) {
       const kv = await Deno.openKv(walkEntry.path);
       const output: KvEntry[] = [];
-      const seen: Map<Deno.KvKey, KvEntry> = new Map();
+      const seen: Set<string> = new Set();
       let i=0;
 
       // Get first set of entries
@@ -54,7 +54,7 @@ export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
           versionstamp: entry.versionstamp,
           fullValue: typeof entry.value === 'string' ? entry.value : JSON.stringify(entry.value)
         };
-        seen.set(entry.key, kvEntry);
+        seen.add(JSON.stringify(entry.key));
         output.push(kvEntry);
        if (++i >= MAX_ROWS/2) break;
       }
@@ -70,7 +70,7 @@ export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
           versionstamp: entry.versionstamp,
           fullValue: typeof entry.value === 'string' ? entry.value : JSON.stringify(entry.value)
         };
-        if (!seen.get(entry.key)) {
+        if (!seen.has(JSON.stringify(entry.key))) {
           output.push(kvEntry);
         }
         if (++i >= MAX_ROWS/2) break;

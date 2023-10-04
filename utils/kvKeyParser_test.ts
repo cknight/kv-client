@@ -1,8 +1,10 @@
 import { parseKvKey } from "./kvKeyParser.ts";
-import { assertEquals } from "$std/testing/asserts.ts";
+import { assertEquals } from "$std/assert/mod.ts";
 
 Deno.test("kvKeyParser", () => {
   assertEquals(parseKvKey(``), []);
+  assertEquals(parseKvKey(""), []);
+  assertEquals(parseKvKey(''), []); 
   assertEquals(parseKvKey(`"A"`), ["A"]);
   assertEquals(parseKvKey(`'A'`), ["A"]);
   assertEquals(parseKvKey("`A`"), ["A"]);
