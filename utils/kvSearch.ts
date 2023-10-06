@@ -1,16 +1,24 @@
-import { KvEntry, KvSearchOptions } from "../types.ts";
+import { KvSearchOptions, KvUIEntry } from "../types.ts";
 import { parseKvKey } from "./kvKeyParser.ts";
+import { getState } from "./state.ts";
 import { ValidationError } from "./validationError.ts";
 
 export async function searchKv(
   searchOptions: KvSearchOptions,
-): Promise<KvEntry[]> {
-  const { kv, prefix, start, end, limit, reverse } = searchOptions;
+): Promise<KvUIEntry[]> {
+  const { session, prefix, start, end, limit, reverse, cursor } = searchOptions;
+  const state = getState(session);
+
+  if (!state.kv) {
+    throw new ValidationError(
+      "Please connect to a KV instance first",
+    );
+  }
 
   const prefixKey = parseKvKey(prefix);
   const startKey = parseKvKey(start);
   const endKey = parseKvKey(end);
-  const maxEntries = limit === "" ? 10 : parseInt(limit);
+  const maxEntries = limit === "all" ? Number.MAX_SAFE_INTEGER : parseInt(limit);
 
   if (prefix.length > 0 && start.length > 0 && end.length > 0) {
     throw new ValidationError(
@@ -28,14 +36,19 @@ export async function searchKv(
   } else {
     selector = { prefix: prefixKey };
   }
-  console.log("KV List Selector: ", selector);
+  const options = { limit: maxEntries, reverse, cursor, batchSize: maxEntries > 500 ? 500 : maxEntries };
+  console.log("KV List Selector: ", selector, options);
 
-  const options = { limit: maxEntries, reverse, batchSize: maxEntries };
-  const listIterator = kv.list(selector, options);
+  const listIterator = state.kv!.list(selector, options);
   let count = 0;
-  const results: KvEntry[] = [];
+  const results: KvUIEntry[] = [];
 
-  for await (const entry of listIterator) {
+  let newCursor = "";
+  let result = await listIterator.next();
+  while (!result.done) {
+    newCursor = listIterator.cursor;
+    const entry = result.value;
+//  for await (const entry of listIterator) {
     const value = typeof entry.value === "string"
       ? entry.value
       : JSON.stringify(entry.value);
@@ -52,7 +65,12 @@ export async function searchKv(
     if (++count > maxEntries) {
       break;
     }
+    result = await listIterator.next();
   }
+
+  //Add results to cache
+  
+
   console.log("Found ", results.length, " results");
   return results;
 }

@@ -1,10 +1,19 @@
-import { signal } from "@preact/signals";
 import { State } from "../types.ts";
+import { CacheManager } from "./cache.ts";
 
-export const state: State = {
-  kvUrl: "",
-  pat: "",
-  kv: null,
-  activeTab: signal("search")
-};
-export const tabbar = signal<string>("search");
+const states: Map<string, State> = new Map();
+
+export function getState(session:string): State {
+  const state = states.get(session);
+
+  if (!state) {
+    const newState: State = {
+      kv: null,
+      cache: new CacheManager(),
+    };
+    states.set(session, newState);
+    return newState;
+  }
+
+  return state;
+}

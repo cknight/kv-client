@@ -1,5 +1,8 @@
 export function parseKvKey(input: string): Deno.KvKey {
+  if (input === "") return [];
+
   const key: Deno.KvKeyPart[] = [];
+
   const keyParts = input.split(',').map((part) => part.trim());
   for (const keyPart of keyParts) {
     if ((keyPart.startsWith("'") && keyPart.endsWith("'")) ||

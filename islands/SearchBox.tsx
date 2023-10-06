@@ -12,8 +12,7 @@ export function SearchBox(data: SearchData) {
   const results = data.results;
 
   function preSubmit() {
-    const connection = (document.getElementById("connection") as HTMLSelectElement).value;
-    (document.getElementById("kvConnection") as HTMLInputElement).value = connection;
+    //TODO validate inputs
   }
   
   return (
@@ -58,7 +57,6 @@ export function SearchBox(data: SearchData) {
         <button type="submit" class="px-2 py-1 rounded mx-4 bg-[#6b6bff]">Search</button>
         <button type="submit" class="px-2 py-1 rounded mx-4 bg-[#6b6bff]">Delete</button>
       </div>
-      <input type="hidden" id="kvConnection" name="kvConnection" value=""/>
     </form>
   );
 }
