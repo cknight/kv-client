@@ -1,10 +1,9 @@
-import { Signal, useSignal } from "@preact/signals";
+import { Signal } from "@preact/signals";
 import { AddEditConnectionDialog } from "../components/AddEditConnectionDialog.tsx";
-import { BUTTON, KvConnection, KvInstance, TW_TABLE, TW_TABLE_WRAPPER, TW_TBODY, TW_TD, TW_TH, TW_THEAD } from "../types.ts";
+import { BUTTON, TW_TABLE, TW_TABLE_WRAPPER, TW_TBODY, TW_TD, TW_TH, TW_THEAD } from "../consts.ts";
 import { DiscoverConnectionsDialog } from "../components/DiscoverConnectionsDialog.tsx";
-import { peekAtLocalKvInstances } from "../utils/autoDiscoverKv.ts";
-import { IS_BROWSER } from "$fresh/runtime.ts";
 import { JSX } from "preact/jsx-runtime";
+import { KvConnection,KvInstance } from "../types.ts";
 
 interface ConnectionListProps {
   connections: Signal<KvConnection[]>;

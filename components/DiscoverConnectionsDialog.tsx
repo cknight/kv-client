@@ -1,10 +1,12 @@
-import { BUTTON, KvInstance } from "../types.ts";
+import { BUTTON } from "../consts.ts";
+import { KvInstance } from "../types.ts";
 import { signal } from "@preact/signals";
 
 export interface DiscoverConnectionsDialogProps {
   kvInstances: KvInstance[];
 }
 
+//FIXME: This doesn't belong here.  Move it to a more appropriate place.
 const radioSelected = signal(false);
 
 export function DiscoverConnectionsDialog(props: DiscoverConnectionsDialogProps) {

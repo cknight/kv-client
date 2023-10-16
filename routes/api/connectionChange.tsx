@@ -8,7 +8,6 @@ export const handler: Handlers = {
       const connection = new URL(req.url).searchParams.get("connection");
       if (connection === null) throw new Error("No connection provided");
       await establishKvConnection(session, connection, "");
-      console.debug("Connection successfully updated to ", connection);
     } catch (e) {
       const failReason = e.message || "Unknown error occurred";
       console.error(e);

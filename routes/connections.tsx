@@ -1,11 +1,10 @@
-import { Handlers, PageProps } from "$fresh/server.ts";
-import { signal } from "@preact/signals";
+import { Handlers } from "$fresh/server.ts";
 import { ConnectionList } from "../islands/ConnectionList.tsx";
-import { CONNECTIONS_KEY_PREFIX, KvConnection } from "../types.ts";
+import { CONNECTIONS_KEY_PREFIX } from "../consts.ts";
 import { peekAtLocalKvInstances } from "../utils/autoDiscoverKv.ts";
-import { getConnections } from "../utils/connections.ts";
 import { ulid } from "$std/ulid/mod.ts";
 import { connections } from "./_layout.tsx";
+import { KvConnection } from "../types.ts";
 
 export const handler: Handlers = {
   async POST(req, ctx) {
@@ -31,7 +30,7 @@ export const handler: Handlers = {
         const connectionId = formData.get("connectionId")?.toString() || "";
         const kv = await Deno.openKv();
         await kv.delete([CONNECTIONS_KEY_PREFIX, connectionId]);
-        console.log("Deleted connection", connectionId);
+        console.debug("Deleted connection", connectionId);
     } else {
       console.error("Unrecognized POST data");
     }

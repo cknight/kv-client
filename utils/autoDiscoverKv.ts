@@ -2,6 +2,7 @@ import { walk } from "$std/fs/walk.ts";
 import { join } from "$std/path/mod.ts";
 import cache_dir from "https://deno.land/x/dir@1.5.1/home_dir/mod.ts";
 import { KvInstance, KvUIEntry } from "../types.ts";
+import { createKvUIEntry } from "./utils.ts";
 
 const MAX_ROWS = 6; //should be even number
 const CACHE_DIR = ".cache";
@@ -52,19 +53,8 @@ export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
       for await (
         const entry of kv.list({ prefix: [] }, { limit: MAX_ROWS / 2 })
       ) {
-        const val = typeof entry.value === "string"
-          ? entry.value.slice(0, 100)
-          : JSON.stringify(entry.value).slice(0, 100);
-        const kvEntry: KvUIEntry = {
-          key: entry.key.toString(),
-          value: val,
-          versionstamp: entry.versionstamp,
-          fullValue: typeof entry.value === "string"
-            ? entry.value
-            : JSON.stringify(entry.value),
-        };
         seen.add(JSON.stringify(entry.key));
-        output.push(kvEntry);
+        output.push(createKvUIEntry(entry));
         if (++i >= MAX_ROWS / 2) break;
       }
 
@@ -77,19 +67,8 @@ export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
           limit: MAX_ROWS / 2,
         })
       ) {
-        const val = typeof entry.value === "string"
-          ? entry.value.slice(0, 100)
-          : JSON.stringify(entry.value).slice(0, 100);
-        const kvEntry: KvUIEntry = {
-          key: entry.key.toString(),
-          value: val,
-          versionstamp: entry.versionstamp,
-          fullValue: typeof entry.value === "string"
-            ? entry.value
-            : JSON.stringify(entry.value),
-        };
         if (!seen.has(JSON.stringify(entry.key))) {
-          output.push(kvEntry);
+          output.push(createKvUIEntry(entry));
         }
         if (++i >= MAX_ROWS / 2) break;
       }

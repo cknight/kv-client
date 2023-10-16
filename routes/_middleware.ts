@@ -2,6 +2,8 @@ import { MiddlewareHandlerContext } from "$fresh/server.ts";
 import { getCookies, setCookie } from "$std/http/cookie.ts";
 
 export async function handler(req: Request, ctx:MiddlewareHandlerContext) {
+  const start = Date.now();
+
   if (ctx.destination === "route") {
     const cookies = getCookies(req.headers);
     let session = cookies.session;
@@ -25,9 +27,22 @@ export async function handler(req: Request, ctx:MiddlewareHandlerContext) {
         secure: true,
       });
     }
-  
+    logRequest(start, req, resp);
     return resp;
   }
 
-  return await ctx.next();
+  const resp = await ctx.next();
+
+  logRequest(start, req, resp);
+  return resp;
+}
+
+function logRequest(start: number, req: Request, resp: Response) {
+  const url = req.url;
+  if (!url.includes("favicon.ico") 
+  && !url.endsWith(".css")
+  && !url.includes("_frsh") 
+  && !url.endsWith(".js")) {
+    console.log(`--- ${req.method} ${req.url} ${Date.now() - start}ms ${resp.status}`)
+  }
 }

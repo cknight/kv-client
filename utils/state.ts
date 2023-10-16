@@ -9,6 +9,7 @@ export function getState(session:string): State {
   if (!state) {
     const newState: State = {
       kv: null,
+      connection: null,
       cache: new CacheManager(),
     };
     states.set(session, newState);

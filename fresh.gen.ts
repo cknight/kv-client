@@ -11,13 +11,15 @@ import * as $5 from "./routes/connections.tsx";
 import * as $6 from "./routes/delete.tsx";
 import * as $7 from "./routes/index.tsx";
 import * as $8 from "./routes/insertUpdate.tsx";
-import * as $9 from "./routes/search.tsx";
+import * as $9 from "./routes/partials/results/search.tsx";
+import * as $10 from "./routes/search.tsx";
 import * as $$0 from "./islands/ConnectionDropDown.tsx";
 import * as $$1 from "./islands/ConnectionList.tsx";
 import * as $$2 from "./islands/DarkMode.tsx";
-import * as $$3 from "./islands/SearchBox.tsx";
-import * as $$4 from "./islands/SearchResults.tsx";
-import * as $$5 from "./islands/TabBar.tsx";
+import * as $$3 from "./islands/PageForm.tsx";
+import * as $$4 from "./islands/SearchBox.tsx";
+import * as $$5 from "./islands/SearchResults.tsx";
+import * as $$6 from "./islands/TabBar.tsx";
 
 const manifest = {
   routes: {
@@ -30,15 +32,17 @@ const manifest = {
     "./routes/delete.tsx": $6,
     "./routes/index.tsx": $7,
     "./routes/insertUpdate.tsx": $8,
-    "./routes/search.tsx": $9,
+    "./routes/partials/results/search.tsx": $9,
+    "./routes/search.tsx": $10,
   },
   islands: {
     "./islands/ConnectionDropDown.tsx": $$0,
     "./islands/ConnectionList.tsx": $$1,
     "./islands/DarkMode.tsx": $$2,
-    "./islands/SearchBox.tsx": $$3,
-    "./islands/SearchResults.tsx": $$4,
-    "./islands/TabBar.tsx": $$5,
+    "./islands/PageForm.tsx": $$3,
+    "./islands/SearchBox.tsx": $$4,
+    "./islands/SearchResults.tsx": $$5,
+    "./islands/TabBar.tsx": $$6,
   },
   baseUrl: import.meta.url,
 };

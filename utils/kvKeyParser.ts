@@ -20,7 +20,7 @@ export function parseKvKey(input: string): Deno.KvKey {
       // number type
       key.push(Number(keyPart));
     } else {
-      console.log("Unrecognized key part: " + keyPart);
+      console.error("Unrecognized key part: " + keyPart);
     }
 
     // TODO

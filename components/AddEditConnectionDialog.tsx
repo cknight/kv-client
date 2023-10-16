@@ -1,6 +1,4 @@
-import { Signal } from "@preact/signals";
-import { BUTTON, KvConnection } from "../types.ts";
-import { ulid } from "$std/ulid/mod.ts";
+import { BUTTON } from "../consts.ts";
 import { JSX } from "preact/jsx-runtime";
 
 export function AddEditConnectionDialog() {

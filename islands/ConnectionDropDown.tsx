@@ -1,21 +1,28 @@
 import { Signal } from "@preact/signals";
 import { KvConnection } from "../types.ts";
+import { IS_BROWSER } from "$fresh/runtime.ts";
 
 interface ConnectionDropDownProps {
   connections: Signal<KvConnection[]>;
+  formIds: Signal<string[]>;
 }
 
 export function ConnectionDropDown(props: ConnectionDropDownProps) {
+  
   function updateConnection() {
     const connectionId =
       (document.getElementById("connection")! as HTMLSelectElement).value;
-    fetch("/api/connectionChange?connection=" + connectionId, {
-      method: "POST",
-      headers: { "Accept": "text/plain", "Content-Type": "text/plain" },
-    }).catch((error) => {
-      //TODO Add retry logic here and UI notification
-      console.error(error);
-    });
+    localStorage.setItem("KV_explorer_connection", connectionId);
+  }
+
+  if (IS_BROWSER) {
+    const connectionId = localStorage.getItem("KV_explorer_connection");
+    console.debug("Restoring connection from", connectionId);
+    setTimeout(() => {
+      (document.getElementById("connection")! as HTMLSelectElement).value = connectionId || "";
+      updateConnection();
+    }, 0);
+    props.formIds.value.push("connection");
   }
 
   return (
@@ -23,11 +30,12 @@ export function ConnectionDropDown(props: ConnectionDropDownProps) {
       <label for="connection" class="text-xl font-bold">Connection:</label>
       <select
         id="connection"
+        form="pageForm"
         name="connection"
         class="rounded bg-blue-100 mx-2 p-2"
         onChange={updateConnection}
       >
-        <option value="" disabled selected>Select a connection</option>
+        <option value="" disabled selected>{" "}</option>
         {props.connections.value.length > 0
           ? (
             props.connections.value.map((connection) => (

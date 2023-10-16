@@ -1,4 +1,5 @@
-import { CONNECTIONS_KEY_PREFIX, KvConnection } from "../types.ts";
+import { CONNECTIONS_KEY_PREFIX } from "../consts.ts";
+import { KvConnection } from "../types.ts";
 
 export async function getConnections(): Promise<KvConnection[]> {
   const connections: KvConnection[] = [];
