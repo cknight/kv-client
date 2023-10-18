@@ -5,11 +5,11 @@ import { peekAtLocalKvInstances } from "../utils/autoDiscoverKv.ts";
 import { ulid } from "$std/ulid/mod.ts";
 import { connections } from "./_layout.tsx";
 import { KvConnection } from "../types.ts";
+import { localKv } from "../utils/db.ts";
 
 export const handler: Handlers = {
   async POST(req, ctx) {
     const formData = await req.formData();
-    const kv = await Deno.openKv();
     const action = formData.get("connectionAction") || "unrecognized";
 
     if (action === "addEdit") {
@@ -24,12 +24,11 @@ export const handler: Handlers = {
       const isDuplicate = connections.value.filter(c => (c.kvLocation === kvLocation && c.name === connectionName)).length > 0;
       if (!isDuplicate) {
         connections.value.push(connection);
-        await kv.set([CONNECTIONS_KEY_PREFIX, connection.id], connection);
+        await localKv.set([CONNECTIONS_KEY_PREFIX, connection.id], connection);
       }
     } else if (action === "delete") {
         const connectionId = formData.get("connectionId")?.toString() || "";
-        const kv = await Deno.openKv();
-        await kv.delete([CONNECTIONS_KEY_PREFIX, connectionId]);
+        await localKv.delete([CONNECTIONS_KEY_PREFIX, connectionId]);
         console.debug("Deleted connection", connectionId);
     } else {
       console.error("Unrecognized POST data");

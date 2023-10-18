@@ -11,7 +11,7 @@ import * as $5 from "./routes/connections.tsx";
 import * as $6 from "./routes/delete.tsx";
 import * as $7 from "./routes/index.tsx";
 import * as $8 from "./routes/insertUpdate.tsx";
-import * as $9 from "./routes/partials/results/search.tsx";
+import * as $9 from "./routes/partials/results/WIP_search.tsx";
 import * as $10 from "./routes/search.tsx";
 import * as $$0 from "./islands/ConnectionDropDown.tsx";
 import * as $$1 from "./islands/ConnectionList.tsx";
@@ -32,7 +32,7 @@ const manifest = {
     "./routes/delete.tsx": $6,
     "./routes/index.tsx": $7,
     "./routes/insertUpdate.tsx": $8,
-    "./routes/partials/results/search.tsx": $9,
+    "./routes/partials/results/WIP_search.tsx": $9,
     "./routes/search.tsx": $10,
   },
   islands: {

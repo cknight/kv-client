@@ -2,22 +2,22 @@ import { CONNECTIONS_KEY_PREFIX } from "../consts.ts";
 import { KvConnection } from "../types.ts";
 import { getState } from "./state.ts";
 import { PATError, ValidationError } from "./errors.ts";
+import { localKv } from "./db.ts";
 
 export async function establishKvConnection(session:string, connection: string, pat?: string) {
   const state = getState(session);
 
   if (!state) {
     throw new ValidationError("Invalid session");
-  } else if (state.connection === connection && state.kv) {
+  } else if (state.connection?.id === connection && state.kv) {
     console.debug(`Reusing connection to '${connection}'`);
     return;
-  } else if (state.connection !== connection && state.kv) {
-    console.debug(`Closing connection to '${state.connection}'`);
+  } else if (state.connection?.id !== connection && state.kv) {
+    console.debug(`Closing connection to '${state.connection?.id}'`);
     state!.kv.close();
   }
 
-  const kvLocal = await Deno.openKv();
-  const conn = await kvLocal.get<KvConnection>([
+  const conn = await localKv.get<KvConnection>([
     CONNECTIONS_KEY_PREFIX,
     connection,
   ]);
@@ -42,18 +42,20 @@ export async function establishKvConnection(session:string, connection: string, 
     console.log("setting PAT to ", pat);
     state.kv = await Deno.openKv(location);
     state.accessToken = pat;
-    state.connection = connection;
+    state.connection = conn.value;
+    state.connectionIsDeploy = true;
   } else {
     // Local KV file
     try {
       // Check if the file exists (and if it does we assume it is a valid KV file)
       await Deno.lstat(location);
     } catch (_e) {
-      console.error(`${location} does not exist`);
-      throw new ValidationError(`${location} does not exist`);
+      console.error(`Connection ${location} does not exist`);
+      throw new ValidationError(`Please choose a connection`);
     }
     state.kv = await Deno.openKv(location);
-    state.connection = connection;
+    state.connection = conn.value;
+    state.connectionIsDeploy = false;
   }
 
   console.debug(`Established KV connection to ${location}`);

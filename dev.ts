@@ -18,4 +18,10 @@ console.error = (msg) => {
   origConsoleError(msg);
 };
 
+const origConsoleWarn = console.warn;
+console.warn = (msg) => {
+  if (typeof msg === "string" && msg.includes("plugin-transform-react-jsx-source")) return;
+  origConsoleWarn(msg);
+};
+
 await dev(import.meta.url, "./main.ts", config);

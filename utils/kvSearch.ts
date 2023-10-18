@@ -1,8 +1,13 @@
-import { KvSearchOptions, PartialSearchResults, State } from "../types.ts";
+import { KvConnection, KvSearchOptions, ListAuditLog, OpStats, PartialSearchResults, State } from "../types.ts";
 import { establishKvConnection } from "./kvConnect.ts";
 import { parseKvKey } from "./kvKeyParser.ts";
 import { getState } from "./state.ts";
 import { ValidationError } from "./errors.ts";
+import { computeSize } from "./kvUnitsConsumed.ts";
+import { readUnitsConsumed } from "./kvUnitsConsumed.ts";
+import { auditListAction } from "./kvAudit.ts";
+import { CONNECTIONS_KEY_PREFIX } from "../consts.ts";
+import { localKv } from "./db.ts";
 
 export async function searchKv(
   searchOptions: KvSearchOptions,
@@ -10,8 +15,8 @@ export async function searchKv(
   const startTime = Date.now();
   const { session, connection, pat, prefix, start, end, limit, reverse } = searchOptions;
   const state = getState(session);
-  const cachedSearch = state.cache.get({ prefix, start, end, reverse });
-  const results: Deno.KvEntry<unknown>[] = [];
+  const cachedSearch = state.cache.get({ connection, prefix, start, end, reverse });
+  const cachedResults: Deno.KvEntry<unknown>[] = [];
 
   let cursor: string | undefined = undefined;
   let maxEntries = limit === "all" ? Number.MAX_SAFE_INTEGER : parseInt(limit);
@@ -26,22 +31,32 @@ export async function searchKv(
       "More available?",
       cachedSearch.cursor !== false,
     );
+    const cacheStats: OpStats = {
+      unitType: "read",
+      unitsConsumed: 0,
+      cachedResults: cachedData.length,
+      kvResults: 0,
+      rtms: Date.now() - startTime,
+    };
+  
     if (!cachedSearch.cursor) {
       // All data has already been retrieved, so return whatever we have
       return {
         results: cachedData,
         cursor: cachedSearch.cursor,
+        opStats: cacheStats,
       };
     } else if (cachedData.length === maxEntries) {
       // We don't have all data, but we do have exactly the data requested, so return it
       return {
         results: cachedData,
         cursor: cachedSearch.cursor,
+        opStats: cacheStats,
       };
     } else {
       // We don't have all the data, so fetch more using the cursor
       cursor = cachedSearch.cursor;
-      results.push(...cachedData);
+      cachedResults.push(...cachedData);
       maxEntries -= cachedData.length;
     }
   }
@@ -54,37 +69,38 @@ export async function searchKv(
   validateInputs(state, prefix, start, end);
 
   const selector = createListSelector(startKey, endKey, prefixKey);
-
   const options = {
     limit: maxEntries,
     reverse,
     cursor,
     batchSize: maxEntries > 500 ? 500 : maxEntries,
   };
-  console.debug("KV List Selector: ", selector, options);
-
   const listIterator = state.kv!.list(selector, options);
+  
   let count = 0;
-
+  let operationSize = 0;
   let newCursor: string | false = "";
-  let result = await listIterator.next();
   const newResults: Deno.KvEntry<unknown>[] = [];
+
+  const queryOnlyTimeStart = Date.now();
+  let result = await listIterator.next();
   while (!result.done) {
     newCursor = listIterator.cursor;
     const entry = result.value;
     newResults.push(entry);
-    results.push(entry);
+    operationSize += computeSize(entry.key, entry.value);
 
     if (++count === maxEntries) {
       break;
     }
     result = await listIterator.next();
   }
-
+  const queryOnlyTime = Date.now() - queryOnlyTimeStart;
   newCursor = listIterator.cursor === "" ? false : newCursor;
 
   //Add results to cache
   state.cache.add({
+    connection,
     prefix,
     start,
     end,
@@ -93,17 +109,46 @@ export async function searchKv(
     cursor: newCursor,
   });
 
+  const readUnits = readUnitsConsumed(operationSize);
+
+  const audit: ListAuditLog = {
+    auditType: "list",
+    executorId: session,
+    prefixKey: prefix,
+    startKey: start,
+    endKey: end,
+    limit,
+    reverse,
+    results: newResults.length,
+    readUnitsConsumed: readUnits,
+    connection: state.connection!.name,
+    isDeploy: state.connectionIsDeployq,
+    rtms: queryOnlyTime,
+  };
+  await auditListAction(audit);
+
+  const finalResults = cachedResults.concat(newResults);
+  console.debug("Audit:", audit);
   console.debug(
     "Search results:",
-    results.length - newResults.length,
+    finalResults.length - newResults.length,
     "results from cache,",
     newResults.length,
-    " from KV, in ",
+    "from KV, in",
     Date.now() - startTime,
-    "ms",
+    "ms of which",
+    queryOnlyTime,
+    "ms was spent querying KV",
   );
 
-  return { results, cursor: newCursor };
+  const opStats: OpStats = {
+    unitType: "read",
+    unitsConsumed: readUnits,
+    cachedResults: cachedResults.length,
+    kvResults: newResults.length,
+    rtms: queryOnlyTime,
+  };
+  return { results: finalResults, cursor: newCursor, opStats };
 }
 
 function createListSelector(

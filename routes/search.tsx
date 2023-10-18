@@ -20,6 +20,7 @@ export const handler: Handlers = {
     const show = parseInt(form.get("show")?.toString() || "10");
     const connection = form.get("connection")?.toString() || "";
     const pat = form.get("pat")?.toString() || "";
+    const filter = form.get("filter")?.toString() || undefined;
     let patRequired = false;
 
     console.log("PAT:", pat);
@@ -29,9 +30,13 @@ export const handler: Handlers = {
     let searchComplete = false;
     const session = ctx.state.session as string;
     try {
-      const partialResults = await searchKv({ session, connection, pat, prefix, start, end, limit, reverse });
+      const searchOptions = { session, connection, pat, prefix, start, end, limit, reverse};
+      const partialResults = await searchKv(searchOptions);
       results.push(...partialResults.results);
       searchComplete = partialResults.cursor === false;
+
+      if isDeploy connection, need to get read/write units consumed today, add to stats
+
     } catch (e) {
       if (e instanceof PATError) {
         failReason = e.message;
@@ -56,6 +61,7 @@ export const handler: Handlers = {
       limit,
       reverse,
       results,
+      filter,
       show,
       from,
       pat,
@@ -83,6 +89,7 @@ export default function Search(props: PageProps<SearchData>) {
   const formIds = props.state.formIds as Signal<string[]>;
   const searchComplete = props.data?.searchComplete || false;
   const patRequired = props.data?.patRequired || false;
+  const filter = props.data?.filter || sp.get("filter") || undefined;
 
   return (
     <>
@@ -102,6 +109,7 @@ export default function Search(props: PageProps<SearchData>) {
           formIds={formIds}
           show={show}
           from={from}
+          filter={filter}
           searchComplete={searchComplete}
         />
       </SearchForm>
