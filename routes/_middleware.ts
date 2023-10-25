@@ -1,7 +1,7 @@
 import { MiddlewareHandlerContext } from "$fresh/server.ts";
 import { getCookies, setCookie } from "$std/http/cookie.ts";
 
-export async function handler(req: Request, ctx:MiddlewareHandlerContext) {
+export async function handler(req: Request, ctx: MiddlewareHandlerContext) {
   const start = Date.now();
 
   if (ctx.destination === "route") {
@@ -16,9 +16,9 @@ export async function handler(req: Request, ctx:MiddlewareHandlerContext) {
       ctx.state.session = session;
       console.debug("New Session: ", session);
     }
-  
+
     const resp = await ctx.next();
-  
+
     if (!cookies.session) {
       setCookie(resp.headers, {
         name: "session",
@@ -39,10 +39,12 @@ export async function handler(req: Request, ctx:MiddlewareHandlerContext) {
 
 function logRequest(start: number, req: Request, resp: Response) {
   const url = req.url;
-  if (!url.includes("favicon.ico") 
-  && !url.endsWith(".css")
-  && !url.includes("_frsh") 
-  && !url.endsWith(".js")) {
-    console.log(`--- ${req.method} ${req.url} ${Date.now() - start}ms ${resp.status}`)
+  if (
+    !url.includes("favicon.ico") &&
+    !url.endsWith(".css") &&
+    !url.includes("_frsh") &&
+    !url.endsWith(".js")
+  ) {
+    console.log(`--- ${req.method} ${req.url} ${Date.now() - start}ms ${resp.status}`);
   }
 }

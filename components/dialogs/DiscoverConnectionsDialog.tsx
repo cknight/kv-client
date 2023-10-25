@@ -1,5 +1,5 @@
-import { BUTTON } from "../consts.ts";
-import { KvInstance } from "../types.ts";
+import { BUTTON } from "../../consts.ts";
+import { KvInstance } from "../../types.ts";
 import { signal } from "@preact/signals";
 
 export interface DiscoverConnectionsDialogProps {
@@ -17,7 +17,8 @@ export function DiscoverConnectionsDialog(props: DiscoverConnectionsDialogProps)
     const selectedLocation = document.querySelector('input[name="localLocation"]:checked');
     if (selectedLocation) {
       (document.getElementById("discoverConnectionsDialog")! as HTMLDialogElement).close();
-      (document.getElementById("connectionLocation")! as HTMLInputElement).value = (selectedLocation as HTMLInputElement).id;
+      (document.getElementById("connectionLocation")! as HTMLInputElement).value =
+        (selectedLocation as HTMLInputElement).id;
       (document.getElementById("addEditConnectionDialog")! as HTMLDialogElement).showModal();
     }
   }
@@ -32,15 +33,21 @@ export function DiscoverConnectionsDialog(props: DiscoverConnectionsDialogProps)
           <p class="font-bold text-xl">Discover local KV connections</p>
         </div>
         <div class="mt-3">
-          <p class="my-2">Choose a connection to a local KV store.  Below are auto-discovered KV stores with 
-            a selection of sample data to help identify the KV store.
+          <p class="my-2">
+            Choose a connection to a local KV store. Below are auto-discovered KV stores with a
+            selection of sample data to help identify the KV store.
           </p>
           <table>
             <tbody>
-              {props.kvInstances.map(kv => (
+              {props.kvInstances.map((kv) => (
                 <tr class="border-b-1 border-red-500 p-2">
                   <td class="text-center w-20">
-                    <input type="radio" name="localLocation" id={kv.kvLocation} onClick={kvInstanceChosen}/>
+                    <input
+                      type="radio"
+                      name="localLocation"
+                      id={kv.kvLocation}
+                      onClick={kvInstanceChosen}
+                    />
                   </td>
                   <td class="break-words py-4" id={kv.kvLocation + "_information"}>
                     <p class="font-bold">{kv.kvLocation}</p>
@@ -52,7 +59,7 @@ export function DiscoverConnectionsDialog(props: DiscoverConnectionsDialogProps)
                         </tr>
                       </thead>
                       <tbody>
-                        {kv.dataSelection.map(data => (
+                        {kv.dataSelection.map((data) => (
                           <tr class="border-b-1">
                             <td class="w-96">{data.key}</td>
                             <td title={data.fullValue}>{data.value}</td>
@@ -72,6 +79,5 @@ export function DiscoverConnectionsDialog(props: DiscoverConnectionsDialogProps)
         <button class={BUTTON} onClick={cancelDialog}>Cancel</button>
       </div>
     </dialog>
-
   );
 }

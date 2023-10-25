@@ -4,25 +4,22 @@ import { IS_BROWSER } from "$fresh/runtime.ts";
 
 interface ConnectionDropDownProps {
   connections: Signal<KvConnection[]>;
-  formIds: Signal<string[]>;
 }
 
 export function ConnectionDropDown(props: ConnectionDropDownProps) {
-  
   function updateConnection() {
-    const connectionId =
-      (document.getElementById("connection")! as HTMLSelectElement).value;
+    const connectionId = (document.getElementById("connection")! as HTMLSelectElement).value;
     localStorage.setItem("KV_explorer_connection", connectionId);
   }
 
   if (IS_BROWSER) {
+    //FIXME - this is hacky, need to centralise connection in state
     const connectionId = localStorage.getItem("KV_explorer_connection");
     console.debug("Restoring connection from", connectionId);
     setTimeout(() => {
       (document.getElementById("connection")! as HTMLSelectElement).value = connectionId || "";
       updateConnection();
     }, 0);
-    props.formIds.value.push("connection");
   }
 
   return (

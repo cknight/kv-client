@@ -8,10 +8,11 @@ export interface SearchData {
   reverse: boolean;
   show: number;
   from: number;
-  results?: Deno.KvEntry<unknown>[];
+  results?: KvUIEntry[];
   filter: string | undefined;
   searchComplete: boolean;
   validationError?: string;
+  stats?: Stats;
 }
 
 export interface I_CacheManager {
@@ -22,7 +23,6 @@ export interface I_CacheManager {
 export interface State {
   kv: Deno.Kv | null;
   connection: KvConnection | null;
-  connectionIsDeploy: boolean;
   accessToken?: string;
 
   cache: I_CacheManager;
@@ -69,6 +69,7 @@ export interface KvConnection {
   kvLocation: string;
   name: string;
   id: string;
+  isRemote: boolean;
 }
 
 export interface KvSearchOptions {
@@ -86,7 +87,7 @@ export type AuditLog = {
   executorId: string;
   connection: string;
   isDeploy: boolean;
-  rtms: number;  //Round trip milliseconds
+  rtms: number; //Round trip milliseconds
 };
 
 export type ListAuditLog = AuditLog & {
@@ -113,9 +114,15 @@ export type UnitsConsumed = {
 };
 
 export type OpStats = {
-  unitType: "read" | "write";
+  opType: "read" | "delete" | "set";
   unitsConsumed: number;
   cachedResults?: number;
   kvResults?: number;
   rtms: number;
-}
+};
+
+export type Stats = {
+  unitsConsumedToday: UnitsConsumed;
+  opStats: OpStats;
+  isDeploy: boolean;
+};

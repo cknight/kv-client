@@ -19,31 +19,33 @@ export const handler: Handlers = {
       const connection: KvConnection = {
         name: connectionName,
         kvLocation,
-        id: connectionId
+        id: connectionId,
       };
-      const isDuplicate = connections.value.filter(c => (c.kvLocation === kvLocation && c.name === connectionName)).length > 0;
+      const isDuplicate =
+        connections.value.filter((c) => (c.kvLocation === kvLocation && c.name === connectionName))
+          .length > 0;
       if (!isDuplicate) {
         connections.value.push(connection);
         await localKv.set([CONNECTIONS_KEY_PREFIX, connection.id], connection);
       }
     } else if (action === "delete") {
-        const connectionId = formData.get("connectionId")?.toString() || "";
-        await localKv.delete([CONNECTIONS_KEY_PREFIX, connectionId]);
-        console.debug("Deleted connection", connectionId);
+      const connectionId = formData.get("connectionId")?.toString() || "";
+      await localKv.delete([CONNECTIONS_KEY_PREFIX, connectionId]);
+      console.debug("Deleted connection", connectionId);
     } else {
       console.error("Unrecognized POST data");
     }
 
     return ctx.render();
-  }
+  },
 };
 
 export default async function Connections() {
   const localKVInstances = await peekAtLocalKvInstances();
-  
+
   return (
     <div>
-      <ConnectionList connections={connections} localKvInstances={localKVInstances}/>      
+      <ConnectionList connections={connections} localKvInstances={localKVInstances} />
     </div>
   );
 }

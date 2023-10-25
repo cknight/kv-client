@@ -9,7 +9,7 @@ interface HelpProps {
 }
 
 export function Help(props: HelpProps) {
-  function showText() {
+  function showHelp() {
     const dialog = document.getElementById(props.dialogId) as HTMLDialogElement;
     dialog.showModal();
     const okButton = dialog.querySelector("button");
@@ -25,7 +25,7 @@ export function Help(props: HelpProps) {
     <div>
       <svg
         class="ml-3 h-6 w-6 text-[#8E939F] cursor-pointer"
-        onClick={showText}
+        onClick={showHelp}
         tabindex={0}
         viewBox="0 0 24 24"
         stroke-width="2"

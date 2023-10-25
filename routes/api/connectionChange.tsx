@@ -11,8 +11,8 @@ export const handler: Handlers = {
     } catch (e) {
       const failReason = e.message || "Unknown error occurred";
       console.error(e);
-      return new Response(failReason, {status: 500, headers: {"content-type": "text/plain" }});
+      return new Response(failReason, { status: 500, headers: { "content-type": "text/plain" } });
     }
-    return new Response(undefined, {status: 200});
-  }
-}
+    return new Response(undefined, { status: 200 });
+  },
+};

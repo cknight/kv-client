@@ -1,11 +1,12 @@
 import { Signal } from "@preact/signals";
 import { KvKeyInput } from "../components/KvKeyInput.tsx";
 import { IS_BROWSER } from "$fresh/runtime.ts";
-import { PATDialog } from "../components/PATDialog.tsx";
+import { PATDialog } from "../components/dialogs/PATDialog.tsx";
 import { Help } from "../components/Help.tsx";
 import { LINK } from "../consts.ts";
 import { KeyHelp } from "../components/KeyHelp.tsx";
 import { JSX } from "preact";
+import { clearSearchForm, submitSearchForm } from "../utils/form.ts";
 
 interface SearchDataProps {
   prefix: string;
@@ -15,7 +16,6 @@ interface SearchDataProps {
   validationError?: string;
   limit: string;
   reverse: boolean;
-  formIds: Signal<string[]>;
 }
 
 export function SearchBox(data: SearchDataProps) {
@@ -29,8 +29,6 @@ export function SearchBox(data: SearchDataProps) {
 
   // Add form ids to signal for access by SearchForm
   if (IS_BROWSER) {
-    data.formIds.value.push("prefix", "start", "end", "limit", "reverse");
-
     if (patRequired) {
       setTimeout(() => {
         (document.getElementById("accessTokenDialog")! as HTMLDialogElement).showModal();
@@ -39,10 +37,17 @@ export function SearchBox(data: SearchDataProps) {
   }
 
   function resetForm(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
-    event.preventDefault(); //e.g. don't submit the form
-    const connectionId = (document.getElementById("connection")! as HTMLSelectElement).value;
-    (document.getElementById("pageForm")! as HTMLFormElement).reset();
-    (document.getElementById("connection")! as HTMLSelectElement).value = connectionId;
+    //event.preventDefault(); //e.g. don't submit the form
+    clearSearchForm();
+  }
+
+  function submitForm(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
+    //event.preventDefault(); //e.g. don't submit the form
+    const filter = document.getElementById("filter")! as HTMLInputElement;
+    if (filter) {
+      filter.value = "";
+    }
+    submitSearchForm();
   }
 
   return (
@@ -61,7 +66,7 @@ export function SearchBox(data: SearchDataProps) {
               value={prefix}
             />
             <Help dialogId="prefixHelp" dialogTitle="Prefix key">
-              <KeyHelp keyPart="prefix"/>
+              <KeyHelp keyPart="prefix" />
             </Help>
           </div>
           <div class="w-full flex items-center">
@@ -75,7 +80,7 @@ export function SearchBox(data: SearchDataProps) {
               value={start}
             />
             <Help dialogId="startHelp" dialogTitle="Start key">
-              <KeyHelp keyPart="start"/>
+              <KeyHelp keyPart="start" />
             </Help>
           </div>
           <div class="w-full flex items-center">
@@ -89,7 +94,7 @@ export function SearchBox(data: SearchDataProps) {
               value={end}
             />
             <Help dialogId="endHelp" dialogTitle="End key">
-              <KeyHelp keyPart="end"/>
+              <KeyHelp keyPart="end" />
             </Help>
           </div>
         </div>
@@ -113,9 +118,12 @@ export function SearchBox(data: SearchDataProps) {
               <option value="all" selected={limit === "all"}>All</option>
             </select>
             <Help dialogId="limitHelp" dialogTitle="Limit">
-              <p>Set the maximum amount of key-value pairs to retrieve with this search</p>
+              <p>
+                Set the maximum amount of key-value pairs to retrieve with this search. It is
+                important to note that the subsequent actions of filtering or paging results is done
+                within the context of the rows returned within this limit.
+              </p>
             </Help>
-
           </div>
           <div class="w-full flex items-center justify-end mt-5">
             <label for="reverse" class="w-24">Reverse</label>
@@ -135,10 +143,20 @@ export function SearchBox(data: SearchDataProps) {
       </div>
 
       <div class="flex w-full justify-center mt-4">
-        <button type="button" onClick={resetForm} form="pageForm" class="px-2 py-1 rounded mx-4 bg-[#ff6b6b]">
+        <button
+          type="button"
+          onClick={resetForm}
+          form="pageForm"
+          class="px-2 py-1 rounded mx-4 bg-[#ff6b6b]"
+        >
           Reset
         </button>
-        <button type="submit" form="pageForm" class="px-2 py-1 rounded mx-4 bg-[#6b6bff]">
+        <button
+          type="button"
+          onClick={submitForm}
+          form="pageForm"
+          class="px-2 py-1 rounded mx-4 bg-[#6b6bff]"
+        >
           Search
         </button>
       </div>

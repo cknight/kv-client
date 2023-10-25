@@ -1,4 +1,4 @@
-import { BUTTON } from "../consts.ts";
+import { BUTTON } from "../../consts.ts";
 import { JSX } from "preact/jsx-runtime";
 
 export function AddEditConnectionDialog() {
@@ -6,8 +6,7 @@ export function AddEditConnectionDialog() {
     event.preventDefault(); //e.g. don't submit the form
     (document.getElementById("connectionId")! as HTMLInputElement).value = "";
     (document.getElementById("connectionName")! as HTMLInputElement).value = "";
-    (document.getElementById("connectionLocation")! as HTMLInputElement).value =
-      "";
+    (document.getElementById("connectionLocation")! as HTMLInputElement).value = "";
     (document.getElementById("addEditConnectionDialog")! as HTMLDialogElement)
       .close();
   }

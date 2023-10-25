@@ -11,15 +11,17 @@ export async function auditListAction(audit: ListAuditLog) {
     const key = ["audit", Date.now()];
     const result = await localKv.atomic()
       .check({ key, versionstamp: null })
-      .set(key, JSON.stringify(audit), {
+      .set(key, audit, {
         expireIn: THIRTY_DAYS_IN_MS,
       })
       .commit();
     auditSuccess = result.ok;
     if (!auditSuccess) {
-      console.debug("Key collision, trying again");
+      console.debug("Audit key collision, trying again");
       await delay(1);
       attempts++;
+    } else {
+      console.debug("Audit successful:", audit);
     }
   }
   if (!auditSuccess) {

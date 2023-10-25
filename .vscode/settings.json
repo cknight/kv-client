@@ -1,7 +1,9 @@
 {
+  "editor.codeLens": false,
   "deno.enable": true,
   "deno.disablePaths": [],
   "deno.lint": true,
+  "deno.unstable": true,
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "denoland.vscode-deno",
   "[typescriptreact]": {

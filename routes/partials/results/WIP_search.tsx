@@ -40,22 +40,22 @@ export default defineRoute(async (req, ctx) => {
   // Only render the new content
   return (
     <Partial name="docs-content">
-        <SearchBox
-          prefix={prefix}
-          start={start}
-          end={end}
-          limit={limit}
-          reverse={reverse}
-          formIds={formIds}
-        />
-        <SearchResults
-          results={results}
-          validationError={failReason}
-          formIds={formIds}
-          show={show}
-          from={from}
-          searchComplete={searchComplete}
-        />
+      <SearchBox
+        prefix={prefix}
+        start={start}
+        end={end}
+        limit={limit}
+        reverse={reverse}
+        formIds={formIds}
+      />
+      <SearchResults
+        results={results}
+        validationError={failReason}
+        formIds={formIds}
+        show={show}
+        from={from}
+        searchComplete={searchComplete}
+      />
     </Partial>
   );
 });

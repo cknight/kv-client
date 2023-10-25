@@ -1,20 +1,25 @@
-import { KvConnection, KvSearchOptions, ListAuditLog, OpStats, PartialSearchResults, State } from "../types.ts";
+import {
+  KvConnection,
+  KvSearchOptions,
+  ListAuditLog,
+  OpStats,
+  PartialSearchResults,
+  State,
+} from "../types.ts";
 import { establishKvConnection } from "./kvConnect.ts";
 import { parseKvKey } from "./kvKeyParser.ts";
-import { getState } from "./state.ts";
+import { getUserState } from "./state.ts";
 import { ValidationError } from "./errors.ts";
 import { computeSize } from "./kvUnitsConsumed.ts";
 import { readUnitsConsumed } from "./kvUnitsConsumed.ts";
 import { auditListAction } from "./kvAudit.ts";
-import { CONNECTIONS_KEY_PREFIX } from "../consts.ts";
-import { localKv } from "./db.ts";
 
 export async function searchKv(
   searchOptions: KvSearchOptions,
 ): Promise<PartialSearchResults> {
   const startTime = Date.now();
   const { session, connection, pat, prefix, start, end, limit, reverse } = searchOptions;
-  const state = getState(session);
+  const state = getUserState(session);
   const cachedSearch = state.cache.get({ connection, prefix, start, end, reverse });
   const cachedResults: Deno.KvEntry<unknown>[] = [];
 
@@ -32,15 +37,16 @@ export async function searchKv(
       cachedSearch.cursor !== false,
     );
     const cacheStats: OpStats = {
-      unitType: "read",
+      opType: "read",
       unitsConsumed: 0,
       cachedResults: cachedData.length,
       kvResults: 0,
       rtms: Date.now() - startTime,
     };
-  
+
     if (!cachedSearch.cursor) {
       // All data has already been retrieved, so return whatever we have
+      console.debug("All data already retrieved from cache");
       return {
         results: cachedData,
         cursor: cachedSearch.cursor,
@@ -48,6 +54,7 @@ export async function searchKv(
       };
     } else if (cachedData.length === maxEntries) {
       // We don't have all data, but we do have exactly the data requested, so return it
+      console.debug("All data requested already in cache");
       return {
         results: cachedData,
         cursor: cachedSearch.cursor,
@@ -76,7 +83,7 @@ export async function searchKv(
     batchSize: maxEntries > 500 ? 500 : maxEntries,
   };
   const listIterator = state.kv!.list(selector, options);
-  
+  console.debug("kv.list(" + JSON.stringify(selector) + ", " + JSON.stringify(options) + ")");
   let count = 0;
   let operationSize = 0;
   let newCursor: string | false = "";
@@ -121,14 +128,13 @@ export async function searchKv(
     reverse,
     results: newResults.length,
     readUnitsConsumed: readUnits,
-    connection: state.connection!.name,
-    isDeploy: state.connectionIsDeployq,
+    connection: state.connection!.id,
+    isDeploy: state.connectionIsDeploy,
     rtms: queryOnlyTime,
   };
   await auditListAction(audit);
 
   const finalResults = cachedResults.concat(newResults);
-  console.debug("Audit:", audit);
   console.debug(
     "Search results:",
     finalResults.length - newResults.length,
@@ -142,7 +148,7 @@ export async function searchKv(
   );
 
   const opStats: OpStats = {
-    unitType: "read",
+    opType: "read",
     unitsConsumed: readUnits,
     cachedResults: cachedResults.length,
     kvResults: newResults.length,
@@ -183,7 +189,7 @@ function validateInputs(
 
   if (prefix.length > 0 && start.length > 0 && end.length > 0) {
     throw new ValidationError(
-      "Cannot specify a prefix, start and end key.  Valid combinations are prefix, prefix/start, prefix/end, start/end",
+      "Cannot specify a prefix, start and end key.  Valid combinations are prefix, prefix/start, prefix/end or start/end",
     );
   }
 }

@@ -1,10 +1,19 @@
+import { PageProps } from "$fresh/server.ts";
 import { State } from "../types.ts";
 import { CacheManager } from "./cache.ts";
 
 const states: Map<string, State> = new Map();
 
-export function getState(session:string): State {
-  const state = states.get(session);
+export function getUserState(sessionOrCtx: string | PageProps): State {
+  let sessionId = "";
+
+  if (typeof sessionOrCtx === "string") {
+    sessionId = sessionOrCtx;
+  } else {
+    sessionId = sessionOrCtx.state.session as string;
+  }
+
+  const state = states.get(sessionId);
 
   if (!state) {
     const newState: State = {
@@ -12,7 +21,7 @@ export function getState(session:string): State {
       connection: null,
       cache: new CacheManager(),
     };
-    states.set(session, newState);
+    states.set(sessionId, newState);
     return newState;
   }
 

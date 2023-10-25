@@ -1,83 +1,94 @@
 import { ValidationError } from "./errors.ts";
 
 const UINT8_REGEX =
-  /^\[(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)(?:,(?:25[0-5]|2[0-4]\d1\d{2}|[1-9]\d|\d))*\]$/;
+  /^\[((?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)(?:,(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d))*)?]?$/;
 const LOG_ENABLED = false;
 
 export function parseKvKey(input: string): Deno.KvKey {
   if (input === "") return [];
-
   const key: Deno.KvKeyPart[] = [];
 
   let partialKey: string[] = [];
-  let endBlockChar = '';
-  LOG_ENABLED && console.log("--------------Parsing input:", input);
-  for (let i=0; i < input.length; i++) {
-    const char = input[i];
-    LOG_ENABLED && console.log("at char:", char);
-    if (char === ',' && endBlockChar === '' && partialKey.length > 0) {
-      // end of non-string and non-unit8 array key part
-      LOG_ENABLED && console.log("Processing end of non-string and non-uint8 array:", partialKey.join(''));
-      processPart(partialKey.join(''), key);
-      partialKey = [];
-    } else if (char === ',' && endBlockChar === '') {
-      // end of string or unit8 array key part, skip comma
-      LOG_ENABLED && console.log("End of string or unit8 array, skipping comma");
-    } else if (isStringChar(char)) {
-      if (partialKey.length === 0) {
-        // start of string
-        endBlockChar = char;
-        partialKey.push(char);
-        LOG_ENABLED && console.log("Start of string, pushing:", char);
-      } else if (endBlockChar === char && input[i-1] !== `\\`) {
-        // end of string
-        endBlockChar = '';
-        partialKey.push(char);
-        LOG_ENABLED && console.log("End of string, processing:", partialKey.join(''));
-        processPart(partialKey.join(''), key);
+  let endBlockChar = "";
+  let inString = false;
+  let inUint8Array = false;
+
+  const parts = input.trim().split(",");
+  parts.forEach((part) => {
+    LOG_ENABLED && console.log("Processing part:", part);
+
+    if (part.length === 0 && !inString) {
+      throw new ValidationError("Invalid key format: " + input);
+    }
+    if (isStringChar(part[0]) || inString) {
+      // start of new string or middle of previous string
+      if (endBlockChar === "" && !inString) {
+        // start of new string
+        if (part[part.length - 1] === part[0] && part[part.length - 2] !== `\\`) {
+          // simple complete string
+          LOG_ENABLED && console.log("End of string, processing:", part);
+          processPart(part, key);
+          inString = false;
+        } else {
+          // start of complex string
+          endBlockChar = part[0];
+          partialKey.push(part);
+          inString = true;
+        }
+      } else {
+        partialKey.push(",");
+        // middle of previous string
+        if (part[part.length - 1] === endBlockChar && part[part.length - 2] !== `\\`) {
+          // end of complex string
+          endBlockChar = "";
+          partialKey.push(part);
+          LOG_ENABLED && console.log("End of string, processing:", partialKey.join(""));
+          processPart(partialKey.join(""), key);
+          partialKey = [];
+          inString = false;
+        } else {
+          // middle of complex string
+          partialKey.push(part);
+        }
+      }
+    } else if (part[0] === "[") {
+      // start of unit8 array
+      if (part[part.length - 1] === "]") {
+        // empty or single value unit8 array
+        LOG_ENABLED && console.log("End of unit8 array, processing:", part);
+        processPart(part, key);
+      } else {
+        // start of non-empty unit8 array
+        inUint8Array = true;
+        partialKey.push(part);
+      }
+    } else if (inUint8Array) {
+      if (part[part.length - 1] === "]") {
+        // end of unit8 array
+        inUint8Array = false;
+        partialKey.push("," + part);
+        LOG_ENABLED && console.log("End of unit8 array, processing:", partialKey.join(""));
+        processPart(partialKey.join(""), key);
         partialKey = [];
       } else {
-        // middle of string with escaped or different string char
-        partialKey.push(char);
-        LOG_ENABLED && console.log("Middle of string, pushing:", char);
+        // middle of unit8 array
+        partialKey.push("," + part);
       }
-    } else if (char === '[' && partialKey.length === 0) {
-      // start of unit8 array
-      endBlockChar = ']';
-      partialKey.push(char);
-      LOG_ENABLED && console.log("Start of unit8 array");
-    } else if (char === ']' && endBlockChar === ']') {
-      // end of unit8 array
-      endBlockChar = '';
-      partialKey.push(char);
-      LOG_ENABLED && console.log("End of unit8 array, processing:", partialKey.join(''));
-      processPart(partialKey.join(''), key);
-      partialKey = [];
     } else {
-      if ((char === ' ' || char === ',') && isStringChar(endBlockChar)) {
-        // Space or comma inside string
-        LOG_ENABLED && console.log("Space or comma inside string, pushing:", char);
-        partialKey.push(char);
-      } else if (char !== ' ') {
-        // Not a space, could be a comma outside string (e.g. unit8 array)
-        LOG_ENABLED && console.log("Pushing:", char);
-        partialKey.push(char);
-      } else {
-        // Skip space outside of string
-        LOG_ENABLED && console.log("Skipping space outside of string");
-      }
+      // some other simple type
+      LOG_ENABLED && console.log("End of simple type, processing:", part);
+      processPart(part, key);
     }
-  }
+  });
   if (partialKey.length > 0) {
-    LOG_ENABLED && console.log("Processing end of input:", partialKey.join(''));
-    processPart(partialKey.join(''), key);
+    throw new ValidationError("Invalid key format: " + input);
   }
 
   return key;
 }
 
 function isStringChar(char: string) {
-  return char === '"' || char === "'" || char === '`';
+  return char === '"' || char === "'" || char === "`";
 }
 
 function processPart(keyPartInput: string, key: Deno.KvKeyPart[]) {

@@ -1,12 +1,15 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
 import { Signal } from "@preact/signals";
 import { SearchBox } from "../islands/SearchBox.tsx";
-import { SearchData } from "../types.ts";
+import { KvUIEntry, SearchData, Stats } from "../types.ts";
 import { SearchResults } from "../islands/SearchResults.tsx";
 import { searchKv } from "../utils/kvSearch.ts";
 import { SearchForm } from "../islands/PageForm.tsx";
 import { PATError } from "../utils/errors.ts";
-import { getState } from "../utils/state.ts";
+import { getUserState } from "../utils/state.ts";
+import { unitsConsumedToday } from "../utils/kvUnitsConsumed.ts";
+import { createKvUIEntry } from "../utils/utils.ts";
+import { establishKvConnection } from "../utils/kvConnect.ts";
 
 export const handler: Handlers = {
   async POST(req, ctx) {
@@ -18,41 +21,68 @@ export const handler: Handlers = {
     const reverse = form.get("reverse")?.toString() === "on";
     const from = parseInt(form.get("from")?.toString() || "1");
     const show = parseInt(form.get("show")?.toString() || "10");
-    const connection = form.get("connection")?.toString() || "";
     const pat = form.get("pat")?.toString() || "";
     const filter = form.get("filter")?.toString() || undefined;
-    let patRequired = false;
 
-    console.log("PAT:", pat);
+    const session = ctx.state.session as string;
+    const state = getUserState(session);
+    const connection = state!.connection;
+    if (!connection) {
+      const connectionId = new URL(req.url).searchParams.get("connection") || "";
+      establishKvConnection(session, connectionId, pat);
+    }
+
+    let patRequired = false;
+    let stats: Stats | undefined;
 
     let failReason;
     const results: Deno.KvEntry<unknown>[] = [];
     let searchComplete = false;
-    const session = ctx.state.session as string;
     try {
-      const searchOptions = { session, connection, pat, prefix, start, end, limit, reverse};
+      const connectionId = connection?.id || "";
+
+      //FIXME - break connection out from search.  Needs established prior to search
+      //e.g. search shouldn't load without valid connection
+      const searchOptions = {
+        session,
+        connection: connectionId,
+        pat,
+        prefix,
+        start,
+        end,
+        limit,
+        reverse,
+      };
       const partialResults = await searchKv(searchOptions);
       results.push(...partialResults.results);
       searchComplete = partialResults.cursor === false;
 
-      if isDeploy connection, need to get read/write units consumed today, add to stats
-
+      //TODO - maybe only for requests to Deploy?
+      const unitsConsumed = await unitsConsumedToday();
+      stats = {
+        unitsConsumedToday: unitsConsumed,
+        opStats: partialResults.opStats,
+        isDeploy: getUserState(session)?.connectionIsDeploy || false,
+      };
     } catch (e) {
       if (e instanceof PATError) {
         failReason = e.message;
         patRequired = true;
       } else if (e instanceof TypeError) {
-        const state = getState(ctx.state.session as string);
+        //invalid PAT error from Deploy
+        const state = getUserState(ctx.state.session as string);
         if (state) {
           state.accessToken = undefined;
-        } 
+        }
         failReason = e.message;
         patRequired = true;
       } else {
         failReason = e.message || "Unknown error occurred";
         console.error(e);
-      } 
+      }
     }
+
+    const kvUIEntries: KvUIEntry[] = results.map((e) => createKvUIEntry(e));
 
     const searchData: SearchData = {
       prefix,
@@ -60,7 +90,7 @@ export const handler: Handlers = {
       end,
       limit,
       reverse,
-      results,
+      results: kvUIEntries,
       filter,
       show,
       from,
@@ -68,6 +98,7 @@ export const handler: Handlers = {
       patRequired,
       searchComplete,
       validationError: failReason,
+      stats,
     };
 
     return await ctx.render(searchData);
@@ -86,14 +117,13 @@ export default function Search(props: PageProps<SearchData>) {
   const from = props.data?.from || parseInt(sp.get("from") || "1");
   const results = props.data?.results;
   const validationError = props.data?.validationError;
-  const formIds = props.state.formIds as Signal<string[]>;
   const searchComplete = props.data?.searchComplete || false;
   const patRequired = props.data?.patRequired || false;
   const filter = props.data?.filter || sp.get("filter") || undefined;
 
   return (
     <>
-      <SearchForm formIds={formIds}>
+      <SearchForm>
         <SearchBox
           prefix={prefix}
           start={start}
@@ -102,15 +132,19 @@ export default function Search(props: PageProps<SearchData>) {
           validationError={validationError}
           patRequired={patRequired}
           reverse={reverse}
-          formIds={formIds}
         />
         <SearchResults
           results={results}
-          formIds={formIds}
           show={show}
           from={from}
           filter={filter}
           searchComplete={searchComplete}
+          stats={props.data?.stats}
+          session={props.state.session as string}
+          prefix={prefix}
+          start={start}
+          end={end}
+          reverse={reverse}
         />
       </SearchForm>
     </>

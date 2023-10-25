@@ -23,6 +23,9 @@ const DEFAULT_KV_FILENAME = "kv.sqlite3";
  */
 export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
   const start = Date.now();
+
+  //FIXME test and/or compare/amend from KvView
+
   const denoDir = Deno.env.get("DENO_DIR");
   const cacheDir = denoDir ||
     join(cache_dir() || "", CACHE_DIR, DENO_CACHE_DIR);
@@ -83,9 +86,7 @@ export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
     }
   }
   console.debug(
-    `Auto-discovered ${instances.length} KV instances in ${
-      Date.now() - start
-    }ms`,
+    `Auto-discovered ${instances.length} KV instances in ${Date.now() - start}ms`,
   );
   return instances;
 }
