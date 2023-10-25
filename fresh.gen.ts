@@ -7,13 +7,11 @@ import * as $1 from "./routes/_app.tsx";
 import * as $2 from "./routes/_layout.tsx";
 import * as $3 from "./routes/_middleware.ts";
 import * as $4 from "./routes/accessToken.tsx";
-import * as $5 from "./routes/api/connectionChange.tsx";
-import * as $6 from "./routes/connections.tsx";
-import * as $7 from "./routes/delete.tsx";
-import * as $8 from "./routes/index.tsx";
-import * as $9 from "./routes/insertUpdate.tsx";
-import * as $10 from "./routes/partials/results/WIP_search.tsx";
-import * as $11 from "./routes/search.tsx";
+import * as $5 from "./routes/connections.tsx";
+import * as $6 from "./routes/delete.tsx";
+import * as $7 from "./routes/index.tsx";
+import * as $8 from "./routes/insertUpdate.tsx";
+import * as $9 from "./routes/search.tsx";
 import * as $$0 from "./islands/AccessTokenInput.tsx";
 import * as $$1 from "./islands/ConnectButton.tsx";
 import * as $$2 from "./islands/ConnectionDropDown.tsx";
@@ -31,13 +29,11 @@ const manifest = {
     "./routes/_layout.tsx": $2,
     "./routes/_middleware.ts": $3,
     "./routes/accessToken.tsx": $4,
-    "./routes/api/connectionChange.tsx": $5,
-    "./routes/connections.tsx": $6,
-    "./routes/delete.tsx": $7,
-    "./routes/index.tsx": $8,
-    "./routes/insertUpdate.tsx": $9,
-    "./routes/partials/results/WIP_search.tsx": $10,
-    "./routes/search.tsx": $11,
+    "./routes/connections.tsx": $5,
+    "./routes/delete.tsx": $6,
+    "./routes/index.tsx": $7,
+    "./routes/insertUpdate.tsx": $8,
+    "./routes/search.tsx": $9,
   },
   islands: {
     "./islands/AccessTokenInput.tsx": $$0,

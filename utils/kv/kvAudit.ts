@@ -1,4 +1,4 @@
-import { ListAuditLog } from "../types.ts";
+import { ListAuditLog } from "../../types.ts";
 import { delay } from "https://deno.land/std@0.204.0/async/delay.ts";
 import { localKv } from "./db.ts";
 

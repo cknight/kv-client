@@ -1,15 +1,14 @@
 import {
-  KvConnection,
   KvSearchOptions,
   ListAuditLog,
   OpStats,
   PartialSearchResults,
   State,
-} from "../types.ts";
+} from "../../types.ts";
 import { establishKvConnection } from "./kvConnect.ts";
 import { parseKvKey } from "./kvKeyParser.ts";
-import { getUserState } from "./state.ts";
-import { ValidationError } from "./errors.ts";
+import { getUserState } from "../state.ts";
+import { ValidationError } from "../errors.ts";
 import { computeSize } from "./kvUnitsConsumed.ts";
 import { readUnitsConsumed } from "./kvUnitsConsumed.ts";
 import { auditListAction } from "./kvAudit.ts";
@@ -129,7 +128,7 @@ export async function searchKv(
     results: newResults.length,
     readUnitsConsumed: readUnits,
     connection: state.connection!.id,
-    isDeploy: state.connectionIsDeploy,
+    isDeploy: state.connection?.isRemote || false,
     rtms: queryOnlyTime,
   };
   await auditListAction(audit);

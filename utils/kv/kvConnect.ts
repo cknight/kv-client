@@ -1,7 +1,7 @@
-import { CONNECTIONS_KEY_PREFIX } from "../consts.ts";
-import { KvConnection } from "../types.ts";
-import { getUserState } from "./state.ts";
-import { PATError, ValidationError } from "./errors.ts";
+import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
+import { KvConnection } from "../../types.ts";
+import { getUserState } from "../state.ts";
+import { PATError, ValidationError } from "../errors.ts";
 import { localKv } from "./db.ts";
 
 export async function establishKvConnection(session: string, connectionId: string, pat?: string) {
@@ -45,7 +45,6 @@ export async function establishKvConnection(session: string, connectionId: strin
     state.kv = await Deno.openKv(location);
     state.accessToken = pat;
     state.connection = conn.value;
-    state.connectionIsDeploy = true;
   } else {
     // Local KV file
     try {
@@ -57,7 +56,6 @@ export async function establishKvConnection(session: string, connectionId: strin
     }
     state.kv = await Deno.openKv(location);
     state.connection = conn.value;
-    state.connectionIsDeploy = false;
   }
 
   console.debug(`Established KV connection to ${location}`);

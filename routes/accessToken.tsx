@@ -1,29 +1,35 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
-import { useSignal } from "@preact/signals";
 import { BUTTON } from "../consts.ts";
 import { getUserState } from "../utils/state.ts";
 import { AccessTokenInput } from "../islands/AccessTokenInput.tsx";
+import { buildRemoteData } from "../utils/denoDeploy/deployUser.ts";
 
 export const handler: Handlers = {
   async POST(req, ctx) {
     const formData = await req.formData();
     const accessToken = formData.get("accessToken");
     if (accessToken && typeof accessToken === "string") {
-      const cookies = new SecureCookieMap(req, { keys });
-      await cookies.set(ACCESS_TOKEN, accessToken);
+      if (accessToken.length < 10) {
+        return ctx.render({ error: true });
+      }
+
+      const start = Date.now();
+      const deployUser = await buildRemoteData(accessToken);
+      console.log(`[buildRemoteData] ${Date.now() - start}ms`);
+      console.log(deployUser);
+
       return new Response("", {
         status: 303,
-        statusText: "See Other",
-        headers: mergeHeaders({ "Location": "/" }, cookies),
+        headers: { Location: "/" },
       });
     }
     return ctx.render({ error: true });
   },
 };
 
-export default function AccessToken(data: PageProps<string>) {
+export default function AccessToken(data: PageProps<boolean>) {
   const state = getUserState(data);
-  const error = false;
+  const error = data.data;
 
   return (
     <div class="w-full bg-white rounded-lg shadow xl:mt-16 sm:max-w-md xl:p-0">

@@ -17,5 +17,8 @@
   },
   "[javascript]": {
     "editor.defaultFormatter": "denoland.vscode-deno"
-  }
+  },
+  "cSpell.ignoreWords": [
+    "organisations"
+  ]
 }

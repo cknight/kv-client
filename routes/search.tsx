@@ -3,13 +3,13 @@ import { Signal } from "@preact/signals";
 import { SearchBox } from "../islands/SearchBox.tsx";
 import { KvUIEntry, SearchData, Stats } from "../types.ts";
 import { SearchResults } from "../islands/SearchResults.tsx";
-import { searchKv } from "../utils/kvSearch.ts";
+import { searchKv } from "../utils/kv/kvSearch.ts";
 import { SearchForm } from "../islands/PageForm.tsx";
 import { PATError } from "../utils/errors.ts";
 import { getUserState } from "../utils/state.ts";
-import { unitsConsumedToday } from "../utils/kvUnitsConsumed.ts";
+import { unitsConsumedToday } from "../utils/kv/kvUnitsConsumed.ts";
 import { createKvUIEntry } from "../utils/utils.ts";
-import { establishKvConnection } from "../utils/kvConnect.ts";
+import { establishKvConnection } from "../utils/kv/kvConnect.ts";
 
 export const handler: Handlers = {
   async POST(req, ctx) {
@@ -62,7 +62,7 @@ export const handler: Handlers = {
       stats = {
         unitsConsumedToday: unitsConsumed,
         opStats: partialResults.opStats,
-        isDeploy: getUserState(session)?.connectionIsDeploy || false,
+        isDeploy: getUserState(session)?.connection?.isRemote || false,
       };
     } catch (e) {
       if (e instanceof PATError) {

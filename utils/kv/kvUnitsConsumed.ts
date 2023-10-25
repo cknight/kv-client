@@ -1,4 +1,4 @@
-import { DeleteAuditLog, ListAuditLog, UnitsConsumed } from "../types.ts";
+import { DeleteAuditLog, ListAuditLog, UnitsConsumed } from "../../types.ts";
 import { localKv } from "./db.ts";
 
 const BYTES_PER_READ_UNIT = 1024 * 4;

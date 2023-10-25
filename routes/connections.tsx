@@ -5,7 +5,7 @@ import { peekAtLocalKvInstances } from "../utils/autoDiscoverKv.ts";
 import { ulid } from "$std/ulid/mod.ts";
 import { connections } from "./_layout.tsx";
 import { KvConnection } from "../types.ts";
-import { localKv } from "../utils/db.ts";
+import { localKv } from "../utils/kv/db.ts";
 
 export const handler: Handlers = {
   async POST(req, ctx) {
