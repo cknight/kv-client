@@ -1,5 +1,5 @@
 import { ListAuditLog } from "../../types.ts";
-import { delay } from "https://deno.land/std@0.204.0/async/delay.ts";
+import { delay } from "$std/async/delay.ts";
 import { localKv } from "./db.ts";
 
 const THIRTY_DAYS_IN_MS = 1000 * 60 * 60 * 24 * 30;

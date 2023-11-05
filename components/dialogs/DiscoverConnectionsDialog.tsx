@@ -30,12 +30,12 @@ export function DiscoverConnectionsDialog(props: DiscoverConnectionsDialogProps)
     <dialog id="discoverConnectionsDialog" class="relative p-0 border-2 border-gray-700 rounded">
       <div class="p-4">
         <div class="mb-3">
-          <p class="font-bold text-xl">Discover local KV connections</p>
+          <p class="font-bold text-xl">Local KV connections</p>
         </div>
         <div class="mt-3">
           <p class="my-2">
-            Choose a connection to a local KV store. Below are auto-discovered KV stores with a
-            selection of sample data to help identify the KV store.
+            Below are auto-discovered KV stores with a selection of sample data to help identify the KV store.
+            Choose one or manually enter a location.
           </p>
           <table>
             <tbody>
@@ -74,9 +74,45 @@ export function DiscoverConnectionsDialog(props: DiscoverConnectionsDialogProps)
           </table>
         </div>
       </div>
-      <div class="sticky bg-white border-1 bottom-0 flex py-3 justify-center">
-        <button class={BUTTON} onClick={addConnection} disabled={!radioSelected.value}>Add</button>
-        <button class={BUTTON} onClick={cancelDialog}>Cancel</button>
+      <div class="sticky bg-white border-1 bottom-0 flex py-3 justify-center pt-5">
+        <form method="post">
+          <input type="hidden" id="connectionId" name="connectionId" />
+          <div class="mt-3">
+            <label for="connectionName" class="inline-block w-[70px]">
+              Name:
+            </label>
+            <input
+              id="connectionName"
+              name="connectionName"
+              class="rounded bg-blue-100 w-96 mx-2 p-2"
+            />
+          </div>
+          <div class="mt-3">
+            <label for="connectionLocation" class="inline-block w-[70px]">
+              Location:
+            </label>
+            <input
+              id="connectionLocation"
+              name="connectionLocation"
+              class="rounded bg-blue-100 w-96 mx-2 p-2"
+            />
+          </div>
+          <div class="flex mt-3 justify-center">
+            <button
+              class={BUTTON}
+              type="submit"
+              name="connectionAction"
+              value="addEdit"
+            >
+              <span data-type="addEdit">Add</span>
+            </button>
+            <button class={BUTTON} onClick={cancelDialog}>Cancel</button>
+          </div>
+        </form>
+        {
+          /* <button class={BUTTON} onClick={addConnection} disabled={!radioSelected.value}>Add</button>
+        <button class={BUTTON} onClick={cancelDialog}>Cancel</button> */
+        }
       </div>
     </dialog>
   );

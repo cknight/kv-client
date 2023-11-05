@@ -12,12 +12,13 @@ import { ValidationError } from "../errors.ts";
 import { computeSize } from "./kvUnitsConsumed.ts";
 import { readUnitsConsumed } from "./kvUnitsConsumed.ts";
 import { auditListAction } from "./kvAudit.ts";
+import { executorId } from "../denoDeploy/deployUser.ts";
 
 export async function searchKv(
   searchOptions: KvSearchOptions,
 ): Promise<PartialSearchResults> {
   const startTime = Date.now();
-  const { session, connection, pat, prefix, start, end, limit, reverse } = searchOptions;
+  const { session, connection, prefix, start, end, limit, reverse } = searchOptions;
   const state = getUserState(session);
   const cachedSearch = state.cache.get({ connection, prefix, start, end, reverse });
   const cachedResults: Deno.KvEntry<unknown>[] = [];
@@ -71,7 +72,7 @@ export async function searchKv(
   const startKey = parseKvKey(start);
   const endKey = parseKvKey(end);
 
-  await establishKvConnection(session, connection, pat);
+  await establishKvConnection(session, connection);
   validateInputs(state, prefix, start, end);
 
   const selector = createListSelector(startKey, endKey, prefixKey);
@@ -119,7 +120,7 @@ export async function searchKv(
 
   const audit: ListAuditLog = {
     auditType: "list",
-    executorId: session,
+    executorId: executorId(session),
     prefixKey: prefix,
     startKey: start,
     endKey: end,
@@ -127,8 +128,8 @@ export async function searchKv(
     reverse,
     results: newResults.length,
     readUnitsConsumed: readUnits,
-    connection: state.connection!.id,
-    isDeploy: state.connection?.isRemote || false,
+    connection: state.connection!.name + ` (${state.connection!.id})`,
+    isDeploy: state.connection!.isRemote,
     rtms: queryOnlyTime,
   };
   await auditListAction(audit);

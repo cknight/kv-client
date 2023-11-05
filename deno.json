@@ -1,11 +1,12 @@
 {
   "lock": false,
+  "unstable": ["kv", "hmr"],
   "tasks": {
     "check": "deno fmt --check && deno lint && deno check **/*.ts && deno check **/*.tsx",
-    "start": "deno run -A --unstable --watch=static/,routes/ dev.ts",
-    "debug": "deno run -A --unstable --inspect-brk dev.ts",
-    "build": "deno run -A --unstable dev.ts build",
-    "preview": "deno run -A --unstable main.ts",
+    "start": "deno run -A --watch=static/,routes/ dev.ts",
+    "debug": "deno run -A --inspect-brk dev.ts",
+    "build": "deno run -A dev.ts build",
+    "preview": "deno run -A main.ts",
     "update": "deno run -A -r https://fresh.deno.dev/update ."
   },
   "lint": { "rules": { "tags": ["fresh", "recommended"] } },
@@ -19,7 +20,9 @@
     "@preact/signals-core": "https://esm.sh/*@preact/signals-core@1.5.0",
     "twind": "https://esm.sh/twind@0.16.19",
     "twind/": "https://esm.sh/twind@0.16.19/",
-    "$std/": "https://deno.land/std@0.202.0/"
+    "$std/": "https://deno.land/std@0.202.0/",
+    "semaphore/": "https://deno.land/x/semaphore@v1.1.2/",
+    "kv-utils/": "https://deno.land/x/kv_utils@1.1.1/"
   },
   "compilerOptions": { "jsx": "react-jsx", "jsxImportSource": "preact" },
   "exclude": ["**/_fresh/*"]

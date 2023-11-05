@@ -23,6 +23,10 @@ export class CacheManager implements I_CacheManager {
     this.cache.set(key, cachedSearch);
   }
 
+  clear(): void {
+    this.cache.clear();
+  }
+
   #key(connection: string, prefix: string, start: string, end: string, reverse: boolean) {
     return `${connection}.${prefix}.${start}.${end}.${reverse}`;
   }

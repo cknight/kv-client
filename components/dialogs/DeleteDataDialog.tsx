@@ -1,10 +1,5 @@
-import { getUserState } from "../../utils/state.ts";
-import { keyToBase64 } from "../../utils/encodeKvKey.ts";
 import { JSX } from "preact";
 import { BUTTON } from "../../consts.ts";
-import { createKvUIEntry } from "../../utils/utils.ts";
-import { Signal, useSignal } from "@preact/signals";
-import { IS_BROWSER } from "$fresh/runtime.ts";
 import { connections } from "../../routes/_layout.tsx";
 
 interface DeleteDialogProps {
@@ -15,7 +10,7 @@ interface DeleteDialogProps {
   end: string;
   reverse: boolean;
 }
-export function DeleteDialog(props: DeleteDialogProps) {
+export function DeleteDataDialog(props: DeleteDialogProps) {
   console.log("delete dialog", props);
   const { keysToDelete, session, prefix, start, end, reverse } = props;
 

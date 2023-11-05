@@ -12,7 +12,6 @@ interface SearchDataProps {
   prefix: string;
   start: string;
   end: string;
-  patRequired: boolean;
   validationError?: string;
   limit: string;
   reverse: boolean;
@@ -24,17 +23,7 @@ export function SearchBox(data: SearchDataProps) {
   const end = data.end;
   const limit = data.limit;
   const reverse = data.reverse;
-  const patRequired = data.patRequired;
   const validationError = data.validationError;
-
-  // Add form ids to signal for access by SearchForm
-  if (IS_BROWSER) {
-    if (patRequired) {
-      setTimeout(() => {
-        (document.getElementById("accessTokenDialog")! as HTMLDialogElement).showModal();
-      }, 0);
-    }
-  }
 
   function resetForm(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     //event.preventDefault(); //e.g. don't submit the form
@@ -52,7 +41,7 @@ export function SearchBox(data: SearchDataProps) {
 
   return (
     <div>
-      {validationError && !patRequired && <div class="text-red-500 w-full">{validationError}</div>}
+      {validationError && <div class="text-red-500 w-full">{validationError}</div>}
       <div class="flex">
         <div class="w-2/3">
           <div class="w-full flex items-center">
@@ -160,7 +149,6 @@ export function SearchBox(data: SearchDataProps) {
           Search
         </button>
       </div>
-      {patRequired && <PATDialog validationError={validationError} />}
     </div>
   );
 }

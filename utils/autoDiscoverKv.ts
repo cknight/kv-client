@@ -3,6 +3,7 @@ import { join } from "$std/path/mod.ts";
 import cache_dir from "https://deno.land/x/dir@1.5.1/home_dir/mod.ts";
 import { KvInstance, KvUIEntry } from "../types.ts";
 import { createKvUIEntry } from "./utils.ts";
+import { env } from "../consts.ts";
 
 const MAX_ROWS = 6; //should be even number
 const CACHE_DIR = ".cache";
@@ -26,7 +27,7 @@ export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
 
   //FIXME test and/or compare/amend from KvView
 
-  const denoDir = Deno.env.get("DENO_DIR");
+  const denoDir = Deno.env.get(env.DENO_DIR);
   const cacheDir = denoDir ||
     join(cache_dir() || "", CACHE_DIR, DENO_CACHE_DIR);
   const locationDir = join(cacheDir, LOCATION_DATA_DIR);
@@ -77,9 +78,19 @@ export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
       }
 
       if (output.length > 0) {
+        let size = 0;
+        try {
+          const fileInfo = await Deno.lstat(walkEntry.path);
+          size = fileInfo.size;
+        } catch (e) {
+          console.error(
+            "Unable to get size of " + walkEntry.path + ": " + e.message,
+          );
+        }
         instances.push({
           kvLocation: walkEntry.path,
           dataSelection: output,
+          size
         });
       }
       kv.close();

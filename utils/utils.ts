@@ -1,3 +1,4 @@
+import { format } from "$std/fmt/bytes.ts";
 import { KvUIEntry } from "../types.ts";
 
 export function createKvUIEntry(entry: Deno.KvEntry<unknown>): KvUIEntry {
@@ -12,4 +13,11 @@ export function createKvUIEntry(entry: Deno.KvEntry<unknown>): KvUIEntry {
     fullValue: value,
   };
   return uiEntry;
+}
+
+export function readableSize(size: number) {
+  const locale = navigator.language;
+  return locale
+    ? format(size, { locale, maximumFractionDigits: 1 })
+    : format(size, { maximumFractionDigits: 1 });
 }

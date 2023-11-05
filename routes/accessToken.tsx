@@ -1,11 +1,17 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
-import { BUTTON } from "../consts.ts";
+import { BUTTON, DEPLOY_USER_KEY_PREFIX, ENCRYPTED_USER_ACCESS_TOKEN_PREFIX } from "../consts.ts";
 import { getUserState } from "../utils/state.ts";
 import { AccessTokenInput } from "../islands/AccessTokenInput.tsx";
 import { buildRemoteData } from "../utils/denoDeploy/deployUser.ts";
+import { localKv } from "../utils/kv/db.ts";
+import { storeEncryptedString } from "../utils/encryption.ts";
+import { persistConnectionData } from "../utils/denoDeploy/persistConnectionData.ts";
+
+const _24_HOURS_IN_MS = 1000 * 60 * 60 * 24;
 
 export const handler: Handlers = {
   async POST(req, ctx) {
+    const session = ctx.state.session as string;
     const formData = await req.formData();
     const accessToken = formData.get("accessToken");
     if (accessToken && typeof accessToken === "string") {
@@ -15,8 +21,21 @@ export const handler: Handlers = {
 
       const start = Date.now();
       const deployUser = await buildRemoteData(accessToken);
+      
       console.log(`[buildRemoteData] ${Date.now() - start}ms`);
-      console.log(deployUser);
+      
+      /* 
+       * Store:
+       * 1. Deploy user object in KV for 30 days
+       * 2. Access token in KV for 30 days
+       * 3. Remote connections data indefinitely (will get overwritten on next user connection)
+       * 4. Deploy user object in state
+       */
+      const state = getUserState(ctx);
+      await localKv.set([DEPLOY_USER_KEY_PREFIX, session], deployUser, {expireIn: 30*_24_HOURS_IN_MS});
+      await storeEncryptedString([ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session], accessToken, 30*_24_HOURS_IN_MS);
+      await persistConnectionData(deployUser);
+      state.deployUserData = deployUser;
 
       return new Response("", {
         status: 303,

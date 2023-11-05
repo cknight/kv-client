@@ -1,3 +1,4 @@
+import { getUserState } from "../state.ts";
 import { getOrganizationDetail, getProjectDbs, getRootData } from "./dash.ts";
 
 export interface DeployUser {
@@ -91,4 +92,21 @@ export async function buildRemoteData(accessToken: string): Promise<DeployUser> 
   });
 
   return deployUser;
+}
+
+export function deployKvEnvironment(project: DeployProject, instance: DeployKvInstance) {
+  if (project.type === "playground") {
+    return "playground";
+  } else if (project.type === "git") {
+    return project.productionBranch === instance.branch ? "prod" : "preview";
+  }
+  return "other";
+}
+
+export function executorId(session:string) {
+  const userState = getUserState(session);
+  if (userState && userState.deployUserData) {
+    return userState.deployUserData.name + ` (${userState.deployUserData.login})`;
+  }
+  return session;
 }

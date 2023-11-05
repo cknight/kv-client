@@ -16,14 +16,16 @@ import { StatsBar } from "../components/StatsBar.tsx";
 import { submitSearchForm } from "../utils/form.ts";
 import { KvDialog } from "../components/dialogs/KvDialog.tsx";
 import { keyToBase64 } from "../utils/encodeKvKey.ts";
-import { DeleteDialog } from "../components/dialogs/DeleteDialog.tsx";
+// import { DeleteDataDialog } from "../components/dialogs/DeleteDataDialog.tsx";
 import { JSX } from "preact";
 
 interface SearchResultsProps {
   results: KvUIEntry[] | undefined;
+  resultsCount: number;
   show: number;
   from: number;
   filter: string | undefined;
+  filtered: boolean;
   searchComplete: boolean;
   stats?: Stats;
   session: string;
@@ -34,31 +36,15 @@ interface SearchResultsProps {
 }
 
 export function SearchResults(props: SearchResultsProps) {
-  console.log("Rendering SearchResults");
-
-  const { results, filter } = props;
+  const { results, resultsCount, filter, filtered } = props;
   const { prefix, start, end, reverse, session } = props;
-  let displayResults = results;
-  let entries = " entries";
-  let filtered = false;
+  const entries = filtered ? " filtered entries": " entries";
 
   const fullViewKey = signal("");
   const fullViewValue = signal("");
   const selected = useSignal<string[]>([]);
 
-  if (filter !== undefined && filter !== "") {
-    displayResults = results?.filter((e) => keep(filter, e));
-    entries = " filtered entries";
-    filtered = true;
-  }
-
-  function keep(filter: string, entry: KvUIEntry) {
-    return entry.key.includes(filter) ||
-      entry.fullValue?.includes(filter);
-  }
-
-  const resultsToShow = displayResults?.slice(props.from - 1, props.from - 1 + props.show);
-  const to = Math.min(props.from + props.show - 1, displayResults ? displayResults.length : 0);
+  const to = Math.min(props.from + props.show - 1, resultsCount);
 
   if (IS_BROWSER && (new URL(window.location.href)).searchParams.has("prefix") && !results) {
     // GET request with POST data in URL, so submit form to redirect to POST
@@ -87,7 +73,7 @@ export function SearchResults(props: SearchResultsProps) {
 
   function page(forward: boolean) {
     const newFrom = forward ? props.from + props.show : props.from - props.show;
-    if (newFrom > displayResults!.length) {
+    if (newFrom > resultsCount) {
       return;
     }
 
@@ -127,7 +113,7 @@ export function SearchResults(props: SearchResultsProps) {
     if (target) {
       const checkboxes = document.querySelectorAll("#resultRows input[type='checkbox']");
       if (target.checked) {
-        selected.value = resultsToShow!.map((result) => keyToBase64(result));
+        selected.value = results!.map((result) => keyToBase64(result));
         checkboxes.forEach((checkbox) => {
           (checkbox as HTMLInputElement).checked = true;
         });
@@ -144,7 +130,7 @@ export function SearchResults(props: SearchResultsProps) {
     if (selected.value.length > 0) {
       return selected.value.length + " selected";
     }
-    return displayResults!.length + (filtered ? " filtered" : " results");
+    return resultsCount + (filtered ? " filtered" : " results");
   }
 
   function deleteEntries(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
@@ -155,7 +141,7 @@ export function SearchResults(props: SearchResultsProps) {
 
   return (
     <div>
-      {displayResults && displayResults!.length > 0 &&
+      {results && resultsCount > 0 &&
         (
           <>
             <div class="flex justify-between">
@@ -207,7 +193,7 @@ export function SearchResults(props: SearchResultsProps) {
                   </tr>
                 </thead>
                 <tbody class={TW_TBODY} id="resultRows">
-                  {resultsToShow!.map((result) => {
+                  {results!.map((result) => {
                     return (
                       <tr class={TW_TR} onClick={fullView}>
                         <td class={TW_TD + " w-12 text-center"}>
@@ -248,7 +234,7 @@ export function SearchResults(props: SearchResultsProps) {
                 </div>
                 <div>
                   Showing {props.from} to {to} of{" "}
-                  {props.searchComplete ? displayResults.length + entries : " many"}
+                  {props.searchComplete ? resultsCount + entries : " many"}
                   <input id="from" name="from" type="hidden" form="pageForm" value={props.from} />
                   <button class={BUTTON} onClick={() => page(false)} disabled={props.from === 1}>
                     &lt;
@@ -256,7 +242,7 @@ export function SearchResults(props: SearchResultsProps) {
                   <button
                     class={BUTTON}
                     onClick={() => page(true)}
-                    disabled={props.from + props.show > displayResults.length}
+                    disabled={props.from + props.show > resultsCount}
                   >
                     &gt;
                   </button>
@@ -267,14 +253,14 @@ export function SearchResults(props: SearchResultsProps) {
         )}
       <StatsBar stats={props.stats} />
       <KvDialog kvKey={fullViewKey} kvValue={fullViewValue} />
-      <DeleteDialog
+      {/* <DeleteDataDialog
         keysToDelete={selected.value}
         session={session}
         prefix={prefix}
         start={start}
         end={end}
         reverse={reverse}
-      />
+      /> */}
     </div>
   );
 }

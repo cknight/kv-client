@@ -1,15 +1,17 @@
+import { DeployUser } from "./utils/denoDeploy/deployUser.ts";
+
 export interface SearchData {
   prefix: string;
   start: string;
   end: string;
-  pat?: string;
-  patRequired: boolean;
   limit: string;
   reverse: boolean;
   show: number;
   from: number;
   results?: KvUIEntry[];
+  fullResultsCount: number;
   filter: string | undefined;
+  filtered: boolean;
   searchComplete: boolean;
   validationError?: string;
   stats?: Stats;
@@ -18,13 +20,13 @@ export interface SearchData {
 export interface I_CacheManager {
   get(parms: CacheKey): CachedSearch | undefined;
   add(parms: SearchResults): void;
+  clear(): void;
 }
 
 export interface State {
   kv: Deno.Kv | null;
   connection: KvConnection | null;
-  accessToken?: string;
-
+  deployUserData: DeployUser | null;
   cache: I_CacheManager;
 }
 
@@ -63,6 +65,7 @@ export interface KvUIEntry {
 export interface KvInstance {
   kvLocation: string;
   dataSelection: KvUIEntry[];
+  size: number;
 }
 
 export interface KvConnection {
@@ -70,12 +73,12 @@ export interface KvConnection {
   name: string;
   id: string;
   isRemote: boolean;
+  size: number;
 }
 
 export interface KvSearchOptions {
   session: string;
   connection: string;
-  pat: string;
   prefix: string;
   start: string;
   end: string;

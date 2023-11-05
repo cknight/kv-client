@@ -21,32 +21,29 @@ export const handler: Handlers = {
     const reverse = form.get("reverse")?.toString() === "on";
     const from = parseInt(form.get("from")?.toString() || "1");
     const show = parseInt(form.get("show")?.toString() || "10");
-    const pat = form.get("pat")?.toString() || "";
     const filter = form.get("filter")?.toString() || undefined;
 
     const session = ctx.state.session as string;
     const state = getUserState(session);
     const connection = state!.connection;
-    if (!connection) {
-      const connectionId = new URL(req.url).searchParams.get("connection") || "";
-      establishKvConnection(session, connectionId, pat);
+    const connectionId = new URL(req.url).searchParams.get("connection") || "";
+    if (!connection && !connectionId) {
+      return new Response("", {
+        status: 303,
+        headers: { Location: "/" },
+      });
     }
 
-    let patRequired = false;
     let stats: Stats | undefined;
 
     let failReason;
     const results: Deno.KvEntry<unknown>[] = [];
     let searchComplete = false;
     try {
-      const connectionId = connection?.id || "";
-
-      //FIXME - break connection out from search.  Needs established prior to search
-      //e.g. search shouldn't load without valid connection
+      const cId = connectionId || connection?.id || "";
       const searchOptions = {
         session,
-        connection: connectionId,
-        pat,
+        connection: cId,
         prefix,
         start,
         end,
@@ -65,24 +62,36 @@ export const handler: Handlers = {
         isDeploy: getUserState(session)?.connection?.isRemote || false,
       };
     } catch (e) {
-      if (e instanceof PATError) {
-        failReason = e.message;
-        patRequired = true;
-      } else if (e instanceof TypeError) {
-        //invalid PAT error from Deploy
-        const state = getUserState(ctx.state.session as string);
-        if (state) {
-          state.accessToken = undefined;
-        }
-        failReason = e.message;
-        patRequired = true;
+      if (e instanceof PATError || e instanceof TypeError) {
+        failReason =
+          "Issue authorizing with remote connection.  Please sign out and reconnect. " +
+          e.message;
+        console.error(e);
       } else {
         failReason = e.message || "Unknown error occurred";
         console.error(e);
       }
     }
 
-    const kvUIEntries: KvUIEntry[] = results.map((e) => createKvUIEntry(e));
+    const startms = Date.now();
+    let resultsToShow: KvUIEntry[] = [];
+    let resultsCount = results.length;
+    let filtered = false;
+    if (filter !== undefined && filter !== "") {
+      const kvUIEntries: KvUIEntry[] = results.map((e) => createKvUIEntry(e));
+      resultsToShow = kvUIEntries?.filter((e) =>
+        e.key.includes(filter) ||
+        e.fullValue?.includes(filter)
+      );
+      resultsCount = resultsToShow.length;
+      resultsToShow = resultsToShow.slice(from - 1, from - 1 + show);
+      filtered = true;
+    } else {
+      const resultsPage = results.slice(from - 1, from - 1 + show);
+      resultsToShow = resultsPage.map((e) => createKvUIEntry(e));
+    }
+    console.log(`kvUIEntries took ${Date.now() - startms}ms`);
+  
 
     const searchData: SearchData = {
       prefix,
@@ -90,18 +99,33 @@ export const handler: Handlers = {
       end,
       limit,
       reverse,
-      results: kvUIEntries,
+      results: resultsToShow,
+      fullResultsCount: resultsCount,
       filter,
+      filtered,
       show,
       from,
-      pat,
-      patRequired,
       searchComplete,
       validationError: failReason,
       stats,
     };
 
     return await ctx.render(searchData);
+  },
+  async GET(req, ctx) {
+    const searchParms = new URL(req.url).searchParams;
+    const connectionId = searchParms.get("connectionId") || "";
+
+    if (connectionId) {
+      try {
+        const session = ctx.state.session as string;
+        await establishKvConnection(session, connectionId);
+      } catch (e) {
+        //FIXME: show error to user
+        console.error(`Failed to connect to ${connectionId}. Error: `, e);
+      }
+    }
+    return ctx.render();
   },
 };
 
@@ -116,10 +140,11 @@ export default function Search(props: PageProps<SearchData>) {
   const show = props.data?.show || parseInt(sp.get("show") || "10");
   const from = props.data?.from || parseInt(sp.get("from") || "1");
   const results = props.data?.results;
+  const fullResultsCount = props.data?.fullResultsCount || 0;
   const validationError = props.data?.validationError;
   const searchComplete = props.data?.searchComplete || false;
-  const patRequired = props.data?.patRequired || false;
   const filter = props.data?.filter || sp.get("filter") || undefined;
+  const filtered = props.data?.filtered || false;
 
   return (
     <>
@@ -130,14 +155,15 @@ export default function Search(props: PageProps<SearchData>) {
           end={end}
           limit={limit}
           validationError={validationError}
-          patRequired={patRequired}
           reverse={reverse}
         />
         <SearchResults
           results={results}
+          resultsCount={fullResultsCount}
           show={show}
           from={from}
           filter={filter}
+          filtered={filtered}
           searchComplete={searchComplete}
           stats={props.data?.stats}
           session={props.state.session as string}

@@ -1,62 +1,72 @@
-import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
+import { CONNECTIONS_KEY_PREFIX, ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, env } from "../../consts.ts";
 import { KvConnection } from "../../types.ts";
 import { getUserState } from "../state.ts";
-import { PATError, ValidationError } from "../errors.ts";
+import { ValidationError } from "../errors.ts";
 import { localKv } from "./db.ts";
+import { Mutex } from "semaphore/mutex.ts";
+import { getEncryptedString } from "../encryption.ts";
 
-export async function establishKvConnection(session: string, connectionId: string, pat?: string) {
-  const state = getUserState(session);
+const mutex = new Mutex();
 
-  if (!state) {
+export async function establishKvConnection(session: string, connectionId: string): Promise<void> {
+  const userState = getUserState(session);
+
+  if (!userState) {
+    // No session found
     throw new ValidationError("Invalid session");
-  } else if (state.connection?.id === connectionId && state.kv) {
-    console.debug(`Reusing connection to '${connectionId}'`);
+  } else if (userState.connection?.id === connectionId && userState.kv) {
+    // Already connected to the requested connection
+    console.debug(`Reusing connection to '${userState.connection?.name}'`);
     return;
-  } else if (state.connection?.id !== connectionId && state.kv) {
-    console.debug(`Closing connection to '${state.connection?.id}'`);
-    state!.kv.close();
-    state.kv = null;
+  } else if (userState.connection?.id !== connectionId && userState.kv) {
+    // Connected to a different connection, so close it first
+    console.debug(`Closing connection to '${userState.connection?.name}'`);
+    userState!.kv.close();
+    userState.kv = null;
   }
 
+  // Get connection details for id
   const conn = await localKv.get<KvConnection>([
     CONNECTIONS_KEY_PREFIX,
     connectionId,
   ]);
-  const location = conn.value?.kvLocation || "<unknown>";
+  const connection: KvConnection | null = conn.value;
 
-  if (location.startsWith("http")) {
+  if (connection && connection.isRemote) {
     // Remote KV access
-    if (!pat) {
-      console.error(
-        "Access token required for remote KV access",
-      );
-      throw new PATError(
-        "Access token required for remote KV access",
-        "missing",
-      );
-    } else if (pat.length < 20) {
-      console.error("Invalid Access Token supplied");
-      throw new PATError(
-        "Invalid Personal Access Token (PAT).  If necessary, visit https://dash.deno.com/account#access-tokens to create a new PAT",
-        "invalid",
-      );
+    const accessToken  = await getEncryptedString([ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session]);
+    if (!accessToken) {
+      throw new ValidationError("No access token available");
     }
-    Deno.env.set("DENO_KV_ACCESS_TOKEN", pat);
-    state.kv = await Deno.openKv(location);
-    state.accessToken = pat;
-    state.connection = conn.value;
-  } else {
+
+    /**
+     * Prevent access token leakage in a multi-user setting by acquiring a mutex,
+     * establishing the connection, and then clearing the access token from the
+     * environment variable.  Access token is only required for the initial
+     * connection.
+     */
+    const release = await mutex.acquire();
+    Deno.env.set(env.DENO_KV_ACCESS_TOKEN, accessToken);
+    userState.kv = await Deno.openKv(connection.kvLocation);
+    Deno.env.delete(env.DENO_KV_ACCESS_TOKEN);
+    release();
+
+    userState.connection = conn.value;
+  } else if (connection) {
     // Local KV file
+    const location = connection.kvLocation;
     try {
       // Check if the file exists (and if it does we assume it is a valid KV file)
       await Deno.lstat(location);
     } catch (_e) {
       console.error(`Connection ${location} does not exist`);
-      throw new ValidationError(`Please choose a connection`);
+      throw new ValidationError(`Connection ${location} does not exist`);
     }
-    state.kv = await Deno.openKv(location);
-    state.connection = conn.value;
+    userState.kv = await Deno.openKv(location);
+    userState.connection = conn.value;
+  } else {
+    throw new ValidationError(`Connection ${connectionId} does not exist`);
   }
 
-  console.debug(`Established KV connection to ${location}`);
+  console.debug(`Established KV connection to '${connection.name}'`);
 }
