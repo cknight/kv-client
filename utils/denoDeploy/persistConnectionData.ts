@@ -13,7 +13,7 @@ export async function persistConnectionData(deployUser: DeployUser): Promise<voi
   deployUser.organisations.forEach((org) => {
     org.projects.forEach((project) => {
       project.kvInstances.forEach((kvInstance) => {
-        const kvName = project.name + "-" + deployKvEnvironment(project, kvInstance);
+        const kvName = project.name + " (" + deployKvEnvironment(project, kvInstance) +")";
         const kvConnection: KvConnection = {
           name: kvName,
           id: kvInstance.databaseId,

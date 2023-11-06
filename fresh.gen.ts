@@ -29,6 +29,7 @@ import * as $$11 from "./islands/RemoveLocalConnectionDialog.tsx";
 import * as $$12 from "./islands/SearchBox.tsx";
 import * as $$13 from "./islands/SearchResults.tsx";
 import * as $$14 from "./islands/TabBar.tsx";
+import * as $$15 from "./islands/UnknownAvatarMenu.tsx";
 
 const manifest = {
   routes: {
@@ -61,6 +62,7 @@ const manifest = {
     "./islands/SearchBox.tsx": $$12,
     "./islands/SearchResults.tsx": $$13,
     "./islands/TabBar.tsx": $$14,
+    "./islands/UnknownAvatarMenu.tsx": $$15,
   },
   baseUrl: import.meta.url,
 };

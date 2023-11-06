@@ -1,30 +1,38 @@
-import { Handlers } from "$fresh/server.ts";
+import { Handlers, PageProps, RouteContext } from "$fresh/server.ts";
 import { deleteCookie, setCookie } from "$std/http/cookie.ts";
 import { logout } from "../utils/denoDeploy/logout.ts";
+import { getUserState } from "../utils/state.ts";
+
+interface LogoutProps {
+  isDeployUser: boolean;
+}
 
 export const handler: Handlers = {
   async POST(req, ctx) {
+    const state = getUserState(ctx);
+    const isDeployUser = state.deployUserData !== null;
     await logout(ctx.state.session as string);
 
     const headers = new Headers();
     deleteCookie(headers, "session");
-    setCookie(headers, { name: "Location", value: "/logout"});
 
-    return new Response("", {
-      status: 303,
-      headers: headers,
+    return new Response("", { 
+      status: 200,
+      headers
     });
   },
 };
 
-export default function Logout() {
+export default function Logout(props: PageProps<LogoutProps>) {
+  const isDeployUser = new URL(props.url).searchParams.get("authenticated") === "true";
+  console.log("isDeployUser2", isDeployUser);
   return (
     <>
       <div class="px-4 py-8 mx-auto">
         <div class="max-w-screen-md mx-auto flex flex-col items-center justify-center">
-          <h1 class="text-4xl font-bold">Logged out</h1>
+          <h1 class="text-4xl font-bold">{isDeployUser ? "Logged out" : "Data cleared"}</h1>
           <p class="my-4">
-            You have successfully logged out
+            {isDeployUser ? "You have successfully logged out" : "Session data has been deleted"}
           </p>
           <a href="/" class="underline">Go back home</a>
         </div>

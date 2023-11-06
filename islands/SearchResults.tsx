@@ -38,7 +38,7 @@ interface SearchResultsProps {
 export function SearchResults(props: SearchResultsProps) {
   const { results, resultsCount, filter, filtered } = props;
   const { prefix, start, end, reverse, session } = props;
-  const entries = filtered ? " filtered entries": " entries";
+  const entries = filtered ? " filtered entries" : " entries";
 
   const fullViewKey = signal("");
   const fullViewValue = signal("");
@@ -141,7 +141,7 @@ export function SearchResults(props: SearchResultsProps) {
 
   return (
     <div>
-      {results && resultsCount > 0 &&
+      {(resultsCount > 0 || filtered) &&
         (
           <>
             <div class="flex justify-between">
@@ -156,12 +156,21 @@ export function SearchResults(props: SearchResultsProps) {
                   value={filter}
                 />
                 <Help dialogId="filterHelp" dialogTitle="Filter">
-                  <p>
-                    Free text search of key and values. Both keys are values are converted to
-                    strings prior to filtering. Only entries which contain the exact filter
-                    substring in either the key or value are included. NOTE: Filtering only applies
-                    to the rows retrieved by the search, not the entire dataset.
-                  </p>
+                  <div>
+                    <p>
+                      Free text search of key and values. Both keys are values are converted to
+                      strings prior to filtering, using{" "}
+                      <span class="font-mono bg-gray-200 rounded p-1">JSON.stringify()</span>. Only
+                      entries which contain the exact filter substring within the{" "}
+                      <span class="font-mono bg-gray-200 rounded p-1">JSON.stringify()</span>
+                      string (in either the key or value) are included.
+                    </p>
+                    <p class="mt-2">
+                      <span class="font-bold">NOTE:</span>{" "}
+                      Filtering only applies to the rows retrieved by the search, not the entire KV
+                      database.
+                    </p>
+                  </div>
                 </Help>
                 <button type="button" onClick={clearFilter} class={BUTTON}>Clear</button>
                 <button type="button" onClick={applyFilter} class={BUTTON}>Apply</button>
@@ -251,16 +260,18 @@ export function SearchResults(props: SearchResultsProps) {
             </div>
           </>
         )}
-      <StatsBar stats={props.stats} />
+      {props.stats && <StatsBar stats={props.stats} />}
       <KvDialog kvKey={fullViewKey} kvValue={fullViewValue} />
-      {/* <DeleteDataDialog
+      {
+        /* <DeleteDataDialog
         keysToDelete={selected.value}
         session={session}
         prefix={prefix}
         start={start}
         end={end}
         reverse={reverse}
-      /> */}
+      /> */
+      }
     </div>
   );
 }

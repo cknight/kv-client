@@ -1,17 +1,6 @@
 import { Stats } from "../types.ts";
 
-export function StatsBar({ stats }: { stats?: Stats }) {
-  //FIXME - Don't think stats will ever be undefined so can probably remove this
-  if (!stats) {
-    console.log("***********************************************");
-    console.log("***********************************************");
-    console.log("***********************************************");
-    console.log("No stats????");
-    console.log("***********************************************");
-    console.log("***********************************************");
-    console.log("***********************************************");
-    return <></>;
-  }
+export function StatsBar({ stats }: { stats: Stats }) {
   const totalResults = stats.opStats.opType === "read"
     ? stats.opStats.kvResults! + stats.opStats.cachedResults!
     : stats.opStats.kvResults!;

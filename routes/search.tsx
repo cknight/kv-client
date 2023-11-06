@@ -26,7 +26,7 @@ export const handler: Handlers = {
     const session = ctx.state.session as string;
     const state = getUserState(session);
     const connection = state!.connection;
-    const connectionId = new URL(req.url).searchParams.get("connection") || "";
+    const connectionId = new URL(req.url).searchParams.get("connectionId") || "";
     if (!connection && !connectionId) {
       return new Response("", {
         status: 303,
@@ -63,8 +63,7 @@ export const handler: Handlers = {
       };
     } catch (e) {
       if (e instanceof PATError || e instanceof TypeError) {
-        failReason =
-          "Issue authorizing with remote connection.  Please sign out and reconnect. " +
+        failReason = "Issue authorizing with remote connection.  Please sign out and reconnect. " +
           e.message;
         console.error(e);
       } else {
@@ -73,16 +72,21 @@ export const handler: Handlers = {
       }
     }
 
-    const startms = Date.now();
     let resultsToShow: KvUIEntry[] = [];
     let resultsCount = results.length;
     let filtered = false;
     if (filter !== undefined && filter !== "") {
-      const kvUIEntries: KvUIEntry[] = results.map((e) => createKvUIEntry(e));
-      resultsToShow = kvUIEntries?.filter((e) =>
-        e.key.includes(filter) ||
-        e.fullValue?.includes(filter)
-      );
+      let startms = Date.now();
+
+      for (const entry of results) {
+        const stringifed = JSON.stringify(entry);
+        if (stringifed.includes(filter)) {
+          resultsToShow.push(createKvUIEntry(entry));
+        }
+      }
+
+      console.debug(`Filtering ${resultsCount} rows took ${Date.now() - startms}ms`);
+
       resultsCount = resultsToShow.length;
       resultsToShow = resultsToShow.slice(from - 1, from - 1 + show);
       filtered = true;
@@ -90,8 +94,6 @@ export const handler: Handlers = {
       const resultsPage = results.slice(from - 1, from - 1 + show);
       resultsToShow = resultsPage.map((e) => createKvUIEntry(e));
     }
-    console.log(`kvUIEntries took ${Date.now() - startms}ms`);
-  
 
     const searchData: SearchData = {
       prefix,
@@ -113,18 +115,18 @@ export const handler: Handlers = {
     return await ctx.render(searchData);
   },
   async GET(req, ctx) {
-    const searchParms = new URL(req.url).searchParams;
-    const connectionId = searchParms.get("connectionId") || "";
+    // const searchParms = new URL(req.url).searchParams;
+    // const connectionId = searchParms.get("connectionId") || "";
 
-    if (connectionId) {
-      try {
-        const session = ctx.state.session as string;
-        await establishKvConnection(session, connectionId);
-      } catch (e) {
-        //FIXME: show error to user
-        console.error(`Failed to connect to ${connectionId}. Error: `, e);
-      }
-    }
+    // if (connectionId) {
+    //   try {
+    //     const session = ctx.state.session as string;
+    //     await establishKvConnection(session, connectionId);
+    //   } catch (e) {
+    //     //FIXME: show error to user
+    //     console.error(`Failed to connect to ${connectionId}. Error: `, e);
+    //   }
+    // }
     return ctx.render();
   },
 };
