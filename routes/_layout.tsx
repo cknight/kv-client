@@ -7,10 +7,10 @@ import { DeployUser } from "../utils/denoDeploy/deployUser.ts";
 import { localKv } from "../utils/kv/db.ts";
 import { CONNECTIONS_KEY_PREFIX, DEPLOY_USER_KEY_PREFIX } from "../consts.ts";
 import { GitHubIcon } from "../components/svg/GitHub.tsx";
-import { AvatarMenu } from "../islands/AvatarMenu.tsx";
+import { AvatarMenu } from "../islands/avatarMenu/AvatarMenu.tsx";
 import { HomeIcon } from "../components/svg/Home.tsx";
 import { RightArrowIcon } from "../components/svg/RightArrow.tsx";
-import { UnknownAvatarMenu } from "../islands/UnknownAvatarMenu.tsx";
+import { UnknownAvatarMenu } from "../islands/avatarMenu/UnknownAvatarMenu.tsx";
 
 //TODO - Remove this - seems unnecessary and yucky
 export const connections = signal<KvConnection[]>([]);

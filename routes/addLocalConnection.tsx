@@ -1,8 +1,8 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
 import { ulid } from "$std/ulid/mod.ts";
 import { BUTTON, CONNECTIONS_KEY_PREFIX } from "../consts.ts";
-import { CancelAddConnectionButton } from "../islands/CancelAddConnectionButton.tsx";
-import { LocalConnectionRadioButton } from "../islands/LocalConnectionRadio.tsx";
+import { CancelAddConnectionButton } from "../islands/connecctions/CancelAddConnectionButton.tsx";
+import { LocalConnectionRadioButton } from "../islands/connecctions/LocalConnectionRadio.tsx";
 import { KvConnection, KvInstance } from "../types.ts";
 import { peekAtLocalKvInstances } from "../utils/autoDiscoverKv.ts";
 import { localKv } from "../utils/kv/db.ts";

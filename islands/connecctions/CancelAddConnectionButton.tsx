@@ -1,4 +1,4 @@
-import { BUTTON } from "../consts.ts";
+import { BUTTON } from "../../consts.ts";
 
 export function CancelAddConnectionButton() {
   function cancel() {

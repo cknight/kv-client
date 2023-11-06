@@ -1,5 +1,5 @@
 import { Handlers } from "$fresh/server.ts";
-import { ConnectionList } from "../islands/ConnectionList.tsx";
+import { ConnectionList } from "../islands/connecctions/ConnectionList.tsx";
 import { CONNECTIONS_KEY_PREFIX } from "../consts.ts";
 import { peekAtLocalKvInstances } from "../utils/autoDiscoverKv.ts";
 import { ulid } from "$std/ulid/mod.ts";

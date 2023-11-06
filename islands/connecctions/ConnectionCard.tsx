@@ -1,9 +1,9 @@
 import { JSX } from "preact";
-import { Chip } from "../components/Chip.tsx";
-import { ExportIcon } from "../components/svg/Export.tsx";
-import { InfoIcon } from "../components/svg/Info.tsx";
-import { XIcon } from "../components/svg/XIcon.tsx";
-import { readableSize } from "../utils/utils.ts";
+import { Chip } from "../../components/Chip.tsx";
+import { ExportIcon } from "../../components/svg/Export.tsx";
+import { InfoIcon } from "../../components/svg/Info.tsx";
+import { XIcon } from "../../components/svg/XIcon.tsx";
+import { readableSize } from "../../utils/utils.ts";
 
 interface ConnectionCardProps {
   name: string;

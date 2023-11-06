@@ -1,9 +1,9 @@
 import { Signal } from "@preact/signals";
-import { AddEditConnectionDialog } from "../components/dialogs/AddEditConnectionDialog.tsx";
-import { BUTTON, TW_TABLE, TW_TABLE_WRAPPER, TW_TBODY, TW_TD, TW_TH, TW_THEAD } from "../consts.ts";
-import { DiscoverConnectionsDialog } from "../components/dialogs/DiscoverConnectionsDialog.tsx";
+import { AddEditConnectionDialog } from "../../components/dialogs/AddEditConnectionDialog.tsx";
+import { BUTTON, TW_TABLE, TW_TABLE_WRAPPER, TW_TBODY, TW_TD, TW_TH, TW_THEAD } from "../../consts.ts";
+import { DiscoverConnectionsDialog } from "../../components/dialogs/DiscoverConnectionsDialog.tsx";
 import { JSX } from "preact/jsx-runtime";
-import { KvConnection, KvInstance } from "../types.ts";
+import { KvConnection, KvInstance } from "../../types.ts";
 
 interface ConnectionListProps {
   connections: Signal<KvConnection[]>;

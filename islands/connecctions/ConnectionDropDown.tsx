@@ -1,5 +1,5 @@
 import { Signal } from "@preact/signals";
-import { KvConnection } from "../types.ts";
+import { KvConnection } from "../../types.ts";
 import { IS_BROWSER } from "$fresh/runtime.ts";
 
 interface ConnectionDropDownProps {

@@ -1,10 +1,10 @@
 /// <reference lib="deno.unstable" />
 import { Handlers, RouteContext } from "$fresh/server.ts";
-import { ConnectionCard } from "../islands/ConnectionCard.tsx";
-import { RemoveLocalConnectionDialog } from "../islands/RemoveLocalConnectionDialog.tsx";
+import { ConnectionCard } from "../islands/connecctions/ConnectionCard.tsx";
+import { RemoveLocalConnectionDialog } from "../islands/connecctions/RemoveLocalConnectionDialog.tsx";
 import { CONNECTIONS_KEY_PREFIX, DEPLOY_USER_KEY_PREFIX } from "../consts.ts";
-import { AddLocalConnectionButton } from "../islands/AddLocalConnectionButton.tsx";
-import { ConnectButton } from "../islands/ConnectButton.tsx";
+import { AddLocalConnectionButton } from "../islands/connecctions/AddLocalConnectionButton.tsx";
+import { ConnectButton } from "../islands/connecctions/ConnectButton.tsx";
 import { getLocalConnections } from "../utils/connections.ts";
 import { DeployKvInstance, DeployProject, DeployUser, deployKvEnvironment } from "../utils/denoDeploy/deployUser.ts";
 import { localKv } from "../utils/kv/db.ts";

@@ -15,21 +15,21 @@ import * as $9 from "./routes/insertUpdate.tsx";
 import * as $10 from "./routes/logout.tsx";
 import * as $11 from "./routes/search.tsx";
 import * as $$0 from "./islands/AccessTokenInput.tsx";
-import * as $$1 from "./islands/AddLocalConnectionButton.tsx";
-import * as $$2 from "./islands/AvatarMenu.tsx";
-import * as $$3 from "./islands/CancelAddConnectionButton.tsx";
-import * as $$4 from "./islands/ConnectButton.tsx";
-import * as $$5 from "./islands/ConnectionCard.tsx";
-import * as $$6 from "./islands/ConnectionDropDown.tsx";
-import * as $$7 from "./islands/ConnectionList.tsx";
-import * as $$8 from "./islands/DarkMode.tsx";
-import * as $$9 from "./islands/LocalConnectionRadio.tsx";
-import * as $$10 from "./islands/PageForm.tsx";
-import * as $$11 from "./islands/RemoveLocalConnectionDialog.tsx";
-import * as $$12 from "./islands/SearchBox.tsx";
-import * as $$13 from "./islands/SearchResults.tsx";
-import * as $$14 from "./islands/TabBar.tsx";
-import * as $$15 from "./islands/UnknownAvatarMenu.tsx";
+import * as $$1 from "./islands/DarkMode.tsx";
+import * as $$2 from "./islands/PageForm.tsx";
+import * as $$3 from "./islands/SearchBox.tsx";
+import * as $$4 from "./islands/SearchResults.tsx";
+import * as $$5 from "./islands/TabBar.tsx";
+import * as $$6 from "./islands/avatarMenu/AvatarMenu.tsx";
+import * as $$7 from "./islands/avatarMenu/UnknownAvatarMenu.tsx";
+import * as $$8 from "./islands/connecctions/AddLocalConnectionButton.tsx";
+import * as $$9 from "./islands/connecctions/CancelAddConnectionButton.tsx";
+import * as $$10 from "./islands/connecctions/ConnectButton.tsx";
+import * as $$11 from "./islands/connecctions/ConnectionCard.tsx";
+import * as $$12 from "./islands/connecctions/ConnectionDropDown.tsx";
+import * as $$13 from "./islands/connecctions/ConnectionList.tsx";
+import * as $$14 from "./islands/connecctions/LocalConnectionRadio.tsx";
+import * as $$15 from "./islands/connecctions/RemoveLocalConnectionDialog.tsx";
 
 const manifest = {
   routes: {
@@ -48,21 +48,21 @@ const manifest = {
   },
   islands: {
     "./islands/AccessTokenInput.tsx": $$0,
-    "./islands/AddLocalConnectionButton.tsx": $$1,
-    "./islands/AvatarMenu.tsx": $$2,
-    "./islands/CancelAddConnectionButton.tsx": $$3,
-    "./islands/ConnectButton.tsx": $$4,
-    "./islands/ConnectionCard.tsx": $$5,
-    "./islands/ConnectionDropDown.tsx": $$6,
-    "./islands/ConnectionList.tsx": $$7,
-    "./islands/DarkMode.tsx": $$8,
-    "./islands/LocalConnectionRadio.tsx": $$9,
-    "./islands/PageForm.tsx": $$10,
-    "./islands/RemoveLocalConnectionDialog.tsx": $$11,
-    "./islands/SearchBox.tsx": $$12,
-    "./islands/SearchResults.tsx": $$13,
-    "./islands/TabBar.tsx": $$14,
-    "./islands/UnknownAvatarMenu.tsx": $$15,
+    "./islands/DarkMode.tsx": $$1,
+    "./islands/PageForm.tsx": $$2,
+    "./islands/SearchBox.tsx": $$3,
+    "./islands/SearchResults.tsx": $$4,
+    "./islands/TabBar.tsx": $$5,
+    "./islands/avatarMenu/AvatarMenu.tsx": $$6,
+    "./islands/avatarMenu/UnknownAvatarMenu.tsx": $$7,
+    "./islands/connecctions/AddLocalConnectionButton.tsx": $$8,
+    "./islands/connecctions/CancelAddConnectionButton.tsx": $$9,
+    "./islands/connecctions/ConnectButton.tsx": $$10,
+    "./islands/connecctions/ConnectionCard.tsx": $$11,
+    "./islands/connecctions/ConnectionDropDown.tsx": $$12,
+    "./islands/connecctions/ConnectionList.tsx": $$13,
+    "./islands/connecctions/LocalConnectionRadio.tsx": $$14,
+    "./islands/connecctions/RemoveLocalConnectionDialog.tsx": $$15,
   },
   baseUrl: import.meta.url,
 };

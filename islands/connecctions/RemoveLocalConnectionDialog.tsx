@@ -1,5 +1,5 @@
 import { JSX } from "preact";
-import { BUTTON } from "../consts.ts";
+import { BUTTON } from "../../consts.ts";
 
 export function RemoveLocalConnectionDialog() {
   function closeDialog(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
