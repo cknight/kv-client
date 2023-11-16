@@ -2,7 +2,7 @@ import { walk } from "$std/fs/walk.ts";
 import { join } from "$std/path/mod.ts";
 import cache_dir from "https://deno.land/x/dir@1.5.1/home_dir/mod.ts";
 import { KvInstance, KvUIEntry } from "../types.ts";
-import { createKvUIEntry } from "./utils.ts";
+import { createKvUIEntry, serializeDenoKvKey } from "./utils.ts";
 import { env } from "../consts.ts";
 
 const MAX_ROWS = 6; //should be even number
@@ -57,8 +57,8 @@ export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
       for await (
         const entry of kv.list({ prefix: [] }, { limit: MAX_ROWS / 2 })
       ) {
-        seen.add(JSON.stringify(entry.key));
-        output.push(createKvUIEntry(entry));
+        seen.add(serializeDenoKvKey(entry.key));
+        output.push(await createKvUIEntry(entry));
         if (++i >= MAX_ROWS / 2) break;
       }
 
@@ -71,8 +71,8 @@ export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
           limit: MAX_ROWS / 2,
         })
       ) {
-        if (!seen.has(JSON.stringify(entry.key))) {
-          output.push(createKvUIEntry(entry));
+        if (!seen.has(serializeDenoKvKey(entry.key))) {
+          output.push(await createKvUIEntry(entry));
         }
         if (++i >= MAX_ROWS / 2) break;
       }

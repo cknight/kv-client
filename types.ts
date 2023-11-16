@@ -6,6 +6,7 @@ export interface SearchData {
   end: string;
   limit: string;
   reverse: boolean;
+  disableCache: boolean;
   show: number;
   from: number;
   results?: KvUIEntry[];
@@ -37,7 +38,7 @@ export interface CachedSearch {
 }
 
 export interface CacheKey {
-  connection: string;
+  connectionId: string;
   prefix: string;
   start: string;
   end: string;
@@ -60,6 +61,7 @@ export interface KvUIEntry {
   value: string;
   versionstamp: string;
   fullValue?: string;
+  keyHash: string;
 }
 
 export interface KvInstance {
@@ -68,9 +70,13 @@ export interface KvInstance {
   size: number;
 }
 
+export type Environment = "local" | "prod" | "preview" | "playground" | "other";
+
 export interface KvConnection {
   kvLocation: string;
+  environment: Environment;
   name: string;
+  organisation?: string;
   id: string;
   isRemote: boolean;
   size: number;
@@ -78,23 +84,24 @@ export interface KvConnection {
 
 export interface KvSearchOptions {
   session: string;
-  connection: string;
+  connectionId: string;
   prefix: string;
   start: string;
   end: string;
   limit: string;
   reverse: boolean;
+  disableCache: boolean;
 }
 
-export type AuditLog = {
+export type AuditLog<T extends "list" | "delete" | "copy"> = {
+  auditType: T;
   executorId: string;
   connection: string;
   isDeploy: boolean;
   rtms: number; //Round trip milliseconds
 };
 
-export type ListAuditLog = AuditLog & {
-  auditType: "list";
+export type ListAuditLog = AuditLog<"list"> & {
   prefixKey: string;
   startKey: string;
   endKey: string;
@@ -104,11 +111,23 @@ export type ListAuditLog = AuditLog & {
   readUnitsConsumed: number;
 };
 
-export type DeleteAuditLog = AuditLog & {
-  auditType: "delete";
+export type DeleteAuditLog = AuditLog<"delete"> & {
   keysDeleted: number;
+  keysFailed: number;
+  aborted: boolean;
   writeUnitsConsumed: number;
 };
+
+export type CopyAuditLog = AuditLog<"copy"> & {
+  destinationConnection: string;
+  isDestinationDeploy: boolean;
+  keysCopied: number;
+  keysFailed: number;
+  aborted: boolean;
+  writeUnitsConsumed: number;
+};
+
+export type AuditRecord = ListAuditLog | DeleteAuditLog | CopyAuditLog;
 
 export type UnitsConsumed = {
   operations: number;
@@ -128,4 +147,20 @@ export type Stats = {
   unitsConsumedToday: UnitsConsumed;
   opStats: OpStats;
   isDeploy: boolean;
+};
+
+export type CopyDeleteProps = {
+  keysSelected: string[];
+  connections?: {name: string, id: string, env:string}[];
+  connectionName: string;
+  connectionLocation: string;
+  connectionId: string;
+  prefix: string;
+  start: string;
+  end: string;
+  from: number;
+  show: number;
+  resultsCount: number;
+  reverse: boolean;
+  filter?: string;
 };

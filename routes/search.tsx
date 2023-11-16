@@ -1,15 +1,15 @@
-import { Handlers, PageProps } from "$fresh/server.ts";
-import { Signal } from "@preact/signals";
+import { Handlers, PageProps, RouteContext } from "$fresh/server.ts";
 import { SearchBox } from "../islands/SearchBox.tsx";
-import { KvUIEntry, SearchData, Stats } from "../types.ts";
+import { PartialSearchResults, SearchData, Stats } from "../types.ts";
 import { SearchResults } from "../islands/SearchResults.tsx";
-import { searchKv } from "../utils/kv/kvSearch.ts";
+import { searchKv } from "../utils/kv/kvList.ts";
 import { SearchForm } from "../islands/PageForm.tsx";
 import { PATError } from "../utils/errors.ts";
 import { getUserState } from "../utils/state.ts";
 import { unitsConsumedToday } from "../utils/kv/kvUnitsConsumed.ts";
 import { createKvUIEntry } from "../utils/utils.ts";
-import { establishKvConnection } from "../utils/kv/kvConnect.ts";
+import { buildResultsPage } from "../utils/ui/buildResultsPage.ts";
+import { getConnections } from "../utils/connections.ts";
 
 export const handler: Handlers = {
   async POST(req, ctx) {
@@ -22,11 +22,13 @@ export const handler: Handlers = {
     const from = parseInt(form.get("from")?.toString() || "1");
     const show = parseInt(form.get("show")?.toString() || "10");
     const filter = form.get("filter")?.toString() || undefined;
+    const disableCache = form.get("disableCache")?.toString() === "on";
 
     const session = ctx.state.session as string;
     const state = getUserState(session);
     const connection = state!.connection;
     const connectionId = new URL(req.url).searchParams.get("connectionId") || "";
+
     if (!connection && !connectionId) {
       return new Response("", {
         status: 303,
@@ -37,30 +39,25 @@ export const handler: Handlers = {
     let stats: Stats | undefined;
 
     let failReason;
-    const results: Deno.KvEntry<unknown>[] = [];
+    let results: Deno.KvEntry<unknown>[] = [];
     let searchComplete = false;
     try {
       const cId = connectionId || connection?.id || "";
       const searchOptions = {
         session,
-        connection: cId,
+        connectionId: cId,
         prefix,
         start,
         end,
         limit,
         reverse,
+        disableCache,
       };
       const partialResults = await searchKv(searchOptions);
-      results.push(...partialResults.results);
+      results = partialResults.results;
       searchComplete = partialResults.cursor === false;
 
-      //TODO - maybe only for requests to Deploy?
-      const unitsConsumed = await unitsConsumedToday();
-      stats = {
-        unitsConsumedToday: unitsConsumed,
-        opStats: partialResults.opStats,
-        isDeploy: getUserState(session)?.connection?.isRemote || false,
-      };
+      await getStats(partialResults);
     } catch (e) {
       if (e instanceof PATError || e instanceof TypeError) {
         failReason = "Issue authorizing with remote connection.  Please sign out and reconnect. " +
@@ -72,28 +69,8 @@ export const handler: Handlers = {
       }
     }
 
-    let resultsToShow: KvUIEntry[] = [];
-    let resultsCount = results.length;
-    let filtered = false;
-    if (filter !== undefined && filter !== "") {
-      let startms = Date.now();
-
-      for (const entry of results) {
-        const stringifed = JSON.stringify(entry);
-        if (stringifed.includes(filter)) {
-          resultsToShow.push(createKvUIEntry(entry));
-        }
-      }
-
-      console.debug(`Filtering ${resultsCount} rows took ${Date.now() - startms}ms`);
-
-      resultsCount = resultsToShow.length;
-      resultsToShow = resultsToShow.slice(from - 1, from - 1 + show);
-      filtered = true;
-    } else {
-      const resultsPage = results.slice(from - 1, from - 1 + show);
-      resultsToShow = resultsPage.map((e) => createKvUIEntry(e));
-    }
+    const { resultsPage, resultsCount, filtered } = buildResultsPage(filter, results, from, show);
+    const resultsToShow = await Promise.all(resultsPage.map(async (e) => await createKvUIEntry(e)));
 
     const searchData: SearchData = {
       prefix,
@@ -101,6 +78,7 @@ export const handler: Handlers = {
       end,
       limit,
       reverse,
+      disableCache,
       results: resultsToShow,
       fullResultsCount: resultsCount,
       filter,
@@ -113,9 +91,17 @@ export const handler: Handlers = {
     };
 
     return await ctx.render(searchData);
+
+    async function getStats(partialResults: PartialSearchResults) {
+      const unitsConsumed = await unitsConsumedToday();
+      stats = {
+        unitsConsumedToday: unitsConsumed,
+        opStats: partialResults.opStats,
+        isDeploy: getUserState(session)?.connection?.isRemote || false,
+      };
+    }
   },
   async GET(req, ctx) {
-    // const searchParms = new URL(req.url).searchParams;
     // const connectionId = searchParms.get("connectionId") || "";
 
     // if (connectionId) {
@@ -131,13 +117,16 @@ export const handler: Handlers = {
   },
 };
 
-export default function Search(props: PageProps<SearchData>) {
+export default async function Search(req: Request, props: RouteContext<SearchData>) {
   const sp = props.url.searchParams;
   const prefix = props.data?.prefix || sp.get("prefix") || "";
   const start = props.data?.start || sp.get("start") || "";
   const end = props.data?.end || sp.get("end") || "";
   const limit = props.data?.limit || sp.get("limit") || "10";
   const reverse = props.data?.reverse || (sp.has("reverse") && sp.get("reverse") === "true") ||
+    false;
+  const disableCache = props.data?.disableCache ||
+    (sp.has("disableCache") && sp.get("disableCache") === "true") ||
     false;
   const show = props.data?.show || parseInt(sp.get("show") || "10");
   const from = props.data?.from || parseInt(sp.get("from") || "1");
@@ -147,6 +136,18 @@ export default function Search(props: PageProps<SearchData>) {
   const searchComplete = props.data?.searchComplete || false;
   const filter = props.data?.filter || sp.get("filter") || undefined;
   const filtered = props.data?.filtered || false;
+
+  const session = props.state.session as string;
+  const state = getUserState(session);
+  const connection = state!.connection;
+  const connectionId = connection?.id || "";
+  const connectionName = connection?.name || "";
+  const connectionLocation = connection?.kvLocation || "";
+
+  const { local, remote } = await getConnections(session);
+  const connections: { name: string; id: string; env: string }[] = [];
+  local.forEach((c) => connections.push({ name: c.name, id: c.id, env: c.environment }));
+  remote.forEach((c) => connections.push({ name: c.name, id: c.id, env: c.environment }));
 
   return (
     <>
@@ -158,6 +159,7 @@ export default function Search(props: PageProps<SearchData>) {
           limit={limit}
           validationError={validationError}
           reverse={reverse}
+          disableCache={disableCache}
         />
         <SearchResults
           results={results}
@@ -173,6 +175,10 @@ export default function Search(props: PageProps<SearchData>) {
           start={start}
           end={end}
           reverse={reverse}
+          connections={connections}
+          connectionId={connectionId}
+          connectionName={connectionName}
+          connectionLocation={connectionLocation}
         />
       </SearchForm>
     </>

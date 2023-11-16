@@ -2,12 +2,12 @@ const searchFormIds = [
   "show",
   "from",
   "filter",
-  "connection",
   "prefix",
   "start",
   "end",
   "limit",
   "reverse",
+  "disableCache",
 ];
 
 export function submitSearchForm() {

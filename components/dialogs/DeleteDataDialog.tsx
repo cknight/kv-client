@@ -1,47 +1,98 @@
 import { JSX } from "preact";
 import { BUTTON } from "../../consts.ts";
-import { connections } from "../../routes/_layout.tsx";
+import { effect, useSignal } from "@preact/signals";
+import { DeleteKeysData } from "../../routes/api/deleteKeys.tsx";
+import { CopyDeleteProps } from "../../types.ts";
 
-interface DeleteDialogProps {
-  keysToDelete: string[];
-  session: string;
-  prefix: string;
-  start: string;
-  end: string;
-  reverse: boolean;
-}
-export function DeleteDataDialog(props: DeleteDialogProps) {
-  console.log("delete dialog", props);
-  const { keysToDelete, session, prefix, start, end, reverse } = props;
+export function DeleteDataDialog(props: CopyDeleteProps) {
+  const {
+    keysSelected,
+    connectionName,
+    connectionLocation,
+    connectionId,
+    prefix,
+    start,
+    end,
+    from,
+    show,
+    resultsCount,
+    reverse,
+    filter,
+  } = props;
+  const isDeleting = useSignal(false);
+  const abortId = useSignal(crypto.randomUUID());
 
-  // FIXME - entire connection handling needs rethought
-  const connectionId = localStorage.getItem("KV_explorer_connection");
+  effect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (isDeleting.value && event.key === "Escape") {
+        event.preventDefault();
+      }
+    };
 
-  const connName = connections.value.find((c) => c.id === connectionId)?.name ||
-    "No connection established";
-  const connLocation = connections.value.find((c) => c.id === connectionId)?.kvLocation ||
-    "No connection established";
-  //Need to move a lot of logic to a REST endpoint
+    self.addEventListener("keydown", handleKeyDown);
 
-  let kvKeysToDelete: Deno.KvEntry<unknown>[] = [];
-
-  if (props.keysToDelete.length > 0) {
-    // const cachedSearch = state.cache.get({ connection, prefix, start, end, reverse });
-    // kvKeysToDelete = cachedSearch!.dataRetrieved.filter((e) => keysToDelete.includes(keyToBase64(createKvUIEntry(e))));
-
-    // if (kvKeysToDelete.length !== keysToDelete.length) {
-    //   console.log(kvKeysToDelete);
-    //   throw new Error("Internal error.  Mismatch between keys to delete and keys retrieved from cache.  Aborting.");
-    // }
-  }
+    return () => {
+      self.removeEventListener("keydown", handleKeyDown);
+    };
+  });
 
   function cancelDialog(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault(); //e.g. don't submit the form
     (document.getElementById("deleteDialog")! as HTMLDialogElement).close();
   }
 
-  function deleteConfirmed() {
-    console.log("Deleting " + kvKeysToDelete.length + " keys");
+  function deleteConfirmed(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
+    event.preventDefault(); //e.g. don't submit the form
+    isDeleting.value = true;
+    abortId.value = crypto.randomUUID();
+
+    fetch("/api/deleteKeys", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        connectionId,
+        keysToDelete: keysSelected,
+        filter,
+        prefix,
+        start,
+        end,
+        from,
+        show,
+        reverse,
+        abortId: abortId.value,
+      } satisfies DeleteKeysData),
+    }).then((response) => {
+      if (response.status === 200) {
+        console.log("Deletion successful:", keysSelected.length, "key(s) deleted");
+        (document.getElementById("deleteDialog")! as HTMLDialogElement).close();
+      } else {
+        response.text().then((text) => {
+          console.error(text);
+        });
+      }
+    }).catch((e) => {
+      console.error("Failure with delete request", e);
+    }).finally(() => {
+      window.location.reload();
+    });
+  }
+
+  function abortDelete(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
+    event.preventDefault(); //e.g. don't submit the form
+
+    fetch("/api/abortDelete", {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain",
+      },
+      body: abortId.value,
+    }).then((_resp) => {
+      console.log("Aborting delete");
+    }).catch((e) => {
+      console.error("Failure with abort request", e);
+    });
   }
 
   return (
@@ -57,21 +108,28 @@ export function DeleteDataDialog(props: DeleteDialogProps) {
           <table>
             <tr>
               <td>Connection name</td>
-              <td>{connName}</td>
+              <td>{connectionName}</td>
             </tr>
             <tr>
               <td>Connection location</td>
-              <td>{connLocation}</td>
+              <td>{connectionLocation}</td>
             </tr>
             <tr>
               <td>Key/Value pairs to delete</td>
-              <td>{kvKeysToDelete.length}</td>
+              <td>{keysSelected.length === 0 ? resultsCount : keysSelected.length}</td>
             </tr>
           </table>
         </div>
         <p>Check the above details carefully. This action cannot be undone.</p>
         <div class="flex mt-3 justify-center">
-          <button class={BUTTON} onClick={deleteConfirmed}>OK</button>
+          {isDeleting.value ? (
+              <button class={BUTTON} onClick={abortDelete}>Abort</button>
+          ) : (
+            <>
+              <button class={BUTTON} onClick={cancelDialog}>Cancel</button>
+              <button class={BUTTON} onClick={deleteConfirmed}>OK</button>
+            </>
+          )}
         </div>
       </div>
     </dialog>

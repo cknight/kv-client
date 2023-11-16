@@ -11,16 +11,18 @@ import { getUserState } from "../state.ts";
 import { ValidationError } from "../errors.ts";
 import { computeSize } from "./kvUnitsConsumed.ts";
 import { readUnitsConsumed } from "./kvUnitsConsumed.ts";
-import { auditListAction } from "./kvAudit.ts";
+import { auditAction, auditConnectionName } from "./kvAudit.ts";
 import { executorId } from "../denoDeploy/deployUser.ts";
+import { toJSON } from "../utils.ts";
 
 export async function searchKv(
   searchOptions: KvSearchOptions,
 ): Promise<PartialSearchResults> {
   const startTime = Date.now();
-  const { session, connection, prefix, start, end, limit, reverse } = searchOptions;
+  const { session, connectionId, prefix, start, end, limit, reverse, disableCache } = searchOptions;
   const state = getUserState(session);
-  const cachedSearch = state.cache.get({ connection, prefix, start, end, reverse });
+  const cachedSearch = !disableCache &&
+    state.cache.get({ connectionId, prefix, start, end, reverse });
   const cachedResults: Deno.KvEntry<unknown>[] = [];
 
   let cursor: string | undefined = undefined;
@@ -31,7 +33,7 @@ export async function searchKv(
     console.debug(
       "Cached data:",
       cachedData.length,
-      "Expected:",
+      "Limit:",
       limit === "all" ? "all" : parseInt(limit),
       "More available?",
       cachedSearch.cursor !== false,
@@ -72,7 +74,7 @@ export async function searchKv(
   const startKey = parseKvKey(start);
   const endKey = parseKvKey(end);
 
-  await establishKvConnection(session, connection);
+  await establishKvConnection(session, connectionId);
   validateInputs(state, prefix, start, end);
 
   const selector = createListSelector(startKey, endKey, prefixKey);
@@ -83,7 +85,7 @@ export async function searchKv(
     batchSize: maxEntries > 500 ? 500 : maxEntries,
   };
   const listIterator = state.kv!.list(selector, options);
-  console.debug("kv.list(" + JSON.stringify(selector) + ", " + JSON.stringify(options) + ")");
+  console.debug("kv.list(" + toJSON(selector) + ", " + JSON.stringify(options) + ")");
   let count = 0;
   let operationSize = 0;
   let newCursor: string | false = "";
@@ -99,15 +101,19 @@ export async function searchKv(
 
     if (++count === maxEntries) {
       break;
+    } else if (count % 100000 === 0) {
+      console.debug("Retrieved", count, "results");
     }
     result = await listIterator.next();
   }
   const queryOnlyTime = Date.now() - queryOnlyTimeStart;
   newCursor = listIterator.cursor === "" ? false : newCursor;
+  console.log("---------", newCursor);
 
   //Add results to cache
+  console.log("Caching", newResults.length, "results.  Cursor", newCursor);
   state.cache.add({
-    connection,
+    connectionId,
     prefix,
     start,
     end,
@@ -128,11 +134,11 @@ export async function searchKv(
     reverse,
     results: newResults.length,
     readUnitsConsumed: readUnits,
-    connection: state.connection!.name + ` (${state.connection!.id})`,
+    connection: auditConnectionName(state.connection!),
     isDeploy: state.connection!.isRemote,
     rtms: queryOnlyTime,
   };
-  await auditListAction(audit);
+  await auditAction(audit);
 
   const finalResults = cachedResults.concat(newResults);
   console.debug(

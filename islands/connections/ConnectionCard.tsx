@@ -4,13 +4,14 @@ import { ExportIcon } from "../../components/svg/Export.tsx";
 import { InfoIcon } from "../../components/svg/Info.tsx";
 import { XIcon } from "../../components/svg/XIcon.tsx";
 import { readableSize } from "../../utils/utils.ts";
+import { Environment } from "../../types.ts";
 
 interface ConnectionCardProps {
   name: string;
   id: string;
   size: number;
-  environment: "local" | "prod" | "preview" | "playground" | "other";
-  organisation: string | null;
+  environment: Environment;
+  organisation: string | undefined;
   location: string;
   session: string;
 }

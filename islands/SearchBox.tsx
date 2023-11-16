@@ -1,12 +1,8 @@
-import { Signal } from "@preact/signals";
 import { KvKeyInput } from "../components/KvKeyInput.tsx";
-import { IS_BROWSER } from "$fresh/runtime.ts";
-import { PATDialog } from "../components/dialogs/PATDialog.tsx";
 import { Help } from "../components/Help.tsx";
-import { LINK } from "../consts.ts";
 import { KeyHelp } from "../components/KeyHelp.tsx";
 import { JSX } from "preact";
-import { clearSearchForm, submitSearchForm } from "../utils/form.ts";
+import { clearSearchForm, submitSearchForm } from "../utils/ui/form.ts";
 
 interface SearchDataProps {
   prefix: string;
@@ -15,6 +11,7 @@ interface SearchDataProps {
   validationError?: string;
   limit: string;
   reverse: boolean;
+  disableCache: boolean;
 }
 
 export function SearchBox(data: SearchDataProps) {
@@ -24,6 +21,7 @@ export function SearchBox(data: SearchDataProps) {
   const limit = data.limit;
   const reverse = data.reverse;
   const validationError = data.validationError;
+  const disableCache = data.disableCache;
 
   function resetForm(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     //event.preventDefault(); //e.g. don't submit the form
@@ -35,6 +33,10 @@ export function SearchBox(data: SearchDataProps) {
     const filter = document.getElementById("filter")! as HTMLInputElement;
     if (filter) {
       filter.value = "";
+    }
+    const from = document.getElementById("from")! as HTMLInputElement;
+    if (from) {
+      from.value = "1";
     }
     submitSearchForm();
   }
@@ -126,6 +128,20 @@ export function SearchBox(data: SearchDataProps) {
             />
             <Help dialogId="reverseHelp" dialogTitle="Reverse">
               <p>Return the key-value pairs in lexicographically descending order</p>
+            </Help>
+          </div>
+          <div class="w-full flex items-center justify-end mt-5">
+            <label for="disableCache" class="w-24">Disbale cache</label>
+            <input
+              id="disableCache"
+              form="pageForm"
+              type="checkbox"
+              name="disableCache"
+              class="mr-12 w-4 h-4"
+              checked={disableCache}
+            />
+            <Help dialogId="disableCacheHelp" dialogTitle="Disable cache">
+              <p>Do not use the server cache when querying KV.  Get all results direct from KV instead.</p>
             </Help>
           </div>
         </div>

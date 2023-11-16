@@ -6,7 +6,6 @@ export function UnknownAvatarMenu() {
 
   function toggleMenu() {
     menuVisible.value = !menuVisible.value;
-    console.log("Menu visible: ", menuVisible.value);
   }
 
   async function clearData() {

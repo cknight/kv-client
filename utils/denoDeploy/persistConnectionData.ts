@@ -1,6 +1,5 @@
 import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
 import { KvConnection } from "../../types.ts";
-import { localKv } from "../kv/db.ts";
 import { DeployUser, deployKvEnvironment } from "./deployUser.ts";
 import {
   MultiResult,
@@ -13,12 +12,12 @@ export async function persistConnectionData(deployUser: DeployUser): Promise<voi
   deployUser.organisations.forEach((org) => {
     org.projects.forEach((project) => {
       project.kvInstances.forEach((kvInstance) => {
-        const kvName = project.name + " (" + deployKvEnvironment(project, kvInstance) +")";
         const kvConnection: KvConnection = {
-          name: kvName,
+          name: project.name,
           id: kvInstance.databaseId,
           isRemote: true,
           kvLocation: `https://api.deno.com/databases/${kvInstance.databaseId}/connect`,
+          environment: deployKvEnvironment(project, kvInstance),
           size: kvInstance.sizeBytes,
         };
         keyValues.set([CONNECTIONS_KEY_PREFIX, kvInstance.databaseId], kvConnection)

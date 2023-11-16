@@ -13,11 +13,11 @@ import { IS_BROWSER } from "$fresh/runtime.ts";
 import { Help } from "../components/Help.tsx";
 import { KvUIEntry, Stats } from "../types.ts";
 import { StatsBar } from "../components/StatsBar.tsx";
-import { submitSearchForm } from "../utils/form.ts";
+import { submitSearchForm } from "../utils/ui/form.ts";
 import { KvDialog } from "../components/dialogs/KvDialog.tsx";
-import { keyToBase64 } from "../utils/encodeKvKey.ts";
-// import { DeleteDataDialog } from "../components/dialogs/DeleteDataDialog.tsx";
 import { JSX } from "preact";
+import { DeleteDataDialog } from "../components/dialogs/DeleteDataDialog.tsx";
+import { CopyDataDialog } from "../components/dialogs/CopyDataDialog.tsx";
 
 interface SearchResultsProps {
   results: KvUIEntry[] | undefined;
@@ -33,6 +33,10 @@ interface SearchResultsProps {
   start: string;
   end: string;
   reverse: boolean;
+  connections: {name: string, id: string, env:string }[];
+  connectionName: string;
+  connectionId: string;
+  connectionLocation: string;
 }
 
 export function SearchResults(props: SearchResultsProps) {
@@ -47,6 +51,7 @@ export function SearchResults(props: SearchResultsProps) {
   const to = Math.min(props.from + props.show - 1, resultsCount);
 
   if (IS_BROWSER && (new URL(window.location.href)).searchParams.has("prefix") && !results) {
+    // FIXME: Seems brittle
     // GET request with POST data in URL, so submit form to redirect to POST
     setTimeout(() => {
       submitSearchForm();
@@ -82,6 +87,22 @@ export function SearchResults(props: SearchResultsProps) {
     submitSearchForm();
   }
 
+  function firstPage() {
+    const from = document.getElementById("from") as HTMLInputElement;
+    from.value = "1";
+    submitSearchForm();
+  }
+
+  function lastPage() {
+    let newFrom = props.from;
+    while (newFrom + props.show < resultsCount) {
+      newFrom += props.show;
+    }
+    const from = document.getElementById("from") as HTMLInputElement;
+    from.value = newFrom.toString();
+    submitSearchForm();
+  }
+
   function fullView(event: JSX.TargetedEvent<HTMLTableRowElement, MouseEvent>) {
     const target = event.target as HTMLElement;
     if (target.tagName === "TD") {
@@ -89,7 +110,7 @@ export function SearchResults(props: SearchResultsProps) {
       const value = (target.parentElement!.children[2] as HTMLTableCellElement).title;
       fullViewKey.value = key || "";
       fullViewValue.value = value || "";
-      console.log(fullViewKey.value, fullViewValue.value);
+
       const dialog = document.getElementById("kvDialog") as HTMLDialogElement;
       dialog.showModal();
     }
@@ -113,7 +134,7 @@ export function SearchResults(props: SearchResultsProps) {
     if (target) {
       const checkboxes = document.querySelectorAll("#resultRows input[type='checkbox']");
       if (target.checked) {
-        selected.value = results!.map((result) => keyToBase64(result));
+        selected.value = results!.map((result) => result.keyHash);
         checkboxes.forEach((checkbox) => {
           (checkbox as HTMLInputElement).checked = true;
         });
@@ -136,6 +157,12 @@ export function SearchResults(props: SearchResultsProps) {
   function deleteEntries(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault();
     const dialog = document.getElementById("deleteDialog") as HTMLDialogElement;
+    dialog.showModal();
+  }
+
+  function copyEntries(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
+    event.preventDefault();
+    const dialog = document.getElementById("copyDialog") as HTMLDialogElement;
     dialog.showModal();
   }
 
@@ -179,7 +206,7 @@ export function SearchResults(props: SearchResultsProps) {
                 <button type="button" onClick={deleteEntries} class={BUTTON}>
                   Delete {scopeText()}
                 </button>
-                <button type="button" onClick={clearFilter} class={BUTTON}>
+                <button type="button" onClick={copyEntries} class={BUTTON}>
                   Copy {scopeText()}
                 </button>
               </div>
@@ -208,7 +235,7 @@ export function SearchResults(props: SearchResultsProps) {
                         <td class={TW_TD + " w-12 text-center"}>
                           <input
                             type="checkbox"
-                            name={keyToBase64(result)}
+                            name={result.keyHash}
                             onChange={handleSelectRow}
                             class="w-4 h-4"
                           />
@@ -245,6 +272,9 @@ export function SearchResults(props: SearchResultsProps) {
                   Showing {props.from} to {to} of{" "}
                   {props.searchComplete ? resultsCount + entries : " many"}
                   <input id="from" name="from" type="hidden" form="pageForm" value={props.from} />
+                  <button class={BUTTON} onClick={firstPage} disabled={props.from === 1}>
+                    &lt;&lt;
+                  </button>
                   <button class={BUTTON} onClick={() => page(false)} disabled={props.from === 1}>
                     &lt;
                   </button>
@@ -255,6 +285,13 @@ export function SearchResults(props: SearchResultsProps) {
                   >
                     &gt;
                   </button>
+                  <button
+                    class={BUTTON}
+                    onClick={lastPage}
+                    disabled={props.from + props.show > resultsCount}
+                  >
+                    &gt;&gt;
+                  </button>
                 </div>
               </div>
             </div>
@@ -262,16 +299,36 @@ export function SearchResults(props: SearchResultsProps) {
         )}
       {props.stats && <StatsBar stats={props.stats} />}
       <KvDialog kvKey={fullViewKey} kvValue={fullViewValue} />
-      {
-        /* <DeleteDataDialog
-        keysToDelete={selected.value}
-        session={session}
+      <DeleteDataDialog
+        keysSelected={selected.value}
+        connectionName={props.connectionName}
+        connectionLocation={props.connectionLocation}
+        connectionId={props.connectionId}
         prefix={prefix}
         start={start}
         end={end}
+        from={props.from}
+        show={props.show}
+        resultsCount={resultsCount}
         reverse={reverse}
-      /> */
-      }
+        filter={filter}
+        />
+      <CopyDataDialog
+        keysSelected={selected.value}
+        connections={props.connections}
+        connectionName={props.connectionName}
+        connectionLocation={props.connectionLocation}
+        connectionId={props.connectionId}
+        prefix={prefix}
+        start={start}
+        end={end}
+        from={props.from}
+        show={props.show}
+        resultsCount={resultsCount}
+        reverse={reverse}
+        filter={filter}
+        />
+
     </div>
   );
 }

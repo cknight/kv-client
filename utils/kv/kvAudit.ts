@@ -1,10 +1,10 @@
-import { ListAuditLog } from "../../types.ts";
+import { AuditRecord, KvConnection } from "../../types.ts";
 import { delay } from "$std/async/delay.ts";
 import { localKv } from "./db.ts";
 
 const THIRTY_DAYS_IN_MS = 1000 * 60 * 60 * 24 * 30;
 
-export async function auditListAction(audit: ListAuditLog) {
+export async function auditAction(audit: AuditRecord) {
   let auditSuccess = false;
   let attempts = 0;
   while (attempts < 10 && !auditSuccess) {
@@ -25,6 +25,10 @@ export async function auditListAction(audit: ListAuditLog) {
     }
   }
   if (!auditSuccess) {
-    console.error("Failed to audit list action after 10 attempts", audit);
+    console.error("Failed to audit action after 10 attempts", audit);
   }
+}
+
+export function auditConnectionName(connection: KvConnection): string {
+  return connection.name + ` (${connection.environment}), ${connection.id}`;
 }

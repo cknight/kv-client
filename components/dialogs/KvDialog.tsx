@@ -8,6 +8,7 @@ export function KvDialog(props: { kvKey: Signal<string>; kvValue: Signal<string>
     event.preventDefault(); //e.g. don't submit the form
     (document.getElementById("kvDialog")! as HTMLDialogElement).close();
   }
+
   const keySize = readableSize(JSON.stringify(props.kvKey.value).length);
   const valueSize = readableSize(JSON.stringify(props.kvValue.value).length);
 

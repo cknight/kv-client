@@ -1,26 +1,25 @@
 /// <reference lib="deno.unstable" />
 import { Handlers, RouteContext } from "$fresh/server.ts";
-import { ConnectionCard } from "../islands/connecctions/ConnectionCard.tsx";
-import { RemoveLocalConnectionDialog } from "../islands/connecctions/RemoveLocalConnectionDialog.tsx";
-import { CONNECTIONS_KEY_PREFIX, DEPLOY_USER_KEY_PREFIX } from "../consts.ts";
-import { AddLocalConnectionButton } from "../islands/connecctions/AddLocalConnectionButton.tsx";
-import { ConnectButton } from "../islands/connecctions/ConnectButton.tsx";
-import { getLocalConnections } from "../utils/connections.ts";
-import { DeployKvInstance, DeployProject, DeployUser, deployKvEnvironment } from "../utils/denoDeploy/deployUser.ts";
+import { ConnectionCard } from "../islands/connections/ConnectionCard.tsx";
+import { RemoveLocalConnectionDialog } from "../islands/connections/RemoveLocalConnectionDialog.tsx";
+import { CONNECTIONS_KEY_PREFIX } from "../consts.ts";
+import { AddLocalConnectionButton } from "../islands/connections/AddLocalConnectionButton.tsx";
+import { ConnectButton } from "../islands/connections/ConnectButton.tsx";
+import { getConnections, resetLocalConnectionList } from "../utils/connections.ts";
 import { localKv } from "../utils/kv/db.ts";
-import { getUserState } from "../utils/state.ts";
 
 export const handler: Handlers = {
   async POST(req, ctx) {
     const formData = await req.formData();
     const action = formData.get("formAction")?.toString();
-    console.log(formData)
+    console.log(formData);
     if (action === "removeLocalConnection") {
       const connectionId = formData.get("removeLocalConnectionId")?.toString();
-      console.log(connectionId)
+      console.log(connectionId);
       if (connectionId && typeof connectionId === "string") {
         console.log("post check");
         await localKv.delete([CONNECTIONS_KEY_PREFIX, connectionId]);
+        await resetLocalConnectionList();
         console.debug("Removed local connection", connectionId);
         return ctx.render();
       }
@@ -33,14 +32,7 @@ export const handler: Handlers = {
 };
 
 export default async function Connections(_req: Request, ctx: RouteContext) {
-  const state = getUserState(ctx);
-  const localConnections = await getLocalConnections();
-
-  let deployUser: DeployUser | null = state.deployUserData;
-  if (!deployUser) {
-    deployUser =
-      (await localKv.get<DeployUser>([DEPLOY_USER_KEY_PREFIX, ctx.state.session as string])).value;
-  }
+  const { local, remote } = await getConnections(ctx.state.session as string);
 
   return (
     <div class="w-full">
@@ -49,13 +41,13 @@ export default async function Connections(_req: Request, ctx: RouteContext) {
           <p class="w-24 text-2xl font-bold">Local</p>
         </div>
         <div id="localConnectionsList" class="flex flex-wrap">
-          {localConnections.map((connection) => (
+          {local.map((connection) => (
             <ConnectionCard
               name={connection.name}
               environment="local"
               location={connection.kvLocation}
               size={connection.size}
-              organisation={null}
+              organisation={undefined}
               id={connection.id}
               session={ctx.state.session as string}
             />
@@ -71,24 +63,18 @@ export default async function Connections(_req: Request, ctx: RouteContext) {
           <p class="w-24 text-2xl font-bold">Remote</p>
         </div>
         <div class="flex flex-wrap w-full">
-          {deployUser
-            ? (
-              deployUser?.organisations.map((org) => (
-                org.projects.map((project) => (
-                  project.kvInstances.map((instance) => (
-                    <ConnectionCard
-                      name={project.name}
-                      environment={deployKvEnvironment(project, instance)}
-                      location={instance.databaseId}
-                      size={instance.sizeBytes}
-                      organisation={org.name}
-                      id={instance.databaseId}
-                      session={ctx.state.session as string}
-                    />
-                  ))
-                ))
-              ))
-            )
+          {remote.length > 0
+            ? remote.map((connection) => (
+              <ConnectionCard
+                name={connection.name}
+                environment={connection.environment}
+                location={connection.kvLocation}
+                size={connection.size}
+                organisation={connection.organisation}
+                id={connection.id}
+                session={ctx.state.session as string}
+              />
+            ))
             : (
               <div class="flex justify-around w-full">
                 <ConnectButton />
@@ -96,7 +82,7 @@ export default async function Connections(_req: Request, ctx: RouteContext) {
             )}
         </div>
       </div>
-      <RemoveLocalConnectionDialog/>
+      <RemoveLocalConnectionDialog />
     </div>
   );
 }

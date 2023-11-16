@@ -6,7 +6,7 @@ import { localKv } from "./db.ts";
 import { Mutex } from "semaphore/mutex.ts";
 import { getEncryptedString } from "../encryption.ts";
 
-const mutex = new Mutex();
+export const mutex = new Mutex();
 
 export async function establishKvConnection(session: string, connectionId: string): Promise<void> {
   const userState = getUserState(session);
@@ -23,6 +23,7 @@ export async function establishKvConnection(session: string, connectionId: strin
     console.debug(`Closing connection to '${userState.connection?.name}'`);
     userState!.kv.close();
     userState.kv = null;
+    userState.connection = null;
   }
 
   // Get connection details for id

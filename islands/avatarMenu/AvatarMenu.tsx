@@ -7,7 +7,6 @@ export function AvatarMenu({ deployUser }: { deployUser: DeployUser }) {
 
   function toggleMenu() {
     menuVisible.value = !menuVisible.value;
-    console.log("Menu visible: ", menuVisible.value);
   }
 
   async function signOut() {
