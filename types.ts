@@ -1,4 +1,4 @@
-import { DeployUser } from "./utils/denoDeploy/deployUser.ts";
+import { DeployUser } from "./utils/connections/denoDeploy/deployUser.ts";
 
 export interface SearchData {
   prefix: string;
@@ -21,6 +21,7 @@ export interface SearchData {
 export interface I_CacheManager {
   get(parms: CacheKey): CachedSearch | undefined;
   add(parms: SearchResults): void;
+  set(parms: SearchResults): void;
   clear(): void;
 }
 
@@ -93,7 +94,7 @@ export interface KvSearchOptions {
   disableCache: boolean;
 }
 
-export type AuditLog<T extends "list" | "delete" | "copy"> = {
+export type AuditLog<T extends "list" | "delete" | "copy" | "update"> = {
   auditType: T;
   executorId: string;
   connection: string;
@@ -127,7 +128,15 @@ export type CopyAuditLog = AuditLog<"copy"> & {
   writeUnitsConsumed: number;
 };
 
-export type AuditRecord = ListAuditLog | DeleteAuditLog | CopyAuditLog;
+export type UpdateAuditLog = AuditLog<"update"> & {
+  updateSuccessful: boolean;
+  writeUnitsConsumed: number;
+  key: string;
+  originalValue: string;
+  newValue: string;
+};
+
+export type AuditRecord = ListAuditLog | DeleteAuditLog | CopyAuditLog | UpdateAuditLog;
 
 export type UnitsConsumed = {
   operations: number;
@@ -151,8 +160,7 @@ export type Stats = {
 
 export type CopyDeleteProps = {
   keysSelected: string[];
-  connections?: {name: string, id: string, env:string}[];
-  connectionName: string;
+  connections?: { name: string; id: string; env: string }[];
   connectionLocation: string;
   connectionId: string;
   prefix: string;
@@ -164,3 +172,5 @@ export type CopyDeleteProps = {
   reverse: boolean;
   filter?: string;
 };
+
+export type ToastType = "info" | "warn" | "error";

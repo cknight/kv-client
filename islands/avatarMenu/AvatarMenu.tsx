@@ -1,6 +1,6 @@
 import { useSignal } from "@preact/signals";
 import { GitHubIcon } from "../../components/svg/GitHub.tsx";
-import { DeployUser } from "../../utils/denoDeploy/deployUser.ts";
+import { DeployUser } from "../../utils/connections/denoDeploy/deployUser.ts";
 
 export function AvatarMenu({ deployUser }: { deployUser: DeployUser }) {
   const menuVisible = useSignal(false);

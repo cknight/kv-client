@@ -30,10 +30,14 @@ export function SearchBox(data: SearchDataProps) {
 
   function submitForm(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     //event.preventDefault(); //e.g. don't submit the form
+    document.body.style.cursor = 'wait'; // Set the cursor to 'wait'
+    
     const filter = document.getElementById("filter")! as HTMLInputElement;
     if (filter) {
       filter.value = "";
     }
+
+    //if a new search is being done, reset the page to 1
     const from = document.getElementById("from")! as HTMLInputElement;
     if (from) {
       from.value = "1";

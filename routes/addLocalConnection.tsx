@@ -4,8 +4,8 @@ import { BUTTON, CONNECTIONS_KEY_PREFIX } from "../consts.ts";
 import { CancelAddConnectionButton } from "../islands/connections/CancelAddConnectionButton.tsx";
 import { LocalConnectionRadioButton } from "../islands/connections/LocalConnectionRadio.tsx";
 import { KvConnection, KvInstance } from "../types.ts";
-import { peekAtLocalKvInstances } from "../utils/autoDiscoverKv.ts";
-import { resetLocalConnectionList } from "../utils/connections.ts";
+import { peekAtLocalKvInstances } from "../utils/connections/autoDiscoverKv.ts";
+import { resetLocalConnectionList } from "../utils/connections/connections.ts";
 import { localKv } from "../utils/kv/db.ts";
 import { readableSize } from "../utils/utils.ts";
 

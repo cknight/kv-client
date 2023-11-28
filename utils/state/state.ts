@@ -1,5 +1,5 @@
 import { HandlerContext, LayoutContext, PageProps } from "$fresh/server.ts";
-import { State } from "../types.ts";
+import { State } from "../../types.ts";
 import { CacheManager } from "./cache.ts";
 
 const states: Map<string, State> = new Map();

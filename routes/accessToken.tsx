@@ -1,11 +1,11 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
 import { BUTTON, DEPLOY_USER_KEY_PREFIX, ENCRYPTED_USER_ACCESS_TOKEN_PREFIX } from "../consts.ts";
-import { getUserState } from "../utils/state.ts";
+import { getUserState } from "../utils/state/state.ts";
 import { AccessTokenInput } from "../islands/AccessTokenInput.tsx";
-import { buildRemoteData } from "../utils/denoDeploy/deployUser.ts";
+import { buildRemoteData } from "../utils/connections/denoDeploy/deployUser.ts";
 import { localKv } from "../utils/kv/db.ts";
-import { storeEncryptedString } from "../utils/encryption.ts";
-import { persistConnectionData } from "../utils/denoDeploy/persistConnectionData.ts";
+import { storeEncryptedString } from "../utils/transform/encryption.ts";
+import { persistConnectionData } from "../utils/connections/denoDeploy/persistConnectionData.ts";
 
 const _24_HOURS_IN_MS = 1000 * 60 * 60 * 24;
 
@@ -21,8 +21,6 @@ export const handler: Handlers = {
 
       const start = Date.now();
       const deployUser = await buildRemoteData(accessToken);
-      
-      console.log(`[buildRemoteData] ${Date.now() - start}ms`);
       
       /* 
        * Store:

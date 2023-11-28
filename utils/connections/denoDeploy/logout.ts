@@ -1,6 +1,6 @@
-import { DEPLOY_USER_KEY_PREFIX, ENCRYPTED_USER_ACCESS_TOKEN_PREFIX } from "../../consts.ts";
-import { localKv } from "../kv/db.ts";
-import { getUserState } from "../state.ts";
+import { DEPLOY_USER_KEY_PREFIX, ENCRYPTED_USER_ACCESS_TOKEN_PREFIX } from "../../../consts.ts";
+import { localKv } from "../../kv/db.ts";
+import { getUserState } from "../../state/state.ts";
 
 export async function logout(session: string) {
   const state = getUserState(session);

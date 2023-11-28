@@ -1,16 +1,15 @@
 import { format } from "$std/fmt/bytes.ts";
 import { encodeHex } from "$std/encoding/hex.ts";
 import { KvUIEntry } from "../types.ts";
+import { json5Stringify } from "./transform/stringSerialization.ts";
 
 const encoder = new TextEncoder();
 
 export async function createKvUIEntry(entry: Deno.KvEntry<unknown>): Promise<KvUIEntry> {
-  const value = typeof entry.value === "string"
-    ? entry.value
-    : Deno.inspect(entry.value, { strAbbreviateSize: Number.MAX_SAFE_INTEGER });
+  const value = json5Stringify(entry.value);
   const displayValue = value.length > 180 ? value.slice(0, 180) + "..." : value;
   const uiEntry = {
-    key: Deno.inspect(entry.key, { strAbbreviateSize: Number.MAX_SAFE_INTEGER }),
+    key: json5Stringify(entry.key),
     value: displayValue,
     versionstamp: entry.versionstamp,
     fullValue: value,
@@ -20,16 +19,16 @@ export async function createKvUIEntry(entry: Deno.KvEntry<unknown>): Promise<KvU
 }
 
 export async function hashKvKey(key: Deno.KvKey): Promise<string> {
-  return await hash(serializeDenoKvKey(key));
+  // @ts-ignore Use internal Deno API to get access to actual serialization method.
+  const DENO_CORE: DenoCore = Deno[Deno.internal].core;
+  return await hash(DENO_CORE.serialize(key));
 }
 
-async function hash(keyString:string): Promise<string> {
-  const data = encoder.encode(keyString);
-  const hashBuffer = await crypto.subtle.digest('SHA-512', data)
-  const hashHex = encodeHex(new Uint8Array(hashBuffer))
+async function hash(bytes: Uint8Array): Promise<string> {
+  const hashBuffer = await crypto.subtle.digest("SHA-512", bytes);
+  const hashHex = encodeHex(new Uint8Array(hashBuffer));
   return hashHex;
 }
-
 
 /**
  * @param size in bytes
@@ -43,31 +42,16 @@ export function readableSize(size: number) {
 }
 
 /**
- * Serialize Deno.KvKey to JSON string with special support for Uint8Array and BigInts
- * @param key 
- * @returns JSON stringified key
+ * JSON stringify with custom support for Uint8Array and BigInts.  Used
+ * for filtering where the key/value pair needs transformed into a string
+ * first
  */
-export function serializeDenoKvKey(key: Deno.KvKey): string {
-  return toJSON(key);
-}
-
-/**
- * Deserialize JSON string to Deno.KvKey with special support for Uint8Array and BigInts
- * @param key 
- * @returns Deno.KvKey
- */
-export function deserializeDenoKvKey(key: string): Deno.KvKey {
-  return fromJSON(key) as Deno.KvKey;
-}
-
-/**
- * JSON stringify with custom support for Uint8Array and BigInts
- */
-export function toJSON(obj:unknown): string {
+export function toJSON(obj: unknown): string {
   return JSON.stringify(obj, replacer, 0);
 }
 
 /**
+ * @deprecated - not in use and don't plan to use, but here in case needed
  * JSON parse with custom support for Uint8Array and BigInts
  */
 export function fromJSON(json: string): unknown {
@@ -96,13 +80,27 @@ function bigIntReplacer(_key: string, value: unknown) {
     return value.toString();
   }
   return value;
+}
+
+// Define Deno Core
+type DenoCore = {
+  deserialize<T>(data: Uint8Array): T;
+  serialize<T>(data: T): Uint8Array;
+  decode(data: Uint8Array): string;
+  encode(data: string): Uint8Array;
 };
 
+// @ts-ignore Use internal Deno API to get access to actual serialization method.
+//const DENO_CORE: DenoCore = Deno[Deno.internal].core
+
 /**
- * 
  * @returns approximate size of value in bytes
  */
 export function approximateSize(value: unknown): number {
   if (value === undefined) return 0;
-  return JSON.stringify(value, bigIntReplacer).length;
+  //return JSON.stringify(value, bigIntReplacer).length;
+
+  // @ts-ignore Use internal Deno API to get access to actual serialization method.
+  const DENO_CORE: DenoCore = Deno[Deno.internal].core;
+  return DENO_CORE.serialize(value).length;
 }

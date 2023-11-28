@@ -5,11 +5,11 @@ import { SearchResults } from "../islands/SearchResults.tsx";
 import { searchKv } from "../utils/kv/kvList.ts";
 import { SearchForm } from "../islands/PageForm.tsx";
 import { PATError } from "../utils/errors.ts";
-import { getUserState } from "../utils/state.ts";
+import { getUserState } from "../utils/state/state.ts";
 import { unitsConsumedToday } from "../utils/kv/kvUnitsConsumed.ts";
 import { createKvUIEntry } from "../utils/utils.ts";
 import { buildResultsPage } from "../utils/ui/buildResultsPage.ts";
-import { getConnections } from "../utils/connections.ts";
+import { getConnections } from "../utils/connections/connections.ts";
 
 export const handler: Handlers = {
   async POST(req, ctx) {

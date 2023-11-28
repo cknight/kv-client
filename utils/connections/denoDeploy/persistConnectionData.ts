@@ -1,5 +1,5 @@
-import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
-import { KvConnection } from "../../types.ts";
+import { CONNECTIONS_KEY_PREFIX } from "../../../consts.ts";
+import { KvConnection } from "../../../types.ts";
 import { DeployUser, deployKvEnvironment } from "./deployUser.ts";
 import {
   MultiResult,

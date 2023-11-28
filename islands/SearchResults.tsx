@@ -11,13 +11,14 @@ import {
 } from "../consts.ts";
 import { IS_BROWSER } from "$fresh/runtime.ts";
 import { Help } from "../components/Help.tsx";
-import { KvUIEntry, Stats } from "../types.ts";
+import { KvUIEntry, Stats, ToastType } from "../types.ts";
 import { StatsBar } from "../components/StatsBar.tsx";
 import { submitSearchForm } from "../utils/ui/form.ts";
 import { KvDialog } from "../components/dialogs/KvDialog.tsx";
 import { JSX } from "preact";
 import { DeleteDataDialog } from "../components/dialogs/DeleteDataDialog.tsx";
 import { CopyDataDialog } from "../components/dialogs/CopyDataDialog.tsx";
+import { Toast } from "./Toast.tsx";
 
 interface SearchResultsProps {
   results: KvUIEntry[] | undefined;
@@ -44,9 +45,13 @@ export function SearchResults(props: SearchResultsProps) {
   const { prefix, start, end, reverse, session } = props;
   const entries = filtered ? " filtered entries" : " entries";
 
-  const fullViewKey = signal("");
-  const fullViewValue = signal("");
+  const fullViewKey = useSignal("");
+  const fullViewValue = useSignal("");
+  const fullViewKeyHash = useSignal("");
   const selected = useSignal<string[]>([]);
+  const showToastSignal = useSignal(false);
+  const toastMsg = useSignal("");
+  const toastType = useSignal<ToastType>("info");
 
   const to = Math.min(props.from + props.show - 1, resultsCount);
 
@@ -108,11 +113,17 @@ export function SearchResults(props: SearchResultsProps) {
     if (target.tagName === "TD") {
       const key = target.parentElement!.children[1].textContent;
       const value = (target.parentElement!.children[2] as HTMLTableCellElement).title;
+      const keyHash = target.parentElement!.id;
       fullViewKey.value = key || "";
       fullViewValue.value = value || "";
-
+      fullViewKeyHash.value = keyHash || "";
+      
       const dialog = document.getElementById("kvDialog") as HTMLDialogElement;
       dialog.showModal();
+      const okButtonRef = document.getElementById("okButton") as HTMLButtonElement;
+      if (okButtonRef) {
+        okButtonRef.focus();
+      }
     }
   }
 
@@ -170,7 +181,7 @@ export function SearchResults(props: SearchResultsProps) {
     <div>
       {(resultsCount > 0 || filtered) &&
         (
-          <>
+          <div id="resultsPanel">
             <div class="flex justify-between">
               <div class="flex items-center justify-start mt-3">
                 <label for="filter">Filter</label>
@@ -231,7 +242,7 @@ export function SearchResults(props: SearchResultsProps) {
                 <tbody class={TW_TBODY} id="resultRows">
                   {results!.map((result) => {
                     return (
-                      <tr class={TW_TR} onClick={fullView}>
+                      <tr id={result.keyHash} class={TW_TR} onClick={fullView}>
                         <td class={TW_TD + " w-12 text-center"}>
                           <input
                             type="checkbox"
@@ -295,13 +306,27 @@ export function SearchResults(props: SearchResultsProps) {
                 </div>
               </div>
             </div>
-          </>
+          </div>
         )}
       {props.stats && <StatsBar stats={props.stats} />}
-      <KvDialog kvKey={fullViewKey} kvValue={fullViewValue} />
+      <KvDialog
+        kvKey={fullViewKey}
+        kvValue={fullViewValue}
+        kvKeyHash={fullViewKeyHash}
+        connectionId={props.connectionId}
+        prefix={prefix}
+        start={start}
+        end={end}
+        from={props.from}
+        show={props.show}
+        reverse={reverse}
+        showToastSignal={showToastSignal}
+        toastMsg={toastMsg}
+        toastType={toastType}
+      />
       <DeleteDataDialog
         keysSelected={selected.value}
-        connectionName={props.connectionName}
+        connections={props.connections}
         connectionLocation={props.connectionLocation}
         connectionId={props.connectionId}
         prefix={prefix}
@@ -316,7 +341,6 @@ export function SearchResults(props: SearchResultsProps) {
       <CopyDataDialog
         keysSelected={selected.value}
         connections={props.connections}
-        connectionName={props.connectionName}
         connectionLocation={props.connectionLocation}
         connectionId={props.connectionId}
         prefix={prefix}
@@ -328,6 +352,12 @@ export function SearchResults(props: SearchResultsProps) {
         reverse={reverse}
         filter={filter}
         />
+      <Toast
+        id="actionCompletedToast"
+        message={toastMsg.value}
+        show={showToastSignal}
+        type={toastType.value}
+      />
 
     </div>
   );

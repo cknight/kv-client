@@ -1,7 +1,7 @@
 import { defineLayout, LayoutContext } from "$fresh/server.ts";
 import { KvConnection } from "../types.ts";
-import { getUserState } from "../utils/state.ts";
-import { DeployUser } from "../utils/denoDeploy/deployUser.ts";
+import { getUserState } from "../utils/state/state.ts";
+import { DeployUser } from "../utils/connections/denoDeploy/deployUser.ts";
 import { localKv } from "../utils/kv/db.ts";
 import { CONNECTIONS_KEY_PREFIX, DEPLOY_USER_KEY_PREFIX } from "../consts.ts";
 import { AvatarMenu } from "../islands/avatarMenu/AvatarMenu.tsx";

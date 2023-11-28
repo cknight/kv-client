@@ -4,7 +4,6 @@ import { BUTTON } from "../../consts.ts";
 export function RemoveLocalConnectionDialog() {
   function closeDialog(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     //event.preventDefault(); //e.g. don't submit the form
-    console.log("close dialog");
     (document.getElementById("removeLocalConnectionDialog")! as HTMLDialogElement).close();
   }
 

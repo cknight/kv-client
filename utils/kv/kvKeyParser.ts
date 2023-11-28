@@ -1,7 +1,6 @@
+import { UINT8_REGEX } from "../../consts.ts";
 import { ValidationError } from "../errors.ts";
 
-const UINT8_REGEX =
-  /^\[((?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)(?:,(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d))*)?]?$/;
 const LOG_ENABLED = false;
 
 export function parseKvKey(input: string): Deno.KvKey {

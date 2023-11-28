@@ -1,7 +1,7 @@
 import { Handlers, PageProps, RouteContext } from "$fresh/server.ts";
 import { deleteCookie, setCookie } from "$std/http/cookie.ts";
-import { logout } from "../utils/denoDeploy/logout.ts";
-import { getUserState } from "../utils/state.ts";
+import { logout } from "../utils/connections/denoDeploy/logout.ts";
+import { getUserState } from "../utils/state/state.ts";
 
 interface LogoutProps {
   isDeployUser: boolean;
@@ -25,7 +25,6 @@ export const handler: Handlers = {
 
 export default function Logout(props: PageProps<LogoutProps>) {
   const isDeployUser = new URL(props.url).searchParams.get("authenticated") === "true";
-  console.log("isDeployUser2", isDeployUser);
   return (
     <>
       <div class="px-4 py-8 mx-auto">

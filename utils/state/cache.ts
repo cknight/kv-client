@@ -1,4 +1,4 @@
-import { CachedSearch, CacheKey, I_CacheManager, SearchResults } from "../types.ts";
+import { CachedSearch, CacheKey, I_CacheManager, SearchResults } from "../../types.ts";
 
 export class CacheManager implements I_CacheManager {
   private cache: Map<string, CachedSearch> = new Map();
@@ -32,6 +32,15 @@ export class CacheManager implements I_CacheManager {
 
     const result = this.cache.get(key);
     console.log("Cache for key", JSON.stringify(key), "cursor", result?.cursor, "items", result?.dataRetrieved.length);
+  }
+
+  set(parms: SearchResults): void {
+    const key = this.#key(parms.connectionId, parms.prefix, parms.start, parms.end, parms.reverse);
+    this.cache.set(key, {
+      cursor: parms.cursor,
+      dataRetrieved: parms.results,
+      cacheTime: Date.now(),
+    });
   }
 
   clear(): void {

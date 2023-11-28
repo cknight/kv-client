@@ -1,8 +1,8 @@
-import { CONNECTIONS_KEY_PREFIX, DEPLOY_USER_KEY_PREFIX } from "../consts.ts";
-import { KvConnection } from "../types.ts";
+import { CONNECTIONS_KEY_PREFIX, DEPLOY_USER_KEY_PREFIX } from "../../consts.ts";
+import { KvConnection } from "../../types.ts";
 import { deployKvEnvironment, DeployUser } from "./denoDeploy/deployUser.ts";
-import { localKv } from "./kv/db.ts";
-import { getUserState } from "./state.ts";
+import { localKv } from "../kv/db.ts";
+import { getUserState } from "../state/state.ts";
 
 export interface Connections {
   local: KvConnection[];

@@ -1,5 +1,5 @@
-import { Environment } from "../../types.ts";
-import { getUserState } from "../state.ts";
+import { Environment } from "../../../types.ts";
+import { getUserState } from "../../state/state.ts";
 import { getOrganizationDetail, getProjectDbs, getRootData } from "./dash.ts";
 
 export interface DeployUser {

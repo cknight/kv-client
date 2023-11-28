@@ -1,13 +1,10 @@
 import { Handlers } from "$fresh/server.ts";
-import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
-import { DeleteAuditLog, KvConnection } from "../../types.ts";
-import { executorId } from "../../utils/denoDeploy/deployUser.ts";
-import { localKv } from "../../utils/kv/db.ts";
+import { DeleteAuditLog } from "../../types.ts";
+import { executorId } from "../../utils/connections/denoDeploy/deployUser.ts";
 import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";
 import { establishKvConnection } from "../../utils/kv/kvConnect.ts";
 import { deleteAll, DeleteResult } from "../../utils/kv/kvDelete.ts";
-import { computeSize, writeUnitsConsumed } from "../../utils/kv/kvUnitsConsumed.ts";
-import { getUserState } from "../../utils/state.ts";
+import { getUserState } from "../../utils/state/state.ts";
 import { entriesToOperateOn } from "../../utils/ui/buildResultsPage.ts";
 
 export interface DeleteKeysData {
@@ -25,6 +22,7 @@ export interface DeleteKeysData {
 
 interface DeleteOpResult {
   duration: number;
+  deleteEntries: number;
   deleteResult: DeleteResult;
 }
 
@@ -58,7 +56,11 @@ export const handler: Handlers = {
       const dc = deleteResult.deletedKeyCount;
 
       if (deleteResult.aborted) {
-        body = `Deletion aborted. ${deleteResult.deletedKeyCount} key${dc > 1 ? "s" : ""} deleted`;
+        const percComplete = dc / result.deleteEntries;
+        const percCompleteString = `${Math.round(percComplete * 100)}%`;
+        body = `Delete aborted at ${percCompleteString} complete. ${dc} key${
+          dc > 1 ? "s" : ""
+        } deleted`;
         status = 499;
       } else if (deleteResult.failedKeys.length > 0) {
         body = `Deleted ${dc} key${
@@ -68,7 +70,7 @@ export const handler: Handlers = {
         }`;
         status = 500;
       } else {
-        body = dc > 1 ? `All ${deleteResult.deletedKeyCount} keys deleted` : `Key successfully deleted`;
+        body = dc > 1 ? `${dc} KV entries successfully deleted` : `KV entry successfully deleted`;
       }
       getUserState(session).cache.clear();
       return new Response(body, {
@@ -113,5 +115,5 @@ async function deleteKeys(data: DeleteKeysData, session: string): Promise<Delete
   console.log("  Time to delete keys", Date.now() - startDeleteTime, "ms");
 
   const overallDuration = Date.now() - startTime;
-  return { duration: overallDuration, deleteResult };
+  return { duration: overallDuration, deleteEntries: deleteEntries.length, deleteResult };
 }

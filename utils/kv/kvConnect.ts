@@ -1,10 +1,10 @@
 import { CONNECTIONS_KEY_PREFIX, ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, env } from "../../consts.ts";
 import { KvConnection } from "../../types.ts";
-import { getUserState } from "../state.ts";
+import { getUserState } from "../state/state.ts";
 import { ValidationError } from "../errors.ts";
 import { localKv } from "./db.ts";
 import { Mutex } from "semaphore/mutex.ts";
-import { getEncryptedString } from "../encryption.ts";
+import { getEncryptedString } from "../transform/encryption.ts";
 
 export const mutex = new Mutex();
 
@@ -37,6 +37,7 @@ export async function establishKvConnection(session: string, connectionId: strin
     // Remote KV access
     const accessToken  = await getEncryptedString([ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session]);
     if (!accessToken) {
+      //FIXME - forward to access token input page
       throw new ValidationError("No access token available");
     }
 
@@ -69,5 +70,5 @@ export async function establishKvConnection(session: string, connectionId: strin
     throw new ValidationError(`Connection ${connectionId} does not exist`);
   }
 
-  console.debug(`Established KV connection to '${connection.name}'`);
+  console.debug(`Established KV connection to '${connection.name} (${connection.environment})'`);
 }

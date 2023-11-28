@@ -5,19 +5,19 @@ import { RemoveLocalConnectionDialog } from "../islands/connections/RemoveLocalC
 import { CONNECTIONS_KEY_PREFIX } from "../consts.ts";
 import { AddLocalConnectionButton } from "../islands/connections/AddLocalConnectionButton.tsx";
 import { ConnectButton } from "../islands/connections/ConnectButton.tsx";
-import { getConnections, resetLocalConnectionList } from "../utils/connections.ts";
+import { getConnections, resetLocalConnectionList } from "../utils/connections/connections.ts";
 import { localKv } from "../utils/kv/db.ts";
+import { Toast } from "../islands/Toast.tsx";
+import { signal, useSignal } from "@preact/signals";
+import { ToastTest } from "../islands/TestToast.tsx";
 
 export const handler: Handlers = {
   async POST(req, ctx) {
     const formData = await req.formData();
     const action = formData.get("formAction")?.toString();
-    console.log(formData);
     if (action === "removeLocalConnection") {
       const connectionId = formData.get("removeLocalConnectionId")?.toString();
-      console.log(connectionId);
       if (connectionId && typeof connectionId === "string") {
-        console.log("post check");
         await localKv.delete([CONNECTIONS_KEY_PREFIX, connectionId]);
         await resetLocalConnectionList();
         console.debug("Removed local connection", connectionId);
@@ -33,9 +33,11 @@ export const handler: Handlers = {
 
 export default async function Connections(_req: Request, ctx: RouteContext) {
   const { local, remote } = await getConnections(ctx.state.session as string);
+  const fadeSignal = signal(false);
 
   return (
     <div class="w-full">
+      <ToastTest />
       <div id="localConnections" class="flex p-5">
         <div class="flex justify-center items-center mr-8">
           <p class="w-24 text-2xl font-bold">Local</p>

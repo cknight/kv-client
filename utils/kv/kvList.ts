@@ -7,12 +7,12 @@ import {
 } from "../../types.ts";
 import { establishKvConnection } from "./kvConnect.ts";
 import { parseKvKey } from "./kvKeyParser.ts";
-import { getUserState } from "../state.ts";
+import { getUserState } from "../state/state.ts";
 import { ValidationError } from "../errors.ts";
 import { computeSize } from "./kvUnitsConsumed.ts";
 import { readUnitsConsumed } from "./kvUnitsConsumed.ts";
 import { auditAction, auditConnectionName } from "./kvAudit.ts";
-import { executorId } from "../denoDeploy/deployUser.ts";
+import { executorId } from "../connections/denoDeploy/deployUser.ts";
 import { toJSON } from "../utils.ts";
 
 export async function searchKv(
@@ -108,19 +108,35 @@ export async function searchKv(
   }
   const queryOnlyTime = Date.now() - queryOnlyTimeStart;
   newCursor = listIterator.cursor === "" ? false : newCursor;
-  console.log("---------", newCursor);
 
-  //Add results to cache
-  console.log("Caching", newResults.length, "results.  Cursor", newCursor);
-  state.cache.add({
-    connectionId,
-    prefix,
-    start,
-    end,
-    reverse,
-    results: newResults,
-    cursor: newCursor,
-  });
+  /**
+   * Caching is always used if the user edits, deletes or copies a key(s) as the results from
+   * the cache are used to determine which keys to operate on.  However, if the cache is disabled
+   * by the user then any results from this search are set in the cache (overwriting any previously)
+   * cached data), not added to any existing results already in the cache.
+   */
+  if (disableCache) {
+    state.cache.set({
+      connectionId,
+      prefix,
+      start,
+      end,
+      reverse,
+      results: newResults,
+      cursor: newCursor,
+    });
+  } else {
+    console.log("Caching", newResults.length, "results.  Cursor", newCursor);
+    state.cache.add({
+      connectionId,
+      prefix,
+      start,
+      end,
+      reverse,
+      results: newResults,
+      cursor: newCursor,
+    });
+  }
 
   const readUnits = readUnitsConsumed(operationSize);
 

@@ -12,25 +12,28 @@ import * as $6 from "./routes/api/abortCopy.tsx";
 import * as $7 from "./routes/api/abortDelete.tsx";
 import * as $8 from "./routes/api/copyKeys.tsx";
 import * as $9 from "./routes/api/deleteKeys.tsx";
-import * as $10 from "./routes/index.tsx";
-import * as $11 from "./routes/logout.tsx";
-import * as $12 from "./routes/search.tsx";
+import * as $10 from "./routes/api/updateKey.tsx";
+import * as $11 from "./routes/index.tsx";
+import * as $12 from "./routes/logout.tsx";
+import * as $13 from "./routes/search.tsx";
 import * as $$0 from "./islands/AccessTokenInput.tsx";
 import * as $$1 from "./islands/DarkMode.tsx";
 import * as $$2 from "./islands/PageForm.tsx";
 import * as $$3 from "./islands/SearchBox.tsx";
 import * as $$4 from "./islands/SearchResults.tsx";
 import * as $$5 from "./islands/TabBar.tsx";
-import * as $$6 from "./islands/avatarMenu/AvatarMenu.tsx";
-import * as $$7 from "./islands/avatarMenu/UnknownAvatarMenu.tsx";
-import * as $$8 from "./islands/connections/AddLocalConnectionButton.tsx";
-import * as $$9 from "./islands/connections/CancelAddConnectionButton.tsx";
-import * as $$10 from "./islands/connections/ConnectButton.tsx";
-import * as $$11 from "./islands/connections/ConnectionCard.tsx";
-import * as $$12 from "./islands/connections/ConnectionDropDown.tsx";
-import * as $$13 from "./islands/connections/ConnectionList.tsx";
-import * as $$14 from "./islands/connections/LocalConnectionRadio.tsx";
-import * as $$15 from "./islands/connections/RemoveLocalConnectionDialog.tsx";
+import * as $$6 from "./islands/TestToast.tsx";
+import * as $$7 from "./islands/Toast.tsx";
+import * as $$8 from "./islands/avatarMenu/AvatarMenu.tsx";
+import * as $$9 from "./islands/avatarMenu/UnknownAvatarMenu.tsx";
+import * as $$10 from "./islands/connections/AddLocalConnectionButton.tsx";
+import * as $$11 from "./islands/connections/CancelAddConnectionButton.tsx";
+import * as $$12 from "./islands/connections/ConnectButton.tsx";
+import * as $$13 from "./islands/connections/ConnectionCard.tsx";
+import * as $$14 from "./islands/connections/ConnectionDropDown.tsx";
+import * as $$15 from "./islands/connections/ConnectionList.tsx";
+import * as $$16 from "./islands/connections/LocalConnectionRadio.tsx";
+import * as $$17 from "./islands/connections/RemoveLocalConnectionDialog.tsx";
 
 const manifest = {
   routes: {
@@ -44,9 +47,10 @@ const manifest = {
     "./routes/api/abortDelete.tsx": $7,
     "./routes/api/copyKeys.tsx": $8,
     "./routes/api/deleteKeys.tsx": $9,
-    "./routes/index.tsx": $10,
-    "./routes/logout.tsx": $11,
-    "./routes/search.tsx": $12,
+    "./routes/api/updateKey.tsx": $10,
+    "./routes/index.tsx": $11,
+    "./routes/logout.tsx": $12,
+    "./routes/search.tsx": $13,
   },
   islands: {
     "./islands/AccessTokenInput.tsx": $$0,
@@ -55,16 +59,18 @@ const manifest = {
     "./islands/SearchBox.tsx": $$3,
     "./islands/SearchResults.tsx": $$4,
     "./islands/TabBar.tsx": $$5,
-    "./islands/avatarMenu/AvatarMenu.tsx": $$6,
-    "./islands/avatarMenu/UnknownAvatarMenu.tsx": $$7,
-    "./islands/connections/AddLocalConnectionButton.tsx": $$8,
-    "./islands/connections/CancelAddConnectionButton.tsx": $$9,
-    "./islands/connections/ConnectButton.tsx": $$10,
-    "./islands/connections/ConnectionCard.tsx": $$11,
-    "./islands/connections/ConnectionDropDown.tsx": $$12,
-    "./islands/connections/ConnectionList.tsx": $$13,
-    "./islands/connections/LocalConnectionRadio.tsx": $$14,
-    "./islands/connections/RemoveLocalConnectionDialog.tsx": $$15,
+    "./islands/TestToast.tsx": $$6,
+    "./islands/Toast.tsx": $$7,
+    "./islands/avatarMenu/AvatarMenu.tsx": $$8,
+    "./islands/avatarMenu/UnknownAvatarMenu.tsx": $$9,
+    "./islands/connections/AddLocalConnectionButton.tsx": $$10,
+    "./islands/connections/CancelAddConnectionButton.tsx": $$11,
+    "./islands/connections/ConnectButton.tsx": $$12,
+    "./islands/connections/ConnectionCard.tsx": $$13,
+    "./islands/connections/ConnectionDropDown.tsx": $$14,
+    "./islands/connections/ConnectionList.tsx": $$15,
+    "./islands/connections/LocalConnectionRadio.tsx": $$16,
+    "./islands/connections/RemoveLocalConnectionDialog.tsx": $$17,
   },
   baseUrl: import.meta.url,
 };

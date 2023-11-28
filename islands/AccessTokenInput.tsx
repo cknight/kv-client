@@ -6,7 +6,6 @@ export function AccessTokenInput() {
   const showPassword = useSignal(false);
 
   function togglePassword() {
-    console.log("togglePassword");
     showPassword.value = !showPassword.value;
   }
 

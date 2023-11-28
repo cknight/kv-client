@@ -1,5 +1,5 @@
-import { env } from "../consts.ts";
-import { localKv } from "./kv/db.ts";
+import { env } from "../../consts.ts";
+import { localKv } from "../kv/db.ts";
 
 let kv = localKv;
 

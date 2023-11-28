@@ -1,4 +1,4 @@
-import { getUserState } from "../state.ts";
+import { getUserState } from "../state/state.ts";
 import { hashKvKey, toJSON } from "../utils.ts";
 
 export interface KeyOperationData {
@@ -48,7 +48,7 @@ export async function entriesToOperateOn(data: KeyOperationData, session: string
    * Scenario 2: no keys supplied and filter specified (operate on all filtered results)
    * Scenario 3: keys specified (operate on specific keys)
    *
-   * keysSelected are sha-512 hashes of serializeDenoKvKey(KvKey)
+   * keysSelected are sha-512 hashes of serialized Deno.KvKey
    */
   let kvEntries: Deno.KvEntry<unknown>[] = [];
 
@@ -92,7 +92,7 @@ export async function entriesToOperateOn(data: KeyOperationData, session: string
     }
   }
 
-  console.log("  Time to match keys:", Date.now() - startTime, "ms");
+  console.log(`  Time to match ${kvEntries.length} keys: ${Date.now() - startTime}ms`);
   return kvEntries;
 }
 

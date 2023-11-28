@@ -1,7 +1,7 @@
 import { assertEquals } from "$std/assert/mod.ts";
-import { env } from "../consts.ts";
-import { _setKv, getEncryptedString, storeEncryptedString } from "./encryption.ts";
-import { localKv } from "./kv/db.ts";
+import { env } from "../../consts.ts";
+import { _setKv, getEncryptedString, storeEncryptedString } from "../transform/encryption.ts";
+import { localKv } from "../kv/db.ts";
 
 Deno.test("Encryption/decryption work correctly with in-memory key", async () => {
   const kvKey = ["encryption test"];

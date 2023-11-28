@@ -1,13 +1,13 @@
 import { Handlers } from "$fresh/server.ts";
 import { CONNECTIONS_KEY_PREFIX, ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, env } from "../../consts.ts";
 import { CopyAuditLog, KvConnection } from "../../types.ts";
-import { executorId } from "../../utils/denoDeploy/deployUser.ts";
-import { getEncryptedString } from "../../utils/encryption.ts";
+import { executorId } from "../../utils/connections/denoDeploy/deployUser.ts";
+import { getEncryptedString } from "../../utils/transform/encryption.ts";
 import { localKv } from "../../utils/kv/db.ts";
 import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";
 import { establishKvConnection, mutex } from "../../utils/kv/kvConnect.ts";
 import { setAll, SetResult } from "../../utils/kv/kvSet.ts";
-import { getUserState } from "../../utils/state.ts";
+import { getUserState } from "../../utils/state/state.ts";
 import { entriesToOperateOn, KeyOperationData } from "../../utils/ui/buildResultsPage.ts";
 
 export interface CopyKeysData {
@@ -26,6 +26,7 @@ export interface CopyKeysData {
 
 interface CopyOpResult {
   duration: number;
+  copyEntries: number;
   copyResult: SetResult;
 }
 
@@ -66,9 +67,9 @@ export const handler: Handlers = {
       const kc = copyResult.setKeyCount;
       
       if (copyResult.aborted) {
-        const percComplete = kc / data.keysToCopy.length;
+        const percComplete = kc / result.copyEntries;
         const percCompleteString = `${Math.round(percComplete * 100)}%`;
-        body = `Copy aborted at ${percCompleteString}. ${copyResult.setKeyCount} key${kc > 1 ? "s" : ""} copied`;
+        body = `Copy aborted at ${percCompleteString} complete. ${kc} key${kc > 1 ? "s" : ""} copied`;
         status = 499;
       } else if (copyResult.failedKeys.length > 0) {
         body = `Copied ${kc} key${
@@ -78,7 +79,7 @@ export const handler: Handlers = {
         }`;
         status = 500;
       } else {
-        body = kc > 1 ? `All ${copyResult.setKeyCount} keys copied` : `Key successfully copied`;
+        body = kc > 1 ? `${kc} KV entries successfully copied` : `KV entry successfully copied`;
       }
 
       return new Response(body, {
@@ -121,7 +122,6 @@ async function copyKeys(data: CopyKeysData, session: string): Promise<CopyOpResu
 
   //Compute which keys to copy
   const copyEntries = await entriesToOperateOn(keyOperationData, session);
-  const state = getUserState(session);
 
   const destKv = await connectToDestKv(session, destConnectionId);
 
@@ -129,11 +129,12 @@ async function copyKeys(data: CopyKeysData, session: string): Promise<CopyOpResu
   //      and then GET progress updates through a separate endpoint.
   const startCopyTime = Date.now();
   const copyResult = await setAll(copyEntries, destKv, abortId);
-  console.log("  Time to copy keys", Date.now() - startCopyTime, "ms");
+  console.debug("  Time to copy keys", Date.now() - startCopyTime, "ms");
 
   const overallDuration = Date.now() - startTime;
   return {
     duration: overallDuration,
+    copyEntries: copyEntries.length,
     copyResult,
   };
 }
