@@ -23,8 +23,8 @@ const LARGEST_KEY_VALUE_SIZE = MAX_KV_VALUE_SIZE + MAX_KV_KEY_SIZE; //bytes (66k
 
 // Since size calcs are approximate, leave a small buffer for differences in size calculations
 const SAFE_MAX_ATOMIC_KEY_SIZE = MAX_TRANSACTION_TOTAL_KEY_SIZE - MAX_KV_KEY_SIZE - 1024; // 1-3kb buffer
-const SAFE_MAX_ATOMIC_TRANSACTION_SIZE = MAX_TRANSACTION_TOTAL_SIZE - LARGEST_KEY_VALUE_SIZE - 10 * 1024; // 10-74kb buffer
-
+const SAFE_MAX_ATOMIC_TRANSACTION_SIZE = MAX_TRANSACTION_TOTAL_SIZE - LARGEST_KEY_VALUE_SIZE -
+  10 * 1024; // 10-74kb buffer
 
 /**
  * A fast, efficient and abortable way to set a large number of key/value pairs into KV
@@ -62,12 +62,14 @@ export async function setAll(
     atomic.set(entry.key, entry.value);
     keysInAction.push(entry);
     const entryKeySize = approximateSize(entry.key);
-    totalTransactionSize += (entryKeySize + approximateSize(entry.value));
+    totalTransactionSize += entryKeySize + approximateSize(entry.value);
     totalKeysSize += entryKeySize;
-    
-    if (++count === MAX_NUM_OPS_PER_TRANSACTION 
-      || totalKeysSize > SAFE_MAX_ATOMIC_KEY_SIZE
-      || totalTransactionSize > SAFE_MAX_ATOMIC_TRANSACTION_SIZE) {
+
+    if (
+      ++count === MAX_NUM_OPS_PER_TRANSACTION ||
+      totalKeysSize > SAFE_MAX_ATOMIC_KEY_SIZE ||
+      totalTransactionSize > SAFE_MAX_ATOMIC_TRANSACTION_SIZE
+    ) {
       // transaction count or size limit reached, commit transaction and reset
       try {
         await atomic.commit();
@@ -79,7 +81,7 @@ export async function setAll(
         failedKeys.push(...result.failedKeys);
         setKeyCount += result.setKeyCount;
         totalWriteUnits += result.writeUnitsConsumed;
-        
+
         if (result.aborted) {
           return {
             failedKeys,
@@ -150,7 +152,9 @@ async function retrySetIndividually(
     }
     try {
       await kv.set(entry.key, entry.value);
-      totalWriteUnits += writeUnitsConsumed(approximateSize(entry.key) + approximateSize(entry.value));
+      totalWriteUnits += writeUnitsConsumed(
+        approximateSize(entry.key) + approximateSize(entry.value),
+      );
       setKeys++;
     } catch (e) {
       console.error("Failed to set key", entry, e);

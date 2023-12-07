@@ -43,7 +43,7 @@ export function AvatarMenu({ deployUser }: { deployUser: DeployUser }) {
             </div>
             <nav class="mt-4 w-full">
               <ul>
-                <li class="px-4 border-t-1 border-gray-200 flex hover:bg-gray-100">
+                <li class="px-4 border-t-2 border-gray-200 flex hover:bg-gray-100">
                   <a
                     class="py-2.5 flex-1"
                     target="_blank"
@@ -53,10 +53,10 @@ export function AvatarMenu({ deployUser }: { deployUser: DeployUser }) {
                     Access tokens
                   </a>
                 </li>
-                <li class="px-4 border-t-1 border-gray-200 flex hover:bg-gray-100">
+                <li class="px-4 border-t-2 border-gray-200 flex hover:bg-gray-100">
                   <a href="/settings" class="py-2.5 flex-1">Settings</a>
                 </li>
-                <li class="px-4 border-t-1 border-gray-200 flex hover:bg-gray-100">
+                <li class="px-4 border-t-2 border-gray-200 flex hover:bg-gray-100">
                   <p onClick={signOut} class="py-2.5 flex-1 cursor-pointer">Sign out</p>
                 </li>
               </ul>

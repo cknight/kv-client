@@ -3,7 +3,10 @@ import { localKv } from "../kv/db.ts";
 
 let kv = localKv;
 
-async function importKey(password: string, suppliedSalt?: Uint8Array): Promise<{ key: CryptoKey; salt: Uint8Array }> {
+async function importKey(
+  password: string,
+  suppliedSalt?: Uint8Array,
+): Promise<{ key: CryptoKey; salt: Uint8Array }> {
   const encoder = new TextEncoder();
   const passwordBuffer = encoder.encode(password);
   const salt = suppliedSalt || window.crypto.getRandomValues(new Uint8Array(16));
@@ -55,7 +58,11 @@ async function encryptString(
   return { iv, encryptedString };
 }
 
-async function decryptString(key: CryptoKey, iv: Uint8Array, cipherText: ArrayBuffer): Promise<string> {
+async function decryptString(
+  key: CryptoKey,
+  iv: Uint8Array,
+  cipherText: ArrayBuffer,
+): Promise<string> {
   const decrypted = await crypto.subtle.decrypt(
     {
       name: "AES-GCM",
@@ -77,30 +84,34 @@ type EncryptedData = {
  * Store a string value on KV as an encrypted value.  Encryption is symmetric using either an in-memory key
  * which will be lost on process end/restart, or a user-supplied key via the KV_CLIENT_ENCRYPTION_KEY
  * environment variable.
- * 
- * @param kvKey 
- * @param value 
+ *
+ * @param kvKey
+ * @param value
  */
-export async function storeEncryptedString(kvKey: Deno.KvKey, value: string, expiryMs?: number): Promise<void> {
+export async function storeEncryptedString(
+  kvKey: Deno.KvKey,
+  value: string,
+  expiryMs?: number,
+): Promise<void> {
   const userSuppliedKey = Deno.env.get(env.KV_CLIENT_ENCRYPTION_KEY);
   if (userSuppliedKey) {
-    const {key, salt} = await importKey(userSuppliedKey);
-    const {iv, encryptedString} = await encryptString(key, value);
+    const { key, salt } = await importKey(userSuppliedKey);
+    const { iv, encryptedString } = await encryptString(key, value);
     const encryptedData: EncryptedData = { iv, cipherText: new Uint8Array(encryptedString), salt };
-    await kv.set(kvKey, encryptedData, expiryMs ? {expireIn: expiryMs} : undefined);
+    await kv.set(kvKey, encryptedData, expiryMs ? { expireIn: expiryMs } : undefined);
   } else {
-    const {iv, encryptedString} = await encryptString(staticCryptoKey, value);
+    const { iv, encryptedString } = await encryptString(staticCryptoKey, value);
     const encryptedData: EncryptedData = { iv, cipherText: new Uint8Array(encryptedString) };
-    await kv.set(kvKey, encryptedData, expiryMs ? {expireIn: expiryMs} : undefined);
+    await kv.set(kvKey, encryptedData, expiryMs ? { expireIn: expiryMs } : undefined);
   }
 }
 
 /**
  * Retrieve a string value from KV that was stored as an encrypted value.  Encryption is symmetric using
- * either an in-memory key which will be lost on process restart, or a user-supplied key via the 
+ * either an in-memory key which will be lost on process restart, or a user-supplied key via the
  * KV_CLIENT_ENCRYPTION_KEY environment variable.
- * 
- * @param kvKey 
+ *
+ * @param kvKey
  * @returns unencrypted string value or null if the encrypted value either does not exist or was encrypted with a different key
  */
 export async function getEncryptedString(kvKey: Deno.KvKey): Promise<string | null> {
@@ -112,10 +123,14 @@ export async function getEncryptedString(kvKey: Deno.KvKey): Promise<string | nu
       key = (await importKey(userSuppliedKey, encryptedData.value.salt)).key;
     }
     try {
-      const decrypted = await decryptString(key, encryptedData.value.iv, encryptedData.value.cipherText.buffer);
+      const decrypted = await decryptString(
+        key,
+        encryptedData.value.iv,
+        encryptedData.value.cipherText.buffer,
+      );
       return decrypted;
     } catch (e) {
-      console.error(`Error decrypting value.  Returning null. KV Key ${Deno.inspect(kvKey)}:`,e);
+      console.error(`Error decrypting value.  Returning null. KV Key ${Deno.inspect(kvKey)}:`, e);
       return null;
     }
   } else {

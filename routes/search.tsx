@@ -3,8 +3,8 @@ import { SearchBox } from "../islands/SearchBox.tsx";
 import { PartialSearchResults, SearchData, Stats } from "../types.ts";
 import { SearchResults } from "../islands/SearchResults.tsx";
 import { searchKv } from "../utils/kv/kvList.ts";
-import { SearchForm } from "../islands/PageForm.tsx";
 import { PATError } from "../utils/errors.ts";
+
 import { getUserState } from "../utils/state/state.ts";
 import { unitsConsumedToday } from "../utils/kv/kvUnitsConsumed.ts";
 import { createKvUIEntry } from "../utils/utils.ts";
@@ -101,20 +101,6 @@ export const handler: Handlers = {
       };
     }
   },
-  async GET(req, ctx) {
-    // const connectionId = searchParms.get("connectionId") || "";
-
-    // if (connectionId) {
-    //   try {
-    //     const session = ctx.state.session as string;
-    //     await establishKvConnection(session, connectionId);
-    //   } catch (e) {
-    //     //FIXME: show error to user
-    //     console.error(`Failed to connect to ${connectionId}. Error: `, e);
-    //   }
-    // }
-    return ctx.render();
-  },
 };
 
 export default async function Search(req: Request, props: RouteContext<SearchData>) {
@@ -151,7 +137,12 @@ export default async function Search(req: Request, props: RouteContext<SearchDat
 
   return (
     <>
-      <SearchForm>
+      <form
+        id="pageForm"
+        xxxf-partial="/partials/results/search?hello=world"
+        method="post"
+        class="w-full h-full m-8 mt-0 border-1 border-gray-400 rounded p-5 bg-white"
+      >
         <SearchBox
           prefix={prefix}
           start={start}
@@ -180,7 +171,7 @@ export default async function Search(req: Request, props: RouteContext<SearchDat
           connectionName={connectionName}
           connectionLocation={connectionLocation}
         />
-      </SearchForm>
+      </form>
     </>
   );
 }

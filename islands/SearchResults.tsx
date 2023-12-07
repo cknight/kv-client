@@ -10,7 +10,7 @@ import {
   TW_TR,
 } from "../consts.ts";
 import { IS_BROWSER } from "$fresh/runtime.ts";
-import { Help } from "../components/Help.tsx";
+import { Help } from "./Help.tsx";
 import { KvUIEntry, Stats, ToastType } from "../types.ts";
 import { StatsBar } from "../components/StatsBar.tsx";
 import { submitSearchForm } from "../utils/ui/form.ts";
@@ -34,7 +34,7 @@ interface SearchResultsProps {
   start: string;
   end: string;
   reverse: boolean;
-  connections: {name: string, id: string, env:string }[];
+  connections: { name: string; id: string; env: string }[];
   connectionName: string;
   connectionId: string;
   connectionLocation: string;
@@ -117,7 +117,7 @@ export function SearchResults(props: SearchResultsProps) {
       fullViewKey.value = key || "";
       fullViewValue.value = value || "";
       fullViewKeyHash.value = keyHash || "";
-      
+
       const dialog = document.getElementById("kvDialog") as HTMLDialogElement;
       dialog.showModal();
       const okButtonRef = document.getElementById("okButton") as HTMLButtonElement;
@@ -337,7 +337,7 @@ export function SearchResults(props: SearchResultsProps) {
         resultsCount={resultsCount}
         reverse={reverse}
         filter={filter}
-        />
+      />
       <CopyDataDialog
         keysSelected={selected.value}
         connections={props.connections}
@@ -351,14 +351,13 @@ export function SearchResults(props: SearchResultsProps) {
         resultsCount={resultsCount}
         reverse={reverse}
         filter={filter}
-        />
+      />
       <Toast
         id="actionCompletedToast"
         message={toastMsg.value}
         show={showToastSignal}
         type={toastType.value}
       />
-
     </div>
   );
 }

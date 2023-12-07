@@ -53,6 +53,7 @@ Deno.test("kvKeyParser - multi-types input", () => {
   assertEquals(parseKvKey(`123n,false, "B"`), [123n, false, "B"]);
   assertEquals(parseKvKey(`true, 456, 0, "B"`), [true, 456, 0, "B"]);
   assertEquals(parseKvKey(`[1,2,3], 456, 0, "B"`), [new Uint8Array([1, 2, 3]), 456, 0, "B"]);
+  assertEquals(parseKvKey(`1, [1,2,3]`), [1, new Uint8Array([1, 2, 3])]);
 });
 
 Deno.test("kvKeyParser - complex input", () => {

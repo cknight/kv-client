@@ -16,8 +16,8 @@ export class CacheManager implements I_CacheManager {
   add(parms: SearchResults): void {
     const key = this.#key(parms.connectionId, parms.prefix, parms.start, parms.end, parms.reverse);
     const cachedSearch = this.cache.get(key);
-    
-    if (!cachedSearch){
+
+    if (!cachedSearch) {
       this.cache.set(key, {
         cursor: parms.cursor,
         dataRetrieved: parms.results,
@@ -31,7 +31,14 @@ export class CacheManager implements I_CacheManager {
     }
 
     const result = this.cache.get(key);
-    console.log("Cache for key", JSON.stringify(key), "cursor", result?.cursor, "items", result?.dataRetrieved.length);
+    console.log(
+      "Cache for key",
+      JSON.stringify(key),
+      "cursor",
+      result?.cursor,
+      "items",
+      result?.dataRetrieved.length,
+    );
   }
 
   set(parms: SearchResults): void {

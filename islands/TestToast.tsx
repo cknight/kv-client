@@ -7,7 +7,12 @@ export function ToastTest() {
   return (
     <div>
       <button onClick={() => fadeSignal.value = true}>Show Toast</button>
-      <Toast show={fadeSignal} id="toast1" message="An unexpected error occurred: Unable to read response. An unexpected error occurred: Unable to read response. An unexpected error occurred: Unable to read response. An unexpected error occurred: Unable to read response. An unexpected error occurred: Unable to read response" type="warn" />
+      <Toast
+        show={fadeSignal}
+        id="toast1"
+        message="An unexpected error occurred: Unable to read response. An unexpected error occurred: Unable to read response. An unexpected error occurred: Unable to read response. An unexpected error occurred: Unable to read response. An unexpected error occurred: Unable to read response"
+        type="warn"
+      />
     </div>
   );
 }

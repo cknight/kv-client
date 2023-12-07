@@ -11,5 +11,5 @@ export const handler: Handlers = {
     return new Response("", {
       status: 200,
     });
-  }
-}
+  },
+};

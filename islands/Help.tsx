@@ -10,6 +10,7 @@ interface HelpProps {
 
 export function Help(props: HelpProps) {
   function showHelp() {
+    console.log("showHelp");
     const dialog = document.getElementById(props.dialogId) as HTMLDialogElement;
     dialog.showModal();
     const okButton = dialog.querySelector("button");

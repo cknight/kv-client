@@ -18,8 +18,10 @@ export function RemoveLocalConnectionDialog() {
         </h1>
         <div class="flex mt-3 justify-center">
           <form method="post">
-            <input type="hidden" id="removeLocalConnectionId" name="removeLocalConnectionId"/>
-            <button class={BUTTON} type="submit" name="formAction" value="removeLocalConnection">OK</button>
+            <input type="hidden" id="removeLocalConnectionId" name="removeLocalConnectionId" />
+            <button class={BUTTON} type="submit" name="formAction" value="removeLocalConnection">
+              OK
+            </button>
             <button class={BUTTON} type="button" onClick={closeDialog}>Cancel</button>
           </form>
         </div>

@@ -1,7 +1,7 @@
 export function HomeIcon() {
   return (
     <svg
-      class="h-5 w-5 text-[#6e6e6e]"
+      class="h-5 w-5 text-neutral-300"
       width="24"
       height="24"
       viewBox="0 0 24 24"

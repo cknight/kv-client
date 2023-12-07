@@ -2,77 +2,93 @@
 // This file SHOULD be checked into source version control.
 // This file is automatically updated during development when running `dev.ts`.
 
-import * as $0 from "./routes/_404.tsx";
-import * as $1 from "./routes/_app.tsx";
-import * as $2 from "./routes/_layout.tsx";
-import * as $3 from "./routes/_middleware.ts";
-import * as $4 from "./routes/accessToken.tsx";
-import * as $5 from "./routes/addLocalConnection.tsx";
-import * as $6 from "./routes/api/abortCopy.tsx";
-import * as $7 from "./routes/api/abortDelete.tsx";
-import * as $8 from "./routes/api/copyKeys.tsx";
-import * as $9 from "./routes/api/deleteKeys.tsx";
-import * as $10 from "./routes/api/updateKey.tsx";
-import * as $11 from "./routes/index.tsx";
-import * as $12 from "./routes/logout.tsx";
-import * as $13 from "./routes/search.tsx";
-import * as $$0 from "./islands/AccessTokenInput.tsx";
-import * as $$1 from "./islands/DarkMode.tsx";
-import * as $$2 from "./islands/PageForm.tsx";
-import * as $$3 from "./islands/SearchBox.tsx";
-import * as $$4 from "./islands/SearchResults.tsx";
-import * as $$5 from "./islands/TabBar.tsx";
-import * as $$6 from "./islands/TestToast.tsx";
-import * as $$7 from "./islands/Toast.tsx";
-import * as $$8 from "./islands/avatarMenu/AvatarMenu.tsx";
-import * as $$9 from "./islands/avatarMenu/UnknownAvatarMenu.tsx";
-import * as $$10 from "./islands/connections/AddLocalConnectionButton.tsx";
-import * as $$11 from "./islands/connections/CancelAddConnectionButton.tsx";
-import * as $$12 from "./islands/connections/ConnectButton.tsx";
-import * as $$13 from "./islands/connections/ConnectionCard.tsx";
-import * as $$14 from "./islands/connections/ConnectionDropDown.tsx";
-import * as $$15 from "./islands/connections/ConnectionList.tsx";
-import * as $$16 from "./islands/connections/LocalConnectionRadio.tsx";
-import * as $$17 from "./islands/connections/RemoveLocalConnectionDialog.tsx";
+import * as $_404 from "./routes/_404.tsx";
+import * as $_app from "./routes/_app.tsx";
+import * as $_layout from "./routes/_layout.tsx";
+import * as $_middleware from "./routes/_middleware.ts";
+import * as $accessToken from "./routes/accessToken.tsx";
+import * as $add from "./routes/add.tsx";
+import * as $addLocalConnection from "./routes/addLocalConnection.tsx";
+import * as $api_abortCopy from "./routes/api/abortCopy.tsx";
+import * as $api_abortDelete from "./routes/api/abortDelete.tsx";
+import * as $api_addEntry from "./routes/api/addEntry.tsx";
+import * as $api_copyKeys from "./routes/api/copyKeys.tsx";
+import * as $api_deleteKeys from "./routes/api/deleteKeys.tsx";
+import * as $api_keyTypes from "./routes/api/keyTypes.tsx";
+import * as $api_updateKey from "./routes/api/updateKey.tsx";
+import * as $buttonTest from "./routes/buttonTest.tsx";
+import * as $index from "./routes/index.tsx";
+import * as $logout from "./routes/logout.tsx";
+import * as $search from "./routes/search.tsx";
+import * as $AccessTokenInput from "./islands/AccessTokenInput.tsx";
+import * as $AddEntryEditor from "./islands/AddEntryEditor.tsx";
+import * as $DarkMode from "./islands/DarkMode.tsx";
+import * as $Help from "./islands/Help.tsx";
+import * as $KvKeyEditor from "./islands/KvKeyEditor.tsx";
+import * as $KvValueEditor from "./islands/KvValueEditor.tsx";
+import * as $SearchBox from "./islands/SearchBox.tsx";
+import * as $SearchResults from "./islands/SearchResults.tsx";
+import * as $TabBar from "./islands/TabBar.tsx";
+import * as $TestToast from "./islands/TestToast.tsx";
+import * as $Toast from "./islands/Toast.tsx";
+import * as $avatarMenu_AvatarMenu from "./islands/avatarMenu/AvatarMenu.tsx";
+import * as $avatarMenu_UnknownAvatarMenu from "./islands/avatarMenu/UnknownAvatarMenu.tsx";
+import * as $connections_AddLocalConnectionButton from "./islands/connections/AddLocalConnectionButton.tsx";
+import * as $connections_CancelAddConnectionButton from "./islands/connections/CancelAddConnectionButton.tsx";
+import * as $connections_ConnectButton from "./islands/connections/ConnectButton.tsx";
+import * as $connections_ConnectionCard from "./islands/connections/ConnectionCard.tsx";
+import * as $connections_ConnectionDropDown from "./islands/connections/ConnectionDropDown.tsx";
+import * as $connections_ConnectionList from "./islands/connections/ConnectionList.tsx";
+import * as $connections_LocalConnectionRadio from "./islands/connections/LocalConnectionRadio.tsx";
+import * as $connections_RemoveLocalConnectionDialog from "./islands/connections/RemoveLocalConnectionDialog.tsx";
+import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {
   routes: {
-    "./routes/_404.tsx": $0,
-    "./routes/_app.tsx": $1,
-    "./routes/_layout.tsx": $2,
-    "./routes/_middleware.ts": $3,
-    "./routes/accessToken.tsx": $4,
-    "./routes/addLocalConnection.tsx": $5,
-    "./routes/api/abortCopy.tsx": $6,
-    "./routes/api/abortDelete.tsx": $7,
-    "./routes/api/copyKeys.tsx": $8,
-    "./routes/api/deleteKeys.tsx": $9,
-    "./routes/api/updateKey.tsx": $10,
-    "./routes/index.tsx": $11,
-    "./routes/logout.tsx": $12,
-    "./routes/search.tsx": $13,
+    "./routes/_404.tsx": $_404,
+    "./routes/_app.tsx": $_app,
+    "./routes/_layout.tsx": $_layout,
+    "./routes/_middleware.ts": $_middleware,
+    "./routes/accessToken.tsx": $accessToken,
+    "./routes/add.tsx": $add,
+    "./routes/addLocalConnection.tsx": $addLocalConnection,
+    "./routes/api/abortCopy.tsx": $api_abortCopy,
+    "./routes/api/abortDelete.tsx": $api_abortDelete,
+    "./routes/api/addEntry.tsx": $api_addEntry,
+    "./routes/api/copyKeys.tsx": $api_copyKeys,
+    "./routes/api/deleteKeys.tsx": $api_deleteKeys,
+    "./routes/api/keyTypes.tsx": $api_keyTypes,
+    "./routes/api/updateKey.tsx": $api_updateKey,
+    "./routes/buttonTest.tsx": $buttonTest,
+    "./routes/index.tsx": $index,
+    "./routes/logout.tsx": $logout,
+    "./routes/search.tsx": $search,
   },
   islands: {
-    "./islands/AccessTokenInput.tsx": $$0,
-    "./islands/DarkMode.tsx": $$1,
-    "./islands/PageForm.tsx": $$2,
-    "./islands/SearchBox.tsx": $$3,
-    "./islands/SearchResults.tsx": $$4,
-    "./islands/TabBar.tsx": $$5,
-    "./islands/TestToast.tsx": $$6,
-    "./islands/Toast.tsx": $$7,
-    "./islands/avatarMenu/AvatarMenu.tsx": $$8,
-    "./islands/avatarMenu/UnknownAvatarMenu.tsx": $$9,
-    "./islands/connections/AddLocalConnectionButton.tsx": $$10,
-    "./islands/connections/CancelAddConnectionButton.tsx": $$11,
-    "./islands/connections/ConnectButton.tsx": $$12,
-    "./islands/connections/ConnectionCard.tsx": $$13,
-    "./islands/connections/ConnectionDropDown.tsx": $$14,
-    "./islands/connections/ConnectionList.tsx": $$15,
-    "./islands/connections/LocalConnectionRadio.tsx": $$16,
-    "./islands/connections/RemoveLocalConnectionDialog.tsx": $$17,
+    "./islands/AccessTokenInput.tsx": $AccessTokenInput,
+    "./islands/AddEntryEditor.tsx": $AddEntryEditor,
+    "./islands/DarkMode.tsx": $DarkMode,
+    "./islands/Help.tsx": $Help,
+    "./islands/KvKeyEditor.tsx": $KvKeyEditor,
+    "./islands/KvValueEditor.tsx": $KvValueEditor,
+    "./islands/SearchBox.tsx": $SearchBox,
+    "./islands/SearchResults.tsx": $SearchResults,
+    "./islands/TabBar.tsx": $TabBar,
+    "./islands/TestToast.tsx": $TestToast,
+    "./islands/Toast.tsx": $Toast,
+    "./islands/avatarMenu/AvatarMenu.tsx": $avatarMenu_AvatarMenu,
+    "./islands/avatarMenu/UnknownAvatarMenu.tsx": $avatarMenu_UnknownAvatarMenu,
+    "./islands/connections/AddLocalConnectionButton.tsx": $connections_AddLocalConnectionButton,
+    "./islands/connections/CancelAddConnectionButton.tsx": $connections_CancelAddConnectionButton,
+    "./islands/connections/ConnectButton.tsx": $connections_ConnectButton,
+    "./islands/connections/ConnectionCard.tsx": $connections_ConnectionCard,
+    "./islands/connections/ConnectionDropDown.tsx": $connections_ConnectionDropDown,
+    "./islands/connections/ConnectionList.tsx": $connections_ConnectionList,
+    "./islands/connections/LocalConnectionRadio.tsx": $connections_LocalConnectionRadio,
+    "./islands/connections/RemoveLocalConnectionDialog.tsx":
+      $connections_RemoveLocalConnectionDialog,
   },
   baseUrl: import.meta.url,
-};
+} satisfies Manifest;
 
 export default manifest;

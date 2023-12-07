@@ -1,10 +1,7 @@
 import { CONNECTIONS_KEY_PREFIX } from "../../../consts.ts";
 import { KvConnection } from "../../../types.ts";
-import { DeployUser, deployKvEnvironment } from "./deployUser.ts";
-import {
-  MultiResult,
-  multiSet,
-} from "kv-utils/mod.ts";
+import { deployKvEnvironment, DeployUser } from "./deployUser.ts";
+import { MultiResult, multiSet } from "kv-utils/mod.ts";
 
 export async function persistConnectionData(deployUser: DeployUser): Promise<void> {
   const keyValues = new Map<Deno.KvKey, unknown>();
@@ -20,9 +17,9 @@ export async function persistConnectionData(deployUser: DeployUser): Promise<voi
           environment: deployKvEnvironment(project, kvInstance),
           size: kvInstance.sizeBytes,
         };
-        keyValues.set([CONNECTIONS_KEY_PREFIX, kvInstance.databaseId], kvConnection)
+        keyValues.set([CONNECTIONS_KEY_PREFIX, kvInstance.databaseId], kvConnection);
       });
-    })
+    });
   });
   const result: MultiResult = await multiSet(keyValues);
 

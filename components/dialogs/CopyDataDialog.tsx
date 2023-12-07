@@ -26,7 +26,7 @@ export function CopyDataDialog(props: CopyDeleteProps) {
   const toastMsg = useSignal("");
   const toastType = useSignal<ToastType>("info");
   const isProd = useSignal(false);
-  
+
   effect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (isCopying.value && event.key === "Escape") {
@@ -51,7 +51,7 @@ export function CopyDataDialog(props: CopyDeleteProps) {
     isCopying.value = true;
     abortId.value = crypto.randomUUID();
     const dest = document.getElementById("dest")! as HTMLSelectElement;
-    document.body.style.cursor = 'progress';
+    document.body.style.cursor = "progress";
 
     fetch("/api/copyKeys", {
       method: "POST",
@@ -97,7 +97,7 @@ export function CopyDataDialog(props: CopyDeleteProps) {
     }).finally(() => {
       (document.getElementById("copyDialog")! as HTMLDialogElement).close();
       isCopying.value = false;
-      document.body.style.cursor = 'default';
+      document.body.style.cursor = "default";
     });
   }
 
@@ -199,7 +199,7 @@ export function CopyDataDialog(props: CopyDeleteProps) {
             </table>
           </div>
           <p>Warning: Any existing keys will be overwritten</p>
-          { isProd.value && (
+          {isProd.value && (
             <div class="my-4 flex flex-row">
               <WarningTriangleIcon />
               <span class="text-red-500 font-semibold pl-1 pr-2 underline decoration-red-500">

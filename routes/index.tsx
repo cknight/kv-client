@@ -7,9 +7,7 @@ import { AddLocalConnectionButton } from "../islands/connections/AddLocalConnect
 import { ConnectButton } from "../islands/connections/ConnectButton.tsx";
 import { getConnections, resetLocalConnectionList } from "../utils/connections/connections.ts";
 import { localKv } from "../utils/kv/db.ts";
-import { Toast } from "../islands/Toast.tsx";
-import { signal, useSignal } from "@preact/signals";
-import { ToastTest } from "../islands/TestToast.tsx";
+import { signal } from "@preact/signals";
 
 export const handler: Handlers = {
   async POST(req, ctx) {
@@ -37,7 +35,6 @@ export default async function Connections(_req: Request, ctx: RouteContext) {
 
   return (
     <div class="w-full">
-      <ToastTest />
       <div id="localConnections" class="flex p-5">
         <div class="flex justify-center items-center mr-8">
           <p class="w-24 text-2xl font-bold">Local</p>

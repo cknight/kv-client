@@ -32,7 +32,7 @@ function replacer(_key: unknown, value: unknown) {
       value: Array.from(value.keys()),
     };
   } else if (typeof value === "bigint") {
-    return { type: "BigInt", value: String(value) };
+    return { type: "bigint", value: String(value) };
   } else if (typeof value === "undefined") {
     /**
      * FIXME:  Is there some hack we can do here to make this work?
@@ -78,7 +78,7 @@ function reviver(_key: unknown, value: unknown) {
       } else {
         throw new Error("Invalid Set value");
       }
-    } else if (value.type === "BigInt" && typeof value.value === "string") {
+    } else if (value.type === "bigint" && typeof value.value === "string") {
       return BigInt(value.value);
     } else if (value.type === "undefined") {
       return undefined;
@@ -106,7 +106,7 @@ function reviver(_key: unknown, value: unknown) {
 
 /**
  * Dear Ecma Standard authors, please look the other way :)
- * 
+ *
  * This is a hack to make Date objects deserialize from JSON5 strings.  By default, Date objects
  * are serialized to a string prior to JSON5 serialization.  This is a problem because the
  * stringified Date object is now indistinguishable from a string that happens to be a valid
@@ -121,17 +121,16 @@ Date.prototype.toJSON = function () {
  * Convert an object to a JSON5 string, with enhanced support for:
  * - Map
  * - Set
- * - BigInt
+ * - bigint
  * - RegExp
  * - Uint8Array
  * - Deno.KvU64
  * - Date
  * - null
- * 
+ *
  * Standard support exists of course for:
  * - string, number, boolean, arrays and objects
  *
- * 
  * undefined values are stringified to "undefined", however be aware that their
  * deserialization does not work and properties with undefined values are removed.
  *
@@ -141,13 +140,20 @@ Date.prototype.toJSON = function () {
  * @returns Customer JSON5 string representation of the input, pretty printed with 2 spaces
  */
 export function json5Stringify(input: unknown, flat?: boolean): string {
-  const json5 = JSON5.stringify(input, { replacer: replacer, quote: '"', space: flat ? undefined : 2 });
+  const json5 = JSON5.stringify(input, {
+    replacer: replacer,
+    quote: '"',
+    space: flat ? undefined : 2,
+  });
 
   // If this contains a Uint8Array, flatten the string to avoid excessive newlines
   const uint8arrayRegex = /(type: \"Uint8Array\",\s*value: \[)([\d,\s]*)(\s*\])/g;
-  const flattened = json5.replace(uint8arrayRegex, (_match: string, g1: string, g2: string, g3: string) => {
-    return `${g1}${g2.replace(/\s/g, "")}${g3}`;
-  });
+  const flattened = json5.replace(
+    uint8arrayRegex,
+    (_match: string, g1: string, g2: string, g3: string) => {
+      return `${g1}${g2.replace(/\s/g, "")}${g3}`;
+    },
+  );
   return flattened;
 }
 
@@ -155,7 +161,7 @@ export function json5Stringify(input: unknown, flat?: boolean): string {
  * Convert a custom JSON5 string (generated via json5Stringify) to an object.  Supports:
  * - Map
  * - Set
- * - BigInt
+ * - bigint
  * - RegExp
  * - Uint8Array
  * - Deno.KvU64
@@ -175,7 +181,7 @@ export function json5Parse(str: string): unknown {
 
 const supportedTypes: SupportedSerializableTypes[] = [
   "Date",
-  "BigInt",
+  "bigint",
   "Map",
   "Set",
   "RegExp",

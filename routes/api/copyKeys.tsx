@@ -65,11 +65,13 @@ export const handler: Handlers = {
       let status = 200;
       let body = "";
       const kc = copyResult.setKeyCount;
-      
+
       if (copyResult.aborted) {
         const percComplete = kc / result.copyEntries;
         const percCompleteString = `${Math.round(percComplete * 100)}%`;
-        body = `Copy aborted at ${percCompleteString} complete. ${kc} key${kc > 1 ? "s" : ""} copied`;
+        body = `Copy aborted at ${percCompleteString} complete. ${kc} key${
+          kc > 1 ? "s" : ""
+        } copied`;
         status = 499;
       } else if (copyResult.failedKeys.length > 0) {
         body = `Copied ${kc} key${

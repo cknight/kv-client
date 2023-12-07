@@ -1,5 +1,6 @@
 interface TabBarProps {
   tab: string;
+  connectionId: string;
 }
 
 export function TabBar(props: TabBarProps) {
@@ -8,43 +9,36 @@ export function TabBar(props: TabBarProps) {
   const tabBase = "tab inline-block hover:text-blue-600 py-2 px-4 text-lg font-medium text-center ";
 
   return (
-    <ul class="w-full mt-2 flex justify-center flex-wrap border-b border-gray-500">
+    <ul class="w-full mt-2 flex justify-center flex-wrap border-b border-gray-200">
       <li class="mr-2" aria-current={props.tab === "search" ? "page" : "false"}>
         <a
-          href="search"
+          href={`search?connectionId=${props.connectionId}`}
           id="search"
           class={tabBase + (props.tab === "search" ? activeTabClasses : inactiveTabClasses)}
         >
           Search
         </a>
       </li>
-      <li class="mr-2" aria-current={props.tab === "delete" ? "page" : "false"}>
+      <li class="mr-2" aria-current={props.tab === "Add" ? "page" : "false"}>
         <a
-          href="delete"
-          id="delete"
-          class={tabBase + (props.tab === "delete" ? activeTabClasses : inactiveTabClasses)}
+          href={`add?connectionId=${props.connectionId}`}
+          id="add"
+          class={tabBase + (props.tab === "add" ? activeTabClasses : inactiveTabClasses)}
         >
-          Delete
+          Add
         </a>
       </li>
-      <li class="mr-2" aria-current={props.tab === "insertUpdate" ? "page" : "false"}>
+      {
+        /* <li class="mr-2" aria-current={props.tab === "importExport" ? "page" : "false"}>
         <a
-          href="insertUpdate"
-          id="insertUpdate"
-          class={tabBase + (props.tab === "insertUpdate" ? activeTabClasses : inactiveTabClasses)}
+          href={`importExport?connectionId=${props.connectionId}`}
+          id="importExport"
+          class={tabBase + (props.tab === "importExport" ? activeTabClasses : inactiveTabClasses)}
         >
           Set
         </a>
-      </li>
-      <li class="mr-2" aria-current={props.tab === "connections" ? "page" : "false"}>
-        <a
-          href="connections"
-          id="connections"
-          class={tabBase + (props.tab === "connections" ? activeTabClasses : inactiveTabClasses)}
-        >
-          Manage Connections
-        </a>
-      </li>
+      </li> */
+      }
     </ul>
   );
 }

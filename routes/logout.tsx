@@ -16,9 +16,9 @@ export const handler: Handlers = {
     const headers = new Headers();
     deleteCookie(headers, "session");
 
-    return new Response("", { 
+    return new Response("", {
       status: 200,
-      headers
+      headers,
     });
   },
 };

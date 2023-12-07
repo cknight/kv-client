@@ -182,7 +182,7 @@ export function DeleteDataDialog(props: CopyDeleteProps) {
             </table>
           </div>
           <p class="my-4">Check the above details carefully. This action cannot be undone.</p>
-          { isProd() && (
+          {isProd() && (
             <div class="my-4 flex flex-row">
               <WarningTriangleIcon />
               <span class="text-red-500 font-semibold pl-1 pr-2 underline decoration-red-500">

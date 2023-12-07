@@ -42,7 +42,7 @@ export function readableSize(size: number) {
 }
 
 /**
- * JSON stringify with custom support for Uint8Array and BigInts.  Used
+ * JSON stringify with custom support for Uint8Array and bigints.  Used
  * for filtering where the key/value pair needs transformed into a string
  * first
  */
@@ -52,7 +52,7 @@ export function toJSON(obj: unknown): string {
 
 /**
  * @deprecated - not in use and don't plan to use, but here in case needed
- * JSON parse with custom support for Uint8Array and BigInts
+ * JSON parse with custom support for Uint8Array and bigints
  */
 export function fromJSON(json: string): unknown {
   return JSON.parse(json, reviver);
@@ -103,4 +103,11 @@ export function approximateSize(value: unknown): number {
   // @ts-ignore Use internal Deno API to get access to actual serialization method.
   const DENO_CORE: DenoCore = Deno[Deno.internal].core;
   return DENO_CORE.serialize(value).length;
+}
+
+export function asMaxLengthString(value: string, maxLength: number): string {
+  if (value.length > maxLength) {
+    return value.substring(0, maxLength - 3) + "...";
+  }
+  return value;
 }

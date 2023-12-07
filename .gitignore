@@ -7,3 +7,7 @@
 
 # Fresh build directory
 _fresh/
+
+node_modules/
+
+z.ts

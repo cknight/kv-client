@@ -3,10 +3,11 @@ import { UpdateAuditLog } from "../../types.ts";
 import { executorId } from "../../utils/connections/denoDeploy/deployUser.ts";
 import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";
 import { establishKvConnection } from "../../utils/kv/kvConnect.ts";
-import { SetResult, setAll } from "../../utils/kv/kvSet.ts";
+import { setAll, SetResult } from "../../utils/kv/kvSet.ts";
 import { getUserState } from "../../utils/state/state.ts";
 import { json5Parse, json5Stringify } from "../../utils/transform/stringSerialization.ts";
 import { entriesToOperateOn } from "../../utils/ui/buildResultsPage.ts";
+import { asMaxLengthString } from "../../utils/utils.ts";
 
 export interface UpdateKeyData {
   connectionId: string;
@@ -22,7 +23,7 @@ export interface UpdateKeyData {
 
 interface UpdateOpResult {
   duration: number;
-  updateResult: Omit<SetResult, 'aborted'>;
+  updateResult: Omit<SetResult, "aborted">;
 }
 
 export const handler: Handlers = {
@@ -87,8 +88,12 @@ async function updateKey(data: UpdateKeyData, session: string): Promise<UpdateOp
     await establishKvConnection(session, state.connection!.id);
   }
   kv = state.kv!;
-  const entry: Deno.KvEntry<unknown> = { key: matchedEntry[0].key, value: kvValue, versionstamp: "1" };
-  const {failedKeys, setKeyCount, writeUnitsConsumed} = await setAll([entry], kv, "");
+  const entry: Deno.KvEntry<unknown> = {
+    key: matchedEntry[0].key,
+    value: kvValue,
+    versionstamp: "1",
+  };
+  const { failedKeys, setKeyCount, writeUnitsConsumed } = await setAll([entry], kv, "");
 
   const overallDuration = Date.now() - startTime;
 
@@ -114,11 +119,4 @@ async function updateKey(data: UpdateKeyData, session: string): Promise<UpdateOp
       writeUnitsConsumed,
     },
   };
-}
-
-function asMaxLengthString(value: string, maxLength: number): string {
-  if (value.length > maxLength) {
-    return value.substring(0, maxLength - 3) + "...";
-  }
-  return value;
 }

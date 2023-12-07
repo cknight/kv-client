@@ -35,7 +35,7 @@ export async function establishKvConnection(session: string, connectionId: strin
 
   if (connection && connection.isRemote) {
     // Remote KV access
-    const accessToken  = await getEncryptedString([ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session]);
+    const accessToken = await getEncryptedString([ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session]);
     if (!accessToken) {
       //FIXME - forward to access token input page
       throw new ValidationError("No access token available");

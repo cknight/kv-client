@@ -50,35 +50,40 @@ export function parseKvKey(input: string): Deno.KvKey {
           partialKey.push(part);
         }
       }
-    } else if (part[0] === "[") {
-      // start of unit8 array
-      if (part[part.length - 1] === "]") {
-        // empty or single value unit8 array
-        LOG_ENABLED && console.log("End of unit8 array, processing:", part);
-        processPart(part, key);
-      } else {
-        // start of non-empty unit8 array
-        inUint8Array = true;
-        partialKey.push(part);
-      }
-    } else if (inUint8Array) {
-      if (part[part.length - 1] === "]") {
-        // end of unit8 array
-        inUint8Array = false;
-        partialKey.push("," + part);
-        LOG_ENABLED && console.log("End of unit8 array, processing:", partialKey.join(""));
-        processPart(partialKey.join(""), key);
-        partialKey = [];
-      } else {
-        // middle of unit8 array
-        partialKey.push("," + part);
-      }
     } else {
-      // some other simple type
-      LOG_ENABLED && console.log("End of simple type, processing:", part);
-      processPart(part, key);
+      const trimmedPart = part.trim();
+      if (trimmedPart[0] === "[") {
+        LOG_ENABLED && console.log("Start of unit8 array, processing:", trimmedPart);
+        // start of unit8 array
+        if (trimmedPart[trimmedPart.length - 1] === "]") {
+          // empty or single value unit8 array
+          LOG_ENABLED && console.log("End of unit8 array, processing:", trimmedPart);
+          processPart(trimmedPart, key);
+        } else {
+          // start of non-empty unit8 array
+          inUint8Array = true;
+          partialKey.push(trimmedPart);
+        }
+      } else if (inUint8Array) {
+        if (trimmedPart[trimmedPart.length - 1] === "]") {
+          // end of unit8 array
+          inUint8Array = false;
+          partialKey.push("," + trimmedPart);
+          LOG_ENABLED && console.log("End of unit8 array, processing:", partialKey.join(""));
+          processPart(partialKey.join(""), key);
+          partialKey = [];
+        } else {
+          // middle of unit8 array
+          partialKey.push("," + trimmedPart);
+        }
+      } else {
+        // some other simple type
+        LOG_ENABLED && console.log("End of simple type, processing:", trimmedPart);
+        processPart(trimmedPart, key);
+      }
     }
   });
+
   if (partialKey.length > 0) {
     throw new ValidationError("Invalid key format: " + input);
   }

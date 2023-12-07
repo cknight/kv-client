@@ -14,17 +14,20 @@ export interface KeyOperationData {
 }
 
 /**
- * Given a set of serialized hashed keys and a set of search criteria, return the keys to operate on. This 
+ * Given a set of serialized hashed keys and a set of search criteria, return the keys to operate on. This
  * will be one of the 3:
  * 1. All Deno.KvEntry in the cache for the search criteria
  * 2. All filtered Deno.KvEntry in the cache for the search criteria
  * 3. The one or more specific Deno.KvEntry in the cache for the search criteria and keys selected
- * 
- * @param data 
- * @param session 
+ *
+ * @param data
+ * @param session
  * @returns list of Deno.KvEntry to operate on
  */
-export async function entriesToOperateOn(data: KeyOperationData, session: string): Promise<Deno.KvEntry<unknown>[]> {
+export async function entriesToOperateOn(
+  data: KeyOperationData,
+  session: string,
+): Promise<Deno.KvEntry<unknown>[]> {
   const startTime = Date.now();
   const state = getUserState(session);
   const { connectionId, keysSelected, prefix, start, end, reverse } = data;
@@ -80,7 +83,9 @@ export async function entriesToOperateOn(data: KeyOperationData, session: string
       }
 
       if (kvEntries.length !== keysSelected.length) {
-        console.error("Mismatch between keys to operate on and keys retrieved from cache.  Aborting.");
+        console.error(
+          "Mismatch between keys to operate on and keys retrieved from cache.  Aborting.",
+        );
         throw new Error(
           "Internal error.  Mismatch between keys to operate on and keys retrieved from cache.  Aborting.",
         );
@@ -96,7 +101,12 @@ export async function entriesToOperateOn(data: KeyOperationData, session: string
   return kvEntries;
 }
 
-export function buildResultsPage(filter: string | undefined, results: Deno.KvEntry<unknown>[], from: number, show: number) {
+export function buildResultsPage(
+  filter: string | undefined,
+  results: Deno.KvEntry<unknown>[],
+  from: number,
+  show: number,
+) {
   let filtered = false;
   let resultsWorkingSet = results;
   if (filter !== undefined && filter !== "") {
@@ -116,5 +126,5 @@ export function buildResultsPage(filter: string | undefined, results: Deno.KvEnt
 
   const resultsCount = resultsWorkingSet.length;
   const resultsPage = resultsWorkingSet.slice(from - 1, from - 1 + show);
-  return { resultsPage, resultsCount, filtered, resultsWorkingSet};
+  return { resultsPage, resultsCount, filtered, resultsWorkingSet };
 }

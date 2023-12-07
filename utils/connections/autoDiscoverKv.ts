@@ -90,7 +90,7 @@ export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
         instances.push({
           kvLocation: walkEntry.path,
           dataSelection: output,
-          size
+          size,
         });
       }
       kv.close();

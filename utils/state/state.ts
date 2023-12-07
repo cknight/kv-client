@@ -4,7 +4,9 @@ import { CacheManager } from "./cache.ts";
 
 const states: Map<string, State> = new Map();
 
-export function getUserState(sessionOrCtx: string | PageProps | HandlerContext | LayoutContext<void, unknown>): State {
+export function getUserState(
+  sessionOrCtx: string | PageProps | HandlerContext | LayoutContext<void, unknown>,
+): State {
   let sessionId = "";
   if (typeof sessionOrCtx === "string") {
     sessionId = sessionOrCtx;

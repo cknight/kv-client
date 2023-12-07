@@ -52,7 +52,7 @@ export function KeyHelp(props: { keyPart: string }) {
               </td>
             </tr>
             <tr class="border-1">
-              <td class="border-1 p-3">BigInt</td>
+              <td class="border-1 p-3">bigint</td>
               <td class="border-1 p-3">18014398509481982n</td>
               <td class="border-1 p-3">
                 kv.list(&#123;{props.keyPart}: [18014398509481982n]&#125;)
@@ -63,11 +63,12 @@ export function KeyHelp(props: { keyPart: string }) {
       </div>
       <div>
         You can also combine different types in a single key. For example, here is a Deno.KvKey made
-        up of 5 parts: string, number, boolean Uint8Array and BigInt:
+        up of 5 parts: string, number, boolean Uint8Array and bigint:
       </div>
       <KvKeyInput
         type="text"
         readOnly={true}
+        disableTypes={true}
         class="rounded bg-blue-100 w-full p-2"
         value={`"example1", 1, true, [200,2,87], 18014398509481982n`}
       />

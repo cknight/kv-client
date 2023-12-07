@@ -103,6 +103,7 @@ export function KvDialog(props: KvDialogProps) {
         console.log("Entry successfully updated");
         showToast("Entry successfully updated", "info");
         inEditMode.value = false;
+        (document.getElementById("resultsPanel")! as HTMLDivElement).style.display = "none";
       } else {
         response.text().then((data) => {
           console.error("Failed to update key", data);

@@ -2,7 +2,7 @@ import { assertEquals } from "$std/assert/assert_equals.ts";
 import { json5Parse, json5Stringify } from "./stringSerialization.ts";
 
 Deno.test("String serialization/deserialization", () => {
-  //string 
+  //string
   assertSerialization("");
   assertSerialization("abc");
 });
@@ -14,7 +14,7 @@ Deno.test("Number serialization/deserialization", () => {
   assertSerialization(1);
 });
 
-Deno.test("BigInt serialization/deserialization", () => {
+Deno.test("bigint serialization/deserialization", () => {
   //bigint
   assertSerialization(BigInt(-1n));
   assertSerialization(BigInt(0));
@@ -61,8 +61,12 @@ Deno.test("Set serialization/deserialization", () => {
 Deno.test("RegExp serialization/deserialization", () => {
   //regexp
   assertSerialization(new RegExp("a"));
-  assertSerialization(new RegExp(/[a-f0-9]{8}\-[a-f0-9]{4}\-[a-f0-9]{4}\-[a-f0-9]{4}\-[a-f0-9]{12}/));
-  assertSerialization(/^\[((?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)(?:,(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d))*)?]?$/);
+  assertSerialization(
+    new RegExp(/[a-f0-9]{8}\-[a-f0-9]{4}\-[a-f0-9]{4}\-[a-f0-9]{4}\-[a-f0-9]{12}/),
+  );
+  assertSerialization(
+    /^\[((?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)(?:,(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d))*)?]?$/,
+  );
   assertSerialization(new RegExp(/a/gi));
 });
 
@@ -118,7 +122,7 @@ Deno.test("Complex object serialization/deserialization", () => {
     a: "a",
     b: 1,
     c: true,
-    d: new Map<string, string|Date>([["a", "b"], ["c", new Date()]]),
+    d: new Map<string, string | Date>([["a", "b"], ["c", new Date()]]),
     e: new Set(["a", "b"]),
     f: BigInt(1),
     h: new RegExp("a"),
@@ -134,7 +138,7 @@ Deno.test("Complex object serialization/deserialization", () => {
       h: new RegExp("a"),
       i: new Uint8Array([1, 2, 3]),
       k: new Deno.KvU64(1234n),
-    }
+    },
   });
 });
 
@@ -155,9 +159,11 @@ Deno.test("Multiline Uint8Arrays are flattened", () => {
     type: "Uint8Array",
     value: [31,90,22,243,4,102,182,95,8,206,15,63,],
   },\n}`;
-  const actual = json5Stringify({ iv: new Uint8Array([31, 90, 22, 243, 4, 102, 182, 95, 8, 206, 15, 63]) });
+  const actual = json5Stringify({
+    iv: new Uint8Array([31, 90, 22, 243, 4, 102, 182, 95, 8, 206, 15, 63]),
+  });
   assertEquals(actual, expected);
-})
+});
 
 function assertSerialization(obj: unknown) {
   const str = json5Stringify(obj);

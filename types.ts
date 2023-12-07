@@ -94,7 +94,7 @@ export interface KvSearchOptions {
   disableCache: boolean;
 }
 
-export type AuditLog<T extends "list" | "delete" | "copy" | "update"> = {
+export type AuditLog<T extends "list" | "delete" | "copy" | "update" | "add"> = {
   auditType: T;
   executorId: string;
   connection: string;
@@ -136,7 +136,19 @@ export type UpdateAuditLog = AuditLog<"update"> & {
   newValue: string;
 };
 
-export type AuditRecord = ListAuditLog | DeleteAuditLog | CopyAuditLog | UpdateAuditLog;
+export type AddAuditLog = AuditLog<"add"> & {
+  addSuccessful: boolean;
+  writeUnitsConsumed: number;
+  key: string;
+  value: string;
+};
+
+export type AuditRecord =
+  | ListAuditLog
+  | DeleteAuditLog
+  | CopyAuditLog
+  | UpdateAuditLog
+  | AddAuditLog;
 
 export type UnitsConsumed = {
   operations: number;
@@ -174,3 +186,18 @@ export type CopyDeleteProps = {
 };
 
 export type ToastType = "info" | "warn" | "error";
+export type SupportedValueTypes =
+  | "bigint"
+  | "boolean"
+  | "null"
+  | "number"
+  | "string"
+  | "Array"
+  | "Date"
+  | "JSON"
+  | "KvU64"
+  | "Map"
+  | "Object"
+  | "RegExp"
+  | "Set"
+  | "Uint8Array";

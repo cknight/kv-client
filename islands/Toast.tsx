@@ -20,6 +20,7 @@ export function Toast(props: ToastProperties) {
   useSignalEffect(() => {
     if (props.show.value) {
       setTimeout(() => {
+        console.log("hiding toast");
         props.show.value = false;
       }, 15000);
     }
@@ -28,9 +29,7 @@ export function Toast(props: ToastProperties) {
   const styleType = props.type == "info"
     ? infoStyle
     : (props.type == "warn" ? warnStyle : errorStyle);
-  const closeColor = props.type === "warn" 
-    ? warnCloseColor
-    : infoErrorCloseColor;
+  const closeColor = props.type === "warn" ? warnCloseColor : infoErrorCloseColor;
   return (
     <div
       id={props.id}
@@ -44,7 +43,9 @@ export function Toast(props: ToastProperties) {
         class={`${styleType} max-w-[400px] p-4 inline-flex rounded-lg items-center shadow`}
         role="alert"
       >
-        <div><XIcon title="close" textColor={closeColor}/></div>
+        <div>
+          <XIcon title="close" textColor={closeColor} />
+        </div>
         <div class="text-base font-bold ml-3">{props.message}</div>
       </div>
     </div>

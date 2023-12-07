@@ -1,4 +1,4 @@
-export function XIcon({ title, textColor }: { title: string, textColor: string }) {
+export function XIcon({ title, textColor }: { title: string; textColor: string }) {
   return (
     <svg
       class={"h-6 w-6 " + textColor}

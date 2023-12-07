@@ -21,8 +21,8 @@ export const handler: Handlers = {
 
       const start = Date.now();
       const deployUser = await buildRemoteData(accessToken);
-      
-      /* 
+
+      /*
        * Store:
        * 1. Deploy user object in KV for 30 days
        * 2. Access token in KV for 30 days
@@ -30,8 +30,15 @@ export const handler: Handlers = {
        * 4. Deploy user object in state
        */
       const state = getUserState(ctx);
-      await localKv.set([DEPLOY_USER_KEY_PREFIX, session], deployUser, {expireIn: 30*_24_HOURS_IN_MS});
-      await storeEncryptedString([ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session], accessToken, 30*_24_HOURS_IN_MS);
+      await localKv.set([DEPLOY_USER_KEY_PREFIX, session], deployUser, {
+        expireIn: 30 * _24_HOURS_IN_MS,
+      });
+      console.log("Successfully set deploy user");
+      await storeEncryptedString(
+        [ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session],
+        accessToken,
+        30 * _24_HOURS_IN_MS,
+      );
       await persistConnectionData(deployUser);
       state.deployUserData = deployUser;
 

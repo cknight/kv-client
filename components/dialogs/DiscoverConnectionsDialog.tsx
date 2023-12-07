@@ -34,8 +34,8 @@ export function DiscoverConnectionsDialog(props: DiscoverConnectionsDialogProps)
         </div>
         <div class="mt-3">
           <p class="my-2">
-            Below are auto-discovered KV stores with a selection of sample data to help identify the KV store.
-            Choose one or manually enter a location.
+            Below are auto-discovered KV stores with a selection of sample data to help identify the
+            KV store. Choose one or manually enter a location.
           </p>
           <table>
             <tbody>

@@ -1,5 +1,5 @@
 import { KvKeyInput } from "../components/KvKeyInput.tsx";
-import { Help } from "../components/Help.tsx";
+import { Help } from "./Help.tsx";
 import { KeyHelp } from "../components/KeyHelp.tsx";
 import { JSX } from "preact";
 import { clearSearchForm, submitSearchForm } from "../utils/ui/form.ts";
@@ -30,8 +30,8 @@ export function SearchBox(data: SearchDataProps) {
 
   function submitForm(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     //event.preventDefault(); //e.g. don't submit the form
-    document.body.style.cursor = 'wait'; // Set the cursor to 'wait'
-    
+    document.body.style.cursor = "wait"; // Set the cursor to 'wait'
+
     const filter = document.getElementById("filter")! as HTMLInputElement;
     if (filter) {
       filter.value = "";
@@ -52,42 +52,48 @@ export function SearchBox(data: SearchDataProps) {
         <div class="w-2/3">
           <div class="w-full flex items-center">
             <label for="prefix" class="w-24">Prefix</label>
-            <KvKeyInput
-              id="prefix"
-              form="pageForm"
-              type="text"
-              name="prefix"
-              class="rounded bg-blue-100 w-full p-2"
-              value={prefix}
-            />
+            <div class="w-full">
+              <KvKeyInput
+                id="prefix"
+                form="pageForm"
+                type="text"
+                name="prefix"
+                class="rounded bg-blue-100 w-full p-2"
+                value={prefix}
+              />
+            </div>
             <Help dialogId="prefixHelp" dialogTitle="Prefix key">
               <KeyHelp keyPart="prefix" />
             </Help>
           </div>
-          <div class="w-full flex items-center">
+          <div class="w-full flex items-center mt-1">
             <label for="start" class="w-24">Start</label>
-            <KvKeyInput
-              id="start"
-              form="pageForm"
-              type="text"
-              name="start"
-              class="rounded bg-blue-100 w-full p-2"
-              value={start}
-            />
+            <div class="w-full">
+              <KvKeyInput
+                id="start"
+                form="pageForm"
+                type="text"
+                name="start"
+                class="rounded bg-blue-100 w-full p-2"
+                value={start}
+              />
+            </div>
             <Help dialogId="startHelp" dialogTitle="Start key">
               <KeyHelp keyPart="start" />
             </Help>
           </div>
-          <div class="w-full flex items-center">
+          <div class="w-full flex items-center mt-1">
             <label for="end" class="w-24">End</label>
-            <KvKeyInput
-              id="end"
-              form="pageForm"
-              type="text"
-              name="end"
-              class="rounded bg-blue-100 w-full p-2"
-              value={end}
-            />
+            <div class="w-full">
+              <KvKeyInput
+                id="end"
+                form="pageForm"
+                type="text"
+                name="end"
+                class="rounded bg-blue-100 w-full p-2"
+                value={end}
+              />
+            </div>
             <Help dialogId="endHelp" dialogTitle="End key">
               <KeyHelp keyPart="end" />
             </Help>
@@ -145,7 +151,10 @@ export function SearchBox(data: SearchDataProps) {
               checked={disableCache}
             />
             <Help dialogId="disableCacheHelp" dialogTitle="Disable cache">
-              <p>Do not use the server cache when querying KV.  Get all results direct from KV instead.</p>
+              <p>
+                Do not use the server cache when querying KV. Get all results direct from KV
+                instead.
+              </p>
             </Help>
           </div>
         </div>
