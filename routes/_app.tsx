@@ -1,25 +1,26 @@
-import { AppProps } from "$fresh/server.ts";
+import { PageProps } from "$fresh/server.ts";
 import { Partial } from "$fresh/runtime.ts";
 
-export default function App({ Component }: AppProps) {
+export default function App({ Component }: PageProps) {
   return (
-    <html>
+    <html data-theme="dark">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>KV Client</title>
-        <link
+        {/* <link
           href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/full.min.css"
           rel="stylesheet"
           type="text/css"
-        />
+        /> */}
         <link rel="stylesheet" href="/styles.css" />
         {
-          /* <style>{`
+          <style>{`
           ::backdrop {
-            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(1px);
+            background: rgba(0,0,0,0.2);
           }`}
-        </style> */
+        </style>
         }
       </head>
       <body class="min-h-screen" f-client-nav>

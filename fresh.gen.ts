@@ -20,6 +20,7 @@ import * as $buttonTest from "./routes/buttonTest.tsx";
 import * as $index from "./routes/index.tsx";
 import * as $logout from "./routes/logout.tsx";
 import * as $search from "./routes/search.tsx";
+import * as $test from "./routes/test.tsx";
 import * as $AccessTokenInput from "./islands/AccessTokenInput.tsx";
 import * as $AddEntryEditor from "./islands/AddEntryEditor.tsx";
 import * as $DarkMode from "./islands/DarkMode.tsx";
@@ -63,6 +64,7 @@ const manifest = {
     "./routes/index.tsx": $index,
     "./routes/logout.tsx": $logout,
     "./routes/search.tsx": $search,
+    "./routes/test.tsx": $test,
   },
   islands: {
     "./islands/AccessTokenInput.tsx": $AccessTokenInput,

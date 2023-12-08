@@ -31,6 +31,12 @@ export interface DeployKvInstance {
 }
 
 export async function buildRemoteData(accessToken: string): Promise<DeployUser> {
+  const kv = await Deno.openKv();
+  const tempEntry = await kv.get<DeployUser>(["temp-deploy-user"]);
+  if (tempEntry.value !== null) {
+    return tempEntry.value;
+  }
+  
   //Get user details and the orgs they belong to
   const rootData = await getRootData(accessToken);
   const deployUser = {
@@ -91,6 +97,10 @@ export async function buildRemoteData(accessToken: string): Promise<DeployUser> 
       }
     });
   });
+
+  //FIXME TODO DELETE THIS CODE
+  //TODO test rate limiting!
+  await kv.set(["temp-deploy-user"], deployUser);
 
   return deployUser;
 }

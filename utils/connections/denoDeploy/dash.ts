@@ -225,17 +225,19 @@ export async function getOrganizationDetail(
 
 /** For a given project, retrieve the project's KV DB details. */
 export async function getProjectDbs(name: string, accessToken: string): Promise<DashDbsForProject> {
-  const req = await fetch(`${DASH_BASE_URL}projects/${name}/kv?_data_`, {
+  console.log("getProjectDbs", DASH_BASE_URL, "**", name, "**", accessToken);
+  const resp = await fetch(`${DASH_BASE_URL}projects/${name}/kv?_data_`, {
     method: "GET",
     headers: {
       "Cookie": `token=${accessToken}`,
     },
   });
-  if (req.status !== 200) {
+
+  if (resp.status !== 200 || resp.headers.get("content-type") !== "application/json") {
     throw new Error(
-      `Fetch KV Details: ${req.statusText}\n\n${await req.text()}`,
+      `Fetch KV Details: ${resp.statusText}\n\n${await resp.text()}`,
     );
   }
-  const { dbList }: { dbList: DashDb[] } = await req.json();
+  const { dbList }: { dbList: DashDb[] } = await resp.json();
   return { projectName: name, dbList };
 }
