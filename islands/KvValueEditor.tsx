@@ -1,7 +1,6 @@
 import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import { JSX } from "preact/jsx-runtime";
-import { BUTTON } from "../consts.ts";
 import { Help } from "./Help.tsx";
 
 export function KvValueEditor() {
@@ -300,7 +299,7 @@ export function KvValueEditor() {
                   <button
                     type="button"
                     onClick={insertTypeTemplate}
-                    className={BUTTON + " w-[90px] justify-center ml-0 mt-2"}
+                    className="btn btn-primary w-[90px] justify-center ml-0 mt-2"
                   >
                     {"Insert ->"}
                   </button>

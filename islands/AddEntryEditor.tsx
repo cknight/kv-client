@@ -1,4 +1,3 @@
-import { BUTTON } from "../consts.ts";
 import { Fragment, JSX } from "preact";
 import { KvKeyEditor } from "./KvKeyEditor.tsx";
 import { KvValueEditor } from "./KvValueEditor.tsx";
@@ -89,10 +88,10 @@ export function AddEntryEditor() {
       <KvKeyEditor />
       <KvValueEditor />
       <div class="flex w-full justify-center mt-8">
-        <button type="button" onClick={clearForm} class={BUTTON + " w-20 ml-0 justify-center"}>
+        <button type="button" onClick={clearForm} class="btn btn-primary w-20 ml-0 justify-center">
           Clear
         </button>
-        <button type="button" onClick={submitEntry} class={BUTTON + " w-20 ml-0 justify-center"}>
+        <button type="button" onClick={submitEntry} class="btn btn-primary w-20 ml-0 justify-center">
           Submit
         </button>
       </div>

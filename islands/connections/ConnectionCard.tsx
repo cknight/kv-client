@@ -62,10 +62,10 @@ export function ConnectionCard(props: ConnectionCardProps) {
   return (
     <div
       onClick={useConnection}
-      class="flex flex-col min-w-[250px] justify-between border-gray-300 hover:border-blue-700 m-3 rounded-lg shadow border-1 hover:cursor-pointer p-4 bg-[#fafafa]"
+      class="flex flex-col min-w-[250px] justify-between bg-[#353535] hover:bg-[#404040] border-gray-300 m-3 rounded-lg shadow border-1 hover:cursor-pointer p-4"
     >
       <div class="flex">
-        <h1 class="text-lg font-bold leading-tight tracking-tight text-gray-900 md:text-xl">
+        <h1 class="text-lg font-bold leading-tight tracking-tight md:text-xl">
           {props.name}
         </h1>
       </div>

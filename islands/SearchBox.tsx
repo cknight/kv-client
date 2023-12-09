@@ -46,9 +46,9 @@ export function SearchBox(data: SearchDataProps) {
   }
 
   return (
-    <div>
+    <div class="border border-1 border-[#666] bg-[#353535] rounded-md p-4 mt-3">
       {validationError && <div class="text-red-500 w-full">{validationError}</div>}
-      <div class="flex">
+      <div class="flex w-full">
         <div class="w-2/3">
           <div class="w-full flex items-center">
             <label for="prefix" class="w-24">Prefix</label>
@@ -58,7 +58,7 @@ export function SearchBox(data: SearchDataProps) {
                 form="pageForm"
                 type="text"
                 name="prefix"
-                class="rounded bg-blue-100 w-full p-2"
+                class="input input-bordered input-primary w-full p-2"
                 value={prefix}
               />
             </div>
@@ -66,7 +66,7 @@ export function SearchBox(data: SearchDataProps) {
               <KeyHelp keyPart="prefix" />
             </Help>
           </div>
-          <div class="w-full flex items-center mt-1">
+          <div class="w-full flex items-center mt-2">
             <label for="start" class="w-24">Start</label>
             <div class="w-full">
               <KvKeyInput
@@ -74,7 +74,7 @@ export function SearchBox(data: SearchDataProps) {
                 form="pageForm"
                 type="text"
                 name="start"
-                class="rounded bg-blue-100 w-full p-2"
+                class="input input-bordered input-primary w-full p-2"
                 value={start}
               />
             </div>
@@ -82,7 +82,7 @@ export function SearchBox(data: SearchDataProps) {
               <KeyHelp keyPart="start" />
             </Help>
           </div>
-          <div class="w-full flex items-center mt-1">
+          <div class="w-full flex items-center mt-2">
             <label for="end" class="w-24">End</label>
             <div class="w-full">
               <KvKeyInput
@@ -90,7 +90,7 @@ export function SearchBox(data: SearchDataProps) {
                 form="pageForm"
                 type="text"
                 name="end"
-                class="rounded bg-blue-100 w-full p-2"
+                class="input input-bordered input-primary w-full p-2"
                 value={end}
               />
             </div>
@@ -100,13 +100,13 @@ export function SearchBox(data: SearchDataProps) {
           </div>
         </div>
         <div class="w-1/3">
-          <div class="flex items-center justify-end mr-[13px] h-14">
+          <div class="flex items-center justify-end h-14 mt-2">
             <label for="limit" class="w-24">Limit</label>
             <select
               id="limit"
               form="pageForm"
               name="limit"
-              class="rounded bg-blue-100 w-24 p-2 my-2"
+              class="select select-bordered w-24 p-2 my-2 "
             >
               <option value="10" selected={limit === "10"}>10</option>
               <option value="20" selected={limit === "20"}>20</option>
@@ -128,28 +128,30 @@ export function SearchBox(data: SearchDataProps) {
           </div>
           <div class="w-full flex items-center justify-end mt-5">
             <label for="reverse" class="w-24">Reverse</label>
+            <div class="w-24 flex justify-center">
             <input
               id="reverse"
               form="pageForm"
               type="checkbox"
               name="reverse"
-              class="mr-12 w-4 h-4"
+              class="checkbox checkbox-sm checkbox-primary w-4 h-4"
               checked={reverse}
-            />
+            /></div>
             <Help dialogId="reverseHelp" dialogTitle="Reverse">
               <p>Return the key-value pairs in lexicographically descending order</p>
             </Help>
           </div>
           <div class="w-full flex items-center justify-end mt-5">
-            <label for="disableCache" class="w-24">Disbale cache</label>
+            <label for="disableCache" class="w-24">Disable cache</label>
+            <div class="w-24 flex justify-center">
             <input
               id="disableCache"
               form="pageForm"
               type="checkbox"
               name="disableCache"
-              class="mr-12 w-4 h-4"
+              class="checkbox checkbox-sm checkbox-primary w-4 h-4"
               checked={disableCache}
-            />
+            /></div>
             <Help dialogId="disableCacheHelp" dialogTitle="Disable cache">
               <p>
                 Do not use the server cache when querying KV. Get all results direct from KV
@@ -160,12 +162,12 @@ export function SearchBox(data: SearchDataProps) {
         </div>
       </div>
 
-      <div class="flex w-full justify-center mt-4">
+      <div class="flex w-full justify-center gap-x-4 mt-4">
         <button
           type="button"
           onClick={resetForm}
           form="pageForm"
-          class="px-2 py-1 rounded mx-4 bg-[#ff6b6b]"
+          class="btn btn-secondary"
         >
           Reset
         </button>
@@ -173,7 +175,7 @@ export function SearchBox(data: SearchDataProps) {
           type="button"
           onClick={submitForm}
           form="pageForm"
-          class="px-2 py-1 rounded mx-4 bg-[#6b6bff]"
+          class="btn btn-primary"
         >
           Search
         </button>

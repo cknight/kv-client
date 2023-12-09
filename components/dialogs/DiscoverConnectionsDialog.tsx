@@ -1,4 +1,3 @@
-import { BUTTON } from "../../consts.ts";
 import { KvInstance } from "../../types.ts";
 import { signal } from "@preact/signals";
 
@@ -99,19 +98,19 @@ export function DiscoverConnectionsDialog(props: DiscoverConnectionsDialogProps)
           </div>
           <div class="flex mt-3 justify-center">
             <button
-              class={BUTTON}
+              class="btn btn-primary"
               type="submit"
               name="connectionAction"
               value="addEdit"
             >
               <span data-type="addEdit">Add</span>
             </button>
-            <button class={BUTTON} onClick={cancelDialog}>Cancel</button>
+            <button class="btn btn-secondary" onClick={cancelDialog}>Cancel</button>
           </div>
         </form>
         {
-          /* <button class={BUTTON} onClick={addConnection} disabled={!radioSelected.value}>Add</button>
-        <button class={BUTTON} onClick={cancelDialog}>Cancel</button> */
+          /* <button class="btn btn-primary" onClick={addConnection} disabled={!radioSelected.value}>Add</button>
+        <button class="btn btn-primary" onClick={cancelDialog}>Cancel</button> */
         }
       </div>
     </dialog>

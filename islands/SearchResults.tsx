@@ -1,14 +1,4 @@
-import { signal, useSignal } from "@preact/signals";
-import {
-  BUTTON,
-  TW_TABLE,
-  TW_TABLE_WRAPPER,
-  TW_TBODY,
-  TW_TD,
-  TW_TH,
-  TW_THEAD,
-  TW_TR,
-} from "../consts.ts";
+import { useSignal } from "@preact/signals";
 import { IS_BROWSER } from "$fresh/runtime.ts";
 import { Help } from "./Help.tsx";
 import { KvUIEntry, Stats, ToastType } from "../types.ts";
@@ -19,6 +9,10 @@ import { JSX } from "preact";
 import { DeleteDataDialog } from "../components/dialogs/DeleteDataDialog.tsx";
 import { CopyDataDialog } from "../components/dialogs/CopyDataDialog.tsx";
 import { Toast } from "./Toast.tsx";
+import { DoubleRightIcon } from "../components/svg/DoubleRight.tsx";
+import { SingleRightIcon } from "../components/svg/SingleRight.tsx";
+import { SingleLeftIcon } from "../components/svg/SingleLeft.tsx";
+import { DoubleLeftIcon } from "../components/svg/DoubleLeft.tsx";
 
 interface SearchResultsProps {
   results: KvUIEntry[] | undefined;
@@ -181,7 +175,10 @@ export function SearchResults(props: SearchResultsProps) {
     <div>
       {(resultsCount > 0 || filtered) &&
         (
-          <div id="resultsPanel">
+          <div
+            id="resultsPanel"
+            class="mt-4 border border-1 border-[#666] bg-[#353535] rounded-md p-4 mt-3"
+          >
             <div class="flex justify-between">
               <div class="flex items-center justify-start mt-3">
                 <label for="filter">Filter</label>
@@ -190,69 +187,62 @@ export function SearchResults(props: SearchResultsProps) {
                   id="filter"
                   name="filter"
                   form="pageForm"
-                  class="rounded bg-blue-100 ml-2 p-2 my-2"
+                  class="input input-bordered input-primary ml-2 p-2 my-2"
                   value={filter}
                 />
                 <Help dialogId="filterHelp" dialogTitle="Filter">
                   <div>
                     <p>
-                      Free text search of key and values. Both keys are values are converted to
-                      strings prior to filtering, using{" "}
-                      <span class="font-mono bg-gray-200 rounded p-1">JSON.stringify()</span>. Only
-                      entries which contain the exact filter substring within the{" "}
-                      <span class="font-mono bg-gray-200 rounded p-1">JSON.stringify()</span>
-                      string (in either the key or value) are included.
-                    </p>
-                    <p class="mt-2">
-                      <span class="font-bold">NOTE:</span>{" "}
-                      Filtering only applies to the rows retrieved by the search, not the entire KV
-                      database.
+                      Free text search of key and values. Filtering only applies to the KV entries
+                      retrieved by the search, not the entire KV database.
                     </p>
                   </div>
                 </Help>
-                <button type="button" onClick={clearFilter} class={BUTTON}>Clear</button>
-                <button type="button" onClick={applyFilter} class={BUTTON}>Apply</button>
+                <button type="button" onClick={clearFilter} class="btn btn-secondary btn-sm mx-3">
+                  Clear
+                </button>
+                <button type="button" onClick={applyFilter} class="btn btn-primary btn-sm">Apply</button>
               </div>
               <div class="flex items-center justify-start mt-3">
-                <button type="button" onClick={deleteEntries} class={BUTTON}>
+                <button type="button" onClick={deleteEntries} class="btn btn-primary btn-sm mr-3">
                   Delete {scopeText()}
                 </button>
-                <button type="button" onClick={copyEntries} class={BUTTON}>
+                <button type="button" onClick={copyEntries} class="btn btn-primary btn-sm">
                   Copy {scopeText()}
                 </button>
               </div>
             </div>
-            <div class={TW_TABLE_WRAPPER}>
-              <table class={TW_TABLE}>
-                <thead class={TW_THEAD}>
+            <div class="w-full inline-block shadow border-1 border-gray-300 rounded-lg overflow-hidden mt-2">
+              <table class="table table-zebra table-sm table-pin-rows table-pin-cols">
+                <thead>
                   <tr>
-                    <th class={TW_TH + " w-12"}>
+                    <th class="w-12 text-center">
                       <input
                         id="selectAll"
                         type="checkbox"
                         onChange={handleSelectAll}
                         name="selectAll"
-                        class="w-4 h-4"
+                        class="checkbox checkbox-xs checkbox-primary w-4 h-4"
                       />
                     </th>
-                    <th class={TW_TH}>Key</th>
-                    <th class={TW_TH}>Value</th>
+                    <th class="text-accent text-base">Key</th>
+                    <th class="text-accent text-base">Value</th>
                   </tr>
                 </thead>
-                <tbody class={TW_TBODY} id="resultRows">
+                <tbody id="resultRows">
                   {results!.map((result) => {
                     return (
-                      <tr id={result.keyHash} class={TW_TR} onClick={fullView}>
-                        <td class={TW_TD + " w-12 text-center"}>
+                      <tr id={result.keyHash} class="hover" onClick={fullView}>
+                        <td class="w-12 text-center">
                           <input
                             type="checkbox"
                             name={result.keyHash}
                             onChange={handleSelectRow}
-                            class="w-4 h-4"
+                            class="checkbox checkbox-xs checkbox-primary w-4 h-4"
                           />
                         </td>
-                        <td class={TW_TD}>{result.key}</td>
-                        <td class={TW_TD} title={result.fullValue}>
+                        <td>{result.key}</td>
+                        <td title={result.fullValue}>
                           {result.value}
                         </td>
                       </tr>
@@ -260,7 +250,7 @@ export function SearchResults(props: SearchResultsProps) {
                   })}
                 </tbody>
               </table>
-              <div class="flex justify-between">
+              <div class="flex justify-between items-center">
                 <div>
                   Show
                   <select
@@ -268,7 +258,7 @@ export function SearchResults(props: SearchResultsProps) {
                     form="pageForm"
                     name="show"
                     onChange={onShowChange}
-                    class="rounded bg-blue-100 mx-2 p-2 my-2"
+                    class="rounded text-[#353535] mx-2 p-2 my-2"
                   >
                     <option value="10" selected={props.show === 10}>10</option>
                     <option value="20" selected={props.show === 20}>20</option>
@@ -279,29 +269,37 @@ export function SearchResults(props: SearchResultsProps) {
                   </select>
                   entries
                 </div>
-                <div>
+                <div class="flex items-center gap-x-2">
                   Showing {props.from} to {to} of{" "}
                   {props.searchComplete ? resultsCount + entries : " many"}
                   <input id="from" name="from" type="hidden" form="pageForm" value={props.from} />
-                  <button class={BUTTON} onClick={firstPage} disabled={props.from === 1}>
-                    &lt;&lt;
-                  </button>
-                  <button class={BUTTON} onClick={() => page(false)} disabled={props.from === 1}>
-                    &lt;
+                  <button
+                    class="btn btn-primary btn-sm"
+                    onClick={firstPage}
+                    disabled={props.from === 1}
+                  >
+                    <DoubleLeftIcon />
                   </button>
                   <button
-                    class={BUTTON}
+                    class="btn btn-primary btn-sm"
+                    onClick={() => page(false)}
+                    disabled={props.from === 1}
+                  >
+                    <SingleLeftIcon />
+                  </button>
+                  <button
+                    class="btn btn-primary btn-sm"
                     onClick={() => page(true)}
                     disabled={props.from + props.show > resultsCount}
                   >
-                    &gt;
+                    <SingleRightIcon />
                   </button>
                   <button
-                    class={BUTTON}
+                    class="btn btn-primary btn-sm"
                     onClick={lastPage}
                     disabled={props.from + props.show > resultsCount}
                   >
-                    &gt;&gt;
+                    <DoubleRightIcon />
                   </button>
                 </div>
               </div>

@@ -2,16 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  background-color: #202020;
-  color: #ddd;
-}
-
 .card {
   background-color: #353535;
+  border: 1px solid #555
 }
 
-input {
-  background-color: #606060;
-  color: #fff;
-}
+.checkbox{
+  border-width: 2px;
+  border-radius: 3px;
+  background-color: #eee;
+} 

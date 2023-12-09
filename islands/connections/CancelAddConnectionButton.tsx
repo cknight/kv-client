@@ -1,5 +1,3 @@
-import { BUTTON } from "../../consts.ts";
-
 export function CancelAddConnectionButton() {
   function cancel() {
     window.location.href = "/";
@@ -9,7 +7,7 @@ export function CancelAddConnectionButton() {
     <button
       type="button"
       onClick={cancel}
-      class={BUTTON}
+      class="btn btn-primary"
     >
       Cancel
     </button>

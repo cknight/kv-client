@@ -1,10 +1,8 @@
 import { effect, Signal, useSignal } from "@preact/signals";
-import { BUTTON } from "../../consts.ts";
 import { JSX } from "preact/jsx-runtime";
 import { readableSize } from "../../utils/utils.ts";
 import { useEffect, useRef } from "preact/hooks";
 import { UpdateKeyData } from "../../routes/api/updateKey.tsx";
-import { Toast } from "../../islands/Toast.tsx";
 import { ToastType } from "../../types.ts";
 
 interface KvDialogProps {
@@ -155,12 +153,12 @@ export function KvDialog(props: KvDialogProps) {
           </div>
           <div class="flex mt-3 justify-center">
             {inEditMode.value
-              ? <button id="cancelButton" class={BUTTON} onClick={cancelEdit}>Cancel</button>
-              : <button class={BUTTON} onClick={editValue}>Edit value</button>}
+              ? <button id="cancelButton" class="btn btn-secondary" onClick={cancelEdit}>Cancel</button>
+              : <button class="btn btn-primary" onClick={editValue}>Edit value</button>}
             {inEditMode.value
-              ? <button class={BUTTON} onClick={submitEdit}>Submit</button>
+              ? <button class="btn btn-primary" onClick={submitEdit}>Submit</button>
               : (
-                <button id="okButton" ref={okButtonRef} class={BUTTON} onClick={closeDialog}>
+                <button id="okButton" ref={okButtonRef} class="btn btn-primary" onClick={closeDialog}>
                   OK
                 </button>
               )}

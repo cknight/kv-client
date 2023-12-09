@@ -1,5 +1,4 @@
 import { JSX } from "preact";
-import { BUTTON } from "../../consts.ts";
 
 export function RemoveLocalConnectionDialog() {
   function closeDialog(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
@@ -10,22 +9,26 @@ export function RemoveLocalConnectionDialog() {
   return (
     <dialog
       id="removeLocalConnectionDialog"
-      class="p-4 border-2 border-gray-700 rounded"
+      class="modal"
     >
-      <div class="mb-3">
-        <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
-          Remove <span id="removeLocalConnectionName"></span>?
+      <div class="modal-box">
+        <h1 class="text-xl font-bold leading-tight tracking-tight md:text-2xl">
+          Remove "<span id="removeLocalConnectionName"></span>"?
         </h1>
-        <div class="flex mt-3 justify-center">
-          <form method="post">
+        <div class="flex flex-col mt-3 justify-center">
+          <p>This will remove the connection from the connections list.  It will not affect any data.</p>
+          <form method="post" class="mt-3 flex justify-center">
             <input type="hidden" id="removeLocalConnectionId" name="removeLocalConnectionId" />
-            <button class={BUTTON} type="submit" name="formAction" value="removeLocalConnection">
+            <button class="btn btn-primary mr-2" type="submit" name="formAction" value="removeLocalConnection">
               OK
             </button>
-            <button class={BUTTON} type="button" onClick={closeDialog}>Cancel</button>
+            <button class="btn btn-primary ml-2" type="button" onClick={closeDialog}>Cancel</button>
           </form>
         </div>
       </div>
+      <form method="dialog" className="modal-backdrop">
+        <button>close</button>
+      </form>
     </dialog>
   );
 }

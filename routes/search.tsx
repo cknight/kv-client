@@ -141,7 +141,7 @@ export default async function Search(req: Request, props: RouteContext<SearchDat
         id="pageForm"
         xxxf-partial="/partials/results/search?hello=world"
         method="post"
-        class="w-full h-full m-8 mt-0 border-1 border-gray-400 rounded p-5 bg-white"
+        class="h-full m-8 mt-0 "
       >
         <SearchBox
           prefix={prefix}

@@ -11,6 +11,7 @@ import { UnknownAvatarMenu } from "../islands/avatarMenu/UnknownAvatarMenu.tsx";
 import { TabBar } from "../islands/TabBar.tsx";
 
 export default async function defineLayout(req: Request, ctx: FreshContext) {
+  const tabBarRoutes = ["search", "add"];
   const state = getUserState(ctx);
   const session = (ctx.state as Record<string, unknown>).session as string;
   let deployUser: DeployUser | null = state.deployUserData;
@@ -29,7 +30,7 @@ export default async function defineLayout(req: Request, ctx: FreshContext) {
   const connectionName = connection.value?.name;
   const pathParts = url.pathname.split("/");
   const path = url.pathname.length > 1 ? pathParts[1] : "";
-  const tabEnabledPath = path !== "" && path !== "accessToken";
+  const tabEnabledPath = tabBarRoutes.includes(path);
   
   function camelToTitleCase(str: string) {
     if (str === "") return "Connections";
@@ -38,7 +39,7 @@ export default async function defineLayout(req: Request, ctx: FreshContext) {
   }
 
   return (
-    <div class="m-4">
+    <div class="m-4 flex flex-col">
       <div class="navbar rounded p-4 mx-auto bg-gray-700">
         <div class="flex-1">
           <a href="/" class="text-2xl font-bold cursor-pointer">
@@ -66,15 +67,17 @@ export default async function defineLayout(req: Request, ctx: FreshContext) {
           <div class="flex ml-2 text-neutral-300">{camelToTitleCase(path)}</div>
         </div>
         <div class="flex-none">
-          {/* {deployUser ? <AvatarMenu deployUser={deployUser} /> : <UnknownAvatarMenu />} */}
+          {deployUser ? <AvatarMenu deployUser={deployUser} /> : <UnknownAvatarMenu />}
         </div>
       </div>
 
-      <div class="px-4 py-4 mx-auto flex flex-col h-screen">
-        <div class="flex-grow">
-          <div class="mx-auto flex flex-col flex-grow h-full items-center justify-center">
-            {/* {tabEnabledPath && <TabBar tab={path} connectionId={connectionId} />} */}
-            <ctx.Component />
+      <div class="px-4 py-4 mx-auto w-full">
+        <div class="w-full">
+          <div class="mx-auto flex flex-col flex-grow items-center justify-center">
+            {tabEnabledPath && <TabBar tab={path} connectionId={connectionId} />}
+            <div class="w-full">
+              <ctx.Component />
+            </div>
           </div>
         </div>
       </div>

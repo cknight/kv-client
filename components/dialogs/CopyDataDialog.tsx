@@ -1,6 +1,5 @@
 import { JSX } from "preact";
-import { BUTTON } from "../../consts.ts";
-import { effect, signal, useSignal } from "@preact/signals";
+import { effect, useSignal } from "@preact/signals";
 import { CopyDeleteProps, ToastType } from "../../types.ts";
 import { CopyKeysData } from "../../routes/api/copyKeys.tsx";
 import { Toast } from "../../islands/Toast.tsx";
@@ -209,10 +208,10 @@ export function CopyDataDialog(props: CopyDeleteProps) {
             </div>
           )}
           <div class="flex mt-5 justify-center">
-            {isCopying.value ? <button class={BUTTON} onClick={abortCopy}>Abort</button> : (
+            {isCopying.value ? <button class="btn btn-secondary" onClick={abortCopy}>Abort</button> : (
               <>
-                <button class={BUTTON} onClick={cancelDialog}>Cancel</button>
-                <button class={BUTTON} onClick={copyConfirmed}>Copy</button>
+                <button class="btn btn-secondary" onClick={cancelDialog}>Cancel</button>
+                <button class="btn btn-primary" onClick={copyConfirmed}>Copy</button>
               </>
             )}
           </div>

@@ -1,4 +1,3 @@
-import { BUTTON } from "../../consts.ts";
 import { JSX } from "preact/jsx-runtime";
 
 export function AddEditConnectionDialog() {
@@ -45,14 +44,14 @@ export function AddEditConnectionDialog() {
         </div>
         <div class="flex mt-3 justify-center">
           <button
-            class={BUTTON}
+            class="btn btn-primary"
             type="submit"
             name="connectionAction"
             value="addEdit"
           >
             <span data-type="addEdit">Add</span>
           </button>
-          <button class={BUTTON} onClick={cancelDialog}>Cancel</button>
+          <button class="btn btn-primary" onClick={cancelDialog}>Cancel</button>
         </div>
       </form>
     </dialog>

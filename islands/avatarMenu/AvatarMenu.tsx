@@ -24,7 +24,7 @@ export function AvatarMenu({ deployUser }: { deployUser: DeployUser }) {
           alt={`Avatar for ${deployUser.name}`}
         />
       </div>
-      <div tabIndex={0} class="dropdown-content z-[1] menu shadow bg-base-100 rounded-box w-52">
+      <div tabIndex={0} class="dropdown-content z-[1] menu shadow bg-[#323232] rounded-box w-52">
         <div class="pt-5 w-55 flex flex-col items-center">
           <img
             class="w-16 h-16 rounded-full block"
@@ -40,9 +40,9 @@ export function AvatarMenu({ deployUser }: { deployUser: DeployUser }) {
           </div>
           <nav class="mt-4 w-full">
             <ul>
-              <li class="border-t border-gray-700 rounded-none flex hover:bg-base-100">
+              <li class="border-t border-gray-700 rounded-none flex hover:bg-[#404040]">
                 <a
-                  class="py-2.5 flex-1"
+                  class="py-2.5 flex-1 rounded-none"
                   target="_blank"
                   href="https://dash.deno.com/account#access-tokens"
                   aria-current="page"
@@ -50,11 +50,11 @@ export function AvatarMenu({ deployUser }: { deployUser: DeployUser }) {
                   Access tokens
                 </a>
               </li>
-              <li class="border-t border-gray-700 flex hover:bg-base-100">
-                <a href="/settings" class="py-2.5 flex-1">Settings</a>
+              <li class="border-t border-gray-700 flex rounded-none hover:bg-[#404040]">
+                <a href="/settings" class="py-2.5 flex-1 rounded-none">Settings</a>
               </li>
-              <li class="border-t border-gray-700 flex hover:bg-base-100">
-                <p onClick={signOut} class="py-2.5 flex-1 cursor-pointer">Sign out</p>
+              <li class="border-t border-gray-700 rounded-none flex hover:bg-[#404040]">
+                <p onClick={signOut} class="py-2.5 flex-1 rounded-none cursor-pointer">Sign out</p>
               </li>
             </ul>
           </nav>

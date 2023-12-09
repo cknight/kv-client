@@ -1,5 +1,5 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
-import { BUTTON, DEPLOY_USER_KEY_PREFIX, ENCRYPTED_USER_ACCESS_TOKEN_PREFIX } from "../consts.ts";
+import { DEPLOY_USER_KEY_PREFIX, ENCRYPTED_USER_ACCESS_TOKEN_PREFIX } from "../consts.ts";
 import { getUserState } from "../utils/state/state.ts";
 import { AccessTokenInput } from "../islands/AccessTokenInput.tsx";
 import { buildRemoteData } from "../utils/connections/denoDeploy/deployUser.ts";
@@ -45,8 +45,7 @@ export const handler: Handlers = {
 
       return new Response("", {
         status: 303,
-        //headers: { Location: "/" },
-        headers: { Location: "/test" },
+        headers: { Location: "/" },
       });
     }
     return ctx.render({ error: true });
@@ -59,6 +58,8 @@ export default function AccessToken(data: PageProps<boolean>) {
 
   //<div class="w-full bg-white rounded-lg shadow sm:max-w-md">
   return (
+    <div class="h-full flex items-center justify-center">
+
     <div class="card w-full sm:max-w-md shadow">
       <div class="card-body">
         <h1 class="card-title">Connect with an access token</h1>
@@ -83,7 +84,7 @@ export default function AccessToken(data: PageProps<boolean>) {
             Need an access token?{" "}
             <a
               href="https://dash.deno.com/account#access-tokens"
-              class="font-medium text-primary-600 hover:underline ml-2"
+              class="font-medium text-primary-600 underline ml-2"
               target="_blank"
             >
               Create one
@@ -91,6 +92,7 @@ export default function AccessToken(data: PageProps<boolean>) {
           </p>
         </form>
       </div>
+    </div>
     </div>
   );
 }

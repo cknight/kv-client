@@ -52,7 +52,7 @@ export function KvKeyInput(props: KvKeyInputProps) {
         <input onInput={parseTypes} {...inputProps} />
         <span class="ml-2 my-2">{`]`}</span>
       </div>
-      <div id={typesId.value} class="ml-5 h-4 pt-1 text-xs text-gray-500">{types}</div>
+      <div id={typesId.value} class="ml-5 h-4 pt-1 text-xs ">{types}</div>
     </div>
   );
 }

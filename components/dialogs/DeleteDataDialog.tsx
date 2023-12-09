@@ -1,5 +1,4 @@
 import { JSX } from "preact";
-import { BUTTON } from "../../consts.ts";
 import { effect, useSignal } from "@preact/signals";
 import { DeleteKeysData } from "../../routes/api/deleteKeys.tsx";
 import { CopyDeleteProps, ToastType } from "../../types.ts";
@@ -192,10 +191,10 @@ export function DeleteDataDialog(props: CopyDeleteProps) {
             </div>
           )}
           <div class="flex mt-3 justify-center">
-            {isDeleting.value ? <button class={BUTTON} onClick={abortDelete}>Abort</button> : (
+            {isDeleting.value ? <button class="btn btn-secondary" onClick={abortDelete}>Abort</button> : (
               <>
-                <button class={BUTTON} onClick={cancelDialog}>Cancel</button>
-                <button class={BUTTON} onClick={deleteConfirmed}>Delete</button>
+                <button class="btn btn-secondary" onClick={cancelDialog}>Cancel</button>
+                <button class="btn btn-primary" onClick={deleteConfirmed}>Delete</button>
               </>
             )}
           </div>

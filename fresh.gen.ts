@@ -16,7 +16,6 @@ import * as $api_copyKeys from "./routes/api/copyKeys.tsx";
 import * as $api_deleteKeys from "./routes/api/deleteKeys.tsx";
 import * as $api_keyTypes from "./routes/api/keyTypes.tsx";
 import * as $api_updateKey from "./routes/api/updateKey.tsx";
-import * as $buttonTest from "./routes/buttonTest.tsx";
 import * as $index from "./routes/index.tsx";
 import * as $logout from "./routes/logout.tsx";
 import * as $search from "./routes/search.tsx";
@@ -39,7 +38,6 @@ import * as $connections_CancelAddConnectionButton from "./islands/connections/C
 import * as $connections_ConnectButton from "./islands/connections/ConnectButton.tsx";
 import * as $connections_ConnectionCard from "./islands/connections/ConnectionCard.tsx";
 import * as $connections_ConnectionDropDown from "./islands/connections/ConnectionDropDown.tsx";
-import * as $connections_ConnectionList from "./islands/connections/ConnectionList.tsx";
 import * as $connections_LocalConnectionRadio from "./islands/connections/LocalConnectionRadio.tsx";
 import * as $connections_RemoveLocalConnectionDialog from "./islands/connections/RemoveLocalConnectionDialog.tsx";
 import { type Manifest } from "$fresh/server.ts";
@@ -60,7 +58,6 @@ const manifest = {
     "./routes/api/deleteKeys.tsx": $api_deleteKeys,
     "./routes/api/keyTypes.tsx": $api_keyTypes,
     "./routes/api/updateKey.tsx": $api_updateKey,
-    "./routes/buttonTest.tsx": $buttonTest,
     "./routes/index.tsx": $index,
     "./routes/logout.tsx": $logout,
     "./routes/search.tsx": $search,
@@ -85,7 +82,6 @@ const manifest = {
     "./islands/connections/ConnectButton.tsx": $connections_ConnectButton,
     "./islands/connections/ConnectionCard.tsx": $connections_ConnectionCard,
     "./islands/connections/ConnectionDropDown.tsx": $connections_ConnectionDropDown,
-    "./islands/connections/ConnectionList.tsx": $connections_ConnectionList,
     "./islands/connections/LocalConnectionRadio.tsx": $connections_LocalConnectionRadio,
     "./islands/connections/RemoveLocalConnectionDialog.tsx":
       $connections_RemoveLocalConnectionDialog,
