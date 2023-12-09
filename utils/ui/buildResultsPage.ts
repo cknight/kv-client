@@ -97,7 +97,7 @@ export async function entriesToOperateOn(
     }
   }
 
-  console.log(`  Time to match ${kvEntries.length} keys: ${Date.now() - startTime}ms`);
+  console.debug(`  Time to match ${kvEntries.length} keys: ${Date.now() - startTime}ms`);
   return kvEntries;
 }
 

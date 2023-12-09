@@ -167,7 +167,6 @@ export async function getRootData(accessToken: string): Promise<DashRootData> {
       `Fetching Root Data: ${req.statusText}\n\n${await req.text()}`,
     );
   }
-  // console.log(await req.text());
   return req.json();
 }
 

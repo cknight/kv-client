@@ -126,7 +126,7 @@ export async function searchKv(
       cursor: newCursor,
     });
   } else {
-    console.log("Caching", newResults.length, "results.  Cursor", newCursor);
+    console.debug("Caching", newResults.length, "results.  Cursor", newCursor);
     state.cache.add({
       connectionId,
       prefix,

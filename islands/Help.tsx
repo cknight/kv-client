@@ -9,7 +9,6 @@ interface HelpProps {
 
 export function Help(props: HelpProps) {
   function showHelp() {
-    console.log("showHelp");
     const dialog = document.getElementById(props.dialogId) as HTMLDialogElement;
     dialog.classList.add("modal");
     dialog.showModal();

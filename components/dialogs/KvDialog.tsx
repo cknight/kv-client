@@ -61,7 +61,9 @@ export function KvDialog(props: KvDialogProps) {
   function closeDialog(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault(); //e.g. don't submit the form
     inEditMode.value = false;
-    (document.getElementById("kvDialog")! as HTMLDialogElement).close();
+    const dialog = document.getElementById("kvDialog")! as HTMLDialogElement;
+    dialog.close();
+    dialog.classList.remove("modal");
   }
 
   function editValue(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
@@ -97,7 +99,9 @@ export function KvDialog(props: KvDialogProps) {
       ),
     }).then((response) => {
       if (response.ok) {
-        (document.getElementById("kvDialog")! as HTMLDialogElement).close();
+        const dialog = document.getElementById("kvDialog")! as HTMLDialogElement;
+        dialog.close();
+        dialog.classList.remove("modal");
         console.log("Entry successfully updated");
         showToast("Entry successfully updated", "info");
         inEditMode.value = false;
@@ -118,7 +122,9 @@ export function KvDialog(props: KvDialogProps) {
   function cancelEdit(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault(); //e.g. don't submit the form
     inEditMode.value = false;
-    (document.getElementById("kvDialog")! as HTMLDialogElement).close();
+    const dialog = document.getElementById("kvDialog")! as HTMLDialogElement;
+    dialog.close();
+    dialog.classList.remove("modal");
   }
 
   function showToast(msg: string, type: ToastType) {
@@ -131,14 +137,20 @@ export function KvDialog(props: KvDialogProps) {
     <>
       <dialog
         id="kvDialog"
-        class="p-4 border-2 border-gray-700 rounded w-[80%]"
+        class=""
       >
-        <div class="mb-3">
+        <div class="modal-box mb-3">
           <div class="font-bold text-xl">
             Key <span class="font-light text-base">(~ {keySize})</span>
           </div>
           <div class="mt-3">
-            <pre class="border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 pr-10">{props.kvKey.value}</pre>
+            {/* <pre class="border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 pr-10">{props.kvKey.value}</pre> */}
+            <textarea
+                    type="text"
+                    disabled={true}
+                    value={props.kvKey.value}
+                    class="textarea textarea-bordered text-area-sm w-full"
+                  />
           </div>
           <div class="mt-3 font-bold text-xl">
             Value <span class="font-light text-base">(~ {valueSize})</span>
@@ -147,18 +159,27 @@ export function KvDialog(props: KvDialogProps) {
             <textarea
               id="valueTextArea"
               disabled={!inEditMode.value}
-              class="border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 pr-10"
+              class="textarea textarea-bordered text-area-sm w-full"
               value={props.kvValue.value}
             />
           </div>
-          <div class="flex mt-3 justify-center">
+          <div class="flex gap-x-3 mt-5 justify-center">
             {inEditMode.value
-              ? <button id="cancelButton" class="btn btn-secondary" onClick={cancelEdit}>Cancel</button>
+              ? (
+                <button id="cancelButton" class="btn btn-secondary" onClick={cancelEdit}>
+                  Cancel
+                </button>
+              )
               : <button class="btn btn-primary" onClick={editValue}>Edit value</button>}
             {inEditMode.value
               ? <button class="btn btn-primary" onClick={submitEdit}>Submit</button>
               : (
-                <button id="okButton" ref={okButtonRef} class="btn btn-primary" onClick={closeDialog}>
+                <button
+                  id="okButton"
+                  ref={okButtonRef}
+                  class="btn btn-primary"
+                  onClick={closeDialog}
+                >
                   OK
                 </button>
               )}

@@ -14,7 +14,7 @@ export function KvKeyInput(props: KvKeyInputProps) {
 
   useEffect(() => {
     if (disableTypes) return;
-    console.log(props);
+    
     fetch("/api/keyTypes", {
       method: "POST",
       body: (document.getElementById(props.id as string) as HTMLInputElement).value,

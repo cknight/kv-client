@@ -54,12 +54,10 @@ export const handler: Handlers = {
       }
 
       const kvValue: unknown = buildKvValue(valueString, valueType);
-      console.log("Built value", kvValue);
 
       const entry: Deno.KvEntry<unknown> = { key: kvKey, value: kvValue, versionstamp: "1" };
       const result = await setAll([entry], kv, "");
       const { setKeyCount, writeUnitsConsumed } = result;
-      console.log("result", result);
 
       const overallDuration = Date.now() - start;
 

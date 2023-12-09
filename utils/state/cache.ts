@@ -25,18 +25,17 @@ export class CacheManager implements I_CacheManager {
       });
     } else {
       cachedSearch.cursor = parms.cursor;
-      console.log("in cache", cachedSearch.dataRetrieved.length, "results", parms.results.length);
       cachedSearch.dataRetrieved = cachedSearch.dataRetrieved.concat(parms.results);
       cachedSearch.cacheTime = Date.now();
     }
 
     const result = this.cache.get(key);
-    console.log(
+    console.debug(
       "Cache for key",
       JSON.stringify(key),
-      "cursor",
+      "|| cursor:",
       result?.cursor,
-      "items",
+      "items:",
       result?.dataRetrieved.length,
     );
   }

@@ -114,6 +114,7 @@ export function SearchResults(props: SearchResultsProps) {
 
       const dialog = document.getElementById("kvDialog") as HTMLDialogElement;
       dialog.showModal();
+      dialog.classList.add("modal");
       const okButtonRef = document.getElementById("okButton") as HTMLButtonElement;
       if (okButtonRef) {
         okButtonRef.focus();
@@ -163,12 +164,14 @@ export function SearchResults(props: SearchResultsProps) {
     event.preventDefault();
     const dialog = document.getElementById("deleteDialog") as HTMLDialogElement;
     dialog.showModal();
+    dialog.classList.add("modal");
   }
 
   function copyEntries(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault();
     const dialog = document.getElementById("copyDialog") as HTMLDialogElement;
     dialog.showModal();
+    dialog.classList.add("modal");
   }
 
   return (
@@ -177,10 +180,10 @@ export function SearchResults(props: SearchResultsProps) {
         (
           <div
             id="resultsPanel"
-            class="mt-4 border border-1 border-[#666] bg-[#353535] rounded-md p-4 mt-3"
+            class="border border-1 border-[#666] bg-[#353535] rounded-md p-4 mt-4"
           >
             <div class="flex justify-between">
-              <div class="flex items-center justify-start mt-3">
+              <div class="flex items-center justify-start">
                 <label for="filter">Filter</label>
                 <input
                   type="text"
@@ -203,7 +206,7 @@ export function SearchResults(props: SearchResultsProps) {
                 </button>
                 <button type="button" onClick={applyFilter} class="btn btn-primary btn-sm">Apply</button>
               </div>
-              <div class="flex items-center justify-start mt-3">
+              <div class="flex items-center justify-start">
                 <button type="button" onClick={deleteEntries} class="btn btn-primary btn-sm mr-3">
                   Delete {scopeText()}
                 </button>
@@ -212,11 +215,11 @@ export function SearchResults(props: SearchResultsProps) {
                 </button>
               </div>
             </div>
-            <div class="w-full inline-block shadow border-1 border-gray-300 rounded-lg overflow-hidden mt-2">
-              <table class="table table-zebra table-sm table-pin-rows table-pin-cols">
+            <div class="mt-3">
+              <table class="table table-sm table-pin-rows table-pin-cols border border-[#151515]">
                 <thead>
                   <tr>
-                    <th class="w-12 text-center">
+                    <th class="w-12 text-center bg-gray-700 shadow-lg">
                       <input
                         id="selectAll"
                         type="checkbox"
@@ -225,8 +228,8 @@ export function SearchResults(props: SearchResultsProps) {
                         class="checkbox checkbox-xs checkbox-primary w-4 h-4"
                       />
                     </th>
-                    <th class="text-accent text-base">Key</th>
-                    <th class="text-accent text-base">Value</th>
+                    <th class="text-[#d5d5d5] text-base bg-gray-700 shaodw-lg">Key</th>
+                    <th class="text-[#d5d5d5] text-base bg-gray-700 shaodw-lg">Value</th>
                   </tr>
                 </thead>
                 <tbody id="resultRows">
@@ -250,7 +253,7 @@ export function SearchResults(props: SearchResultsProps) {
                   })}
                 </tbody>
               </table>
-              <div class="flex justify-between items-center">
+              <div class="flex justify-between items-center mt-2">
                 <div>
                   Show
                   <select
@@ -258,7 +261,7 @@ export function SearchResults(props: SearchResultsProps) {
                     form="pageForm"
                     name="show"
                     onChange={onShowChange}
-                    class="rounded text-[#353535] mx-2 p-2 my-2"
+                    class="select select-bordered select-sm mx-2"
                   >
                     <option value="10" selected={props.show === 10}>10</option>
                     <option value="20" selected={props.show === 20}>20</option>

@@ -20,7 +20,6 @@ export const handler: Handlers = {
       }
 
       const start = Date.now();
-      console.log("*********************** ", accessToken);
       const deployUser = await buildRemoteData(accessToken);
 
       /*
@@ -34,7 +33,6 @@ export const handler: Handlers = {
       await localKv.set([DEPLOY_USER_KEY_PREFIX, session], deployUser, {
         expireIn: 30 * _24_HOURS_IN_MS,
       });
-      console.log("Successfully set deploy user");
       await storeEncryptedString(
         [ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session],
         accessToken,

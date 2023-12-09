@@ -18,43 +18,43 @@ export function KeyHelp(props: { keyPart: string }) {
         of key parts, use the following syntax:
       </div>
       <div class="flex justify-center my-3">
-        <table class="border-1">
+        <table class="table table-sm border border-[#151515]">
           <thead>
-            <tr class="border-1">
-              <th class="border-1 p-3">Type</th>
-              <th class="border-1 p-3">Example values</th>
-              <th class="border-1 p-3">Resulting Deno.KvKey</th>
+            <tr>
+              <th class="text-[#d5d5d5] text-sm bg-gray-700 shaodw-lg">Type</th>
+              <th class="text-[#d5d5d5] text-sm bg-gray-700 shaodw-lg">Example values</th>
+              <th class="text-[#d5d5d5] text-sm bg-gray-700 shaodw-lg">Resulting Deno.KvKey</th>
             </tr>
           </thead>
           <tbody>
-            <tr class="border-1">
-              <td class="border-1 p-3">string</td>
-              <td class="border-1 p-3">"example1", 'example2', `example3`</td>
-              <td class="border-1 p-3">
+            <tr>
+              <td>string</td>
+              <td>"example1", 'example2', `example3`</td>
+              <td>
                 kv.list(&#123;{props.keyPart}: ["example1", "example2", "example3"]&#125;)
               </td>
             </tr>
-            <tr class="border-1">
-              <td class="border-1 p-3">number</td>
-              <td class="border-1 p-3">1, -1, 0</td>
-              <td class="border-1 p-3">kv.list(&#123;{props.keyPart}: [1, -1, 0]&#125;)</td>
+            <tr>
+              <td>number</td>
+              <td>1, -1, 0</td>
+              <td>kv.list(&#123;{props.keyPart}: [1, -1, 0]&#125;)</td>
             </tr>
-            <tr class="border-1">
-              <td class="border-1 p-3">boolean</td>
-              <td class="border-1 p-3">true, false</td>
-              <td class="border-1 p-3">kv.list(&#123;{props.keyPart}: [true, false]&#125;)</td>
+            <tr>
+              <td>boolean</td>
+              <td>true, false</td>
+              <td>kv.list(&#123;{props.keyPart}: [true, false]&#125;)</td>
             </tr>
-            <tr class="border-1">
-              <td class="border-1 p-3">Uint8Array</td>
-              <td class="border-1 p-3">[1, 2, 3]</td>
-              <td class="border-1 p-3">
+            <tr>
+              <td>Uint8Array</td>
+              <td>[1, 2, 3]</td>
+              <td>
                 kv.list(&#123;{props.keyPart}: [new Uint8Array([1,2,3])]&#125;)
               </td>
             </tr>
-            <tr class="border-1">
-              <td class="border-1 p-3">bigint</td>
-              <td class="border-1 p-3">18014398509481982n</td>
-              <td class="border-1 p-3">
+            <tr>
+              <td>bigint</td>
+              <td>18014398509481982n</td>
+              <td>
                 kv.list(&#123;{props.keyPart}: [18014398509481982n]&#125;)
               </td>
             </tr>
@@ -69,7 +69,7 @@ export function KeyHelp(props: { keyPart: string }) {
         type="text"
         readOnly={true}
         disableTypes={true}
-        class="rounded bg-blue-100 w-full p-2"
+        class="input input-bordered input-primary w-full p-2"
         value={`"example1", 1, true, [200,2,87], 18014398509481982n`}
       />
     </>

@@ -42,7 +42,9 @@ export function DeleteDataDialog(props: CopyDeleteProps) {
 
   function cancelDialog(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault(); //e.g. don't submit the form
-    (document.getElementById("deleteDialog")! as HTMLDialogElement).close();
+    const dialog = document.getElementById("deleteDialog")! as HTMLDialogElement;
+    dialog.close();
+    dialog.classList.remove("modal");
   }
 
   function deleteConfirmed(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
@@ -92,7 +94,10 @@ export function DeleteDataDialog(props: CopyDeleteProps) {
       console.error("Failure with delete request", e);
       showToast("An unexpected error occurred: Unable to send request", "error");
     }).finally(() => {
-      (document.getElementById("deleteDialog")! as HTMLDialogElement).close();
+      const dialog = document.getElementById("deleteDialog")! as HTMLDialogElement;
+      dialog.close();
+      dialog.classList.remove("modal");
+
       isDeleting.value = false;
       document.body.style.cursor = "default";
       (document.getElementById("resultsPanel")! as HTMLDivElement).style.display = "none";
@@ -137,14 +142,14 @@ export function DeleteDataDialog(props: CopyDeleteProps) {
     <>
       <dialog
         id="deleteDialog"
-        class="p-4 border-2 border-gray-700 rounded shadow max-w-[800px]"
+        class=""
       >
-        <div class="mb-3">
+        <div class="modal-box mb-3">
           <p class="font-bold text-xl">
             Confirm delete
           </p>
           <div class="mt-3">
-            <table class="w-full">
+            <table class="table">
               <tr>
                 <td class="w-40 text-right pr-6 font-bold">Connection</td>
                 <td>
@@ -152,7 +157,7 @@ export function DeleteDataDialog(props: CopyDeleteProps) {
                     type="text"
                     disabled={true}
                     value={connNameAndEnv()}
-                    class="border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 pr-10"
+                    class="input input-bordered w-full"
                   />
                 </td>
               </tr>
@@ -163,7 +168,7 @@ export function DeleteDataDialog(props: CopyDeleteProps) {
                     type="text"
                     disabled={true}
                     value={connectionLocation}
-                    class="border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 pr-10"
+                    class="textarea textarea-bordered text-area-sm w-full"
                   />
                 </td>
               </tr>
@@ -174,7 +179,7 @@ export function DeleteDataDialog(props: CopyDeleteProps) {
                     type="text"
                     disabled={true}
                     value={keysSelected.length === 0 ? resultsCount : keysSelected.length}
-                    class="border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 pr-10"
+                    class="input input-bordered w-full"
                   />
                 </td>
               </tr>
@@ -190,13 +195,15 @@ export function DeleteDataDialog(props: CopyDeleteProps) {
               <p class="text-red-500">This is a production environment</p>
             </div>
           )}
-          <div class="flex mt-3 justify-center">
-            {isDeleting.value ? <button class="btn btn-secondary" onClick={abortDelete}>Abort</button> : (
-              <>
-                <button class="btn btn-secondary" onClick={cancelDialog}>Cancel</button>
-                <button class="btn btn-primary" onClick={deleteConfirmed}>Delete</button>
-              </>
-            )}
+          <div class="flex gap-x-3 mt-5 justify-center">
+            {isDeleting.value
+              ? <button class="btn btn-secondary" onClick={abortDelete}>Abort</button>
+              : (
+                <>
+                  <button class="btn btn-secondary" onClick={cancelDialog}>Cancel</button>
+                  <button class="btn btn-primary" onClick={deleteConfirmed}>Delete</button>
+                </>
+              )}
           </div>
         </div>
       </dialog>

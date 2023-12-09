@@ -20,7 +20,6 @@ export function Toast(props: ToastProperties) {
   useSignalEffect(() => {
     if (props.show.value) {
       setTimeout(() => {
-        console.log("hiding toast");
         props.show.value = false;
       }, 15000);
     }

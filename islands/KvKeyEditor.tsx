@@ -7,19 +7,6 @@ import { KeyHelp } from "../components/KeyHelp.tsx";
 export function KvKeyEditor() {
   const keyParts: Signal<{ key: string; type: string }[]> = useSignal([]);
 
-  function addRow(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
-    event.preventDefault();
-    keyParts.value = buildParts();
-    console.log(keyParts.value);
-  }
-
-  function removeRow(index: number, event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
-    event.preventDefault();
-    console.log("removing row", index);
-    keyParts.value = buildParts().filter((_, i) => i !== index);
-    console.log(keyParts.value);
-  }
-
   function buildParts(): { key: string; type: string }[] {
     let i = 0;
     const newParts = [];

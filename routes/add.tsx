@@ -20,9 +20,9 @@ export default function Add(props: PageProps<unknown>) {
       <form
         id="pageForm"
         method="post"
-        class="w-full h-full m-8 mt-0 border-1 border-gray-400 rounded p-5 bg-white"
+        class="m-8 mt-0 "
       >
-        <div class="flex flex-col w-full h-full">
+        <div class="flex flex-col w-full">
           <AddEntryEditor />
         </div>
       </form>

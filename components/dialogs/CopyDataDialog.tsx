@@ -42,7 +42,9 @@ export function CopyDataDialog(props: CopyDeleteProps) {
 
   function cancelDialog(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault(); //e.g. don't submit the form
-    (document.getElementById("copyDialog")! as HTMLDialogElement).close();
+    const dialog = document.getElementById("copyDialog")! as HTMLDialogElement;
+    dialog.close();
+    dialog.classList.remove("modal");
   }
 
   function copyConfirmed(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
@@ -94,7 +96,9 @@ export function CopyDataDialog(props: CopyDeleteProps) {
       console.error("Failure with copy request", e);
       showToast("An unexpected error occurred: Unable to send request", "error");
     }).finally(() => {
-      (document.getElementById("copyDialog")! as HTMLDialogElement).close();
+      const dialog = document.getElementById("copyDialog")! as HTMLDialogElement;
+      dialog.close();
+      dialog.classList.remove("modal");
       isCopying.value = false;
       document.body.style.cursor = "default";
     });
@@ -156,15 +160,15 @@ export function CopyDataDialog(props: CopyDeleteProps) {
     <>
       <dialog
         id="copyDialog"
-        class="p-4 border-2 border-gray-700 rounded shadow"
+        class=""
       >
-        <div class="mb-3">
+        <div class="modal-box mb-3">
           <h2 class="font-bold text-xl">
             Copy results
           </h2>
           <p class="mt-3">Copy {results()} result{results() > 0 ? "s" : ""}</p>
           <div class="my-3">
-            <table>
+            <table class="table">
               <tr>
                 <td class="w-[60px]">From</td>
                 <td>
@@ -172,7 +176,7 @@ export function CopyDataDialog(props: CopyDeleteProps) {
                     type="text"
                     disabled={true}
                     value={connNameAndEnv()}
-                    class="border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 pr-10"
+                    class="input input-bordered w-full"
                   />
                 </td>
               </tr>
@@ -182,7 +186,7 @@ export function CopyDataDialog(props: CopyDeleteProps) {
                   <select
                     id="dest"
                     onChange={checkIfProd}
-                    class="border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 pr-10"
+                    class="select select-bordered w-full"
                   >
                     <option value="" disabled selected>Please select</option>
                     {[...connectionList().keys()].sort().map((environment) => (
@@ -207,7 +211,7 @@ export function CopyDataDialog(props: CopyDeleteProps) {
               <p class="text-red-500 break-all">Copy destination is a production environment</p>
             </div>
           )}
-          <div class="flex mt-5 justify-center">
+          <div class="flex gap-x-3 mt-5 justify-center">
             {isCopying.value ? <button class="btn btn-secondary" onClick={abortCopy}>Abort</button> : (
               <>
                 <button class="btn btn-secondary" onClick={cancelDialog}>Cancel</button>

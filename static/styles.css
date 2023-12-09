@@ -2,13 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+/* For dark scroll bar */
+:root {
+  color-scheme: dark;
+}
+
 .card {
   background-color: #353535;
   border: 1px solid #555
 }
 
 .checkbox{
-  border-width: 2px;
+  border-width: 1px;
   border-radius: 3px;
-  background-color: #eee;
+  background-color: #222;
 } 
+
+.input, .input-disabled, .input:disabled, .input[disabled] {
+  color: #ddd;
+}
+
+.modal-box {
+  border: 1px solid #444;
+}
