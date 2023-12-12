@@ -62,9 +62,11 @@ export function SearchBox(data: SearchDataProps) {
                 value={prefix}
               />
             </div>
-            <Help dialogId="prefixHelp" dialogTitle="Prefix key">
-              <KeyHelp keyPart="prefix" />
-            </Help>
+            <div class="pb-3">
+              <Help dialogId="prefixHelp" dialogTitle="Prefix key">
+                <KeyHelp keyPart="prefix" />
+              </Help>
+            </div>
           </div>
           <div class="w-full flex items-center mt-2">
             <label for="start" class="w-24">Start</label>
@@ -78,9 +80,11 @@ export function SearchBox(data: SearchDataProps) {
                 value={start}
               />
             </div>
-            <Help dialogId="startHelp" dialogTitle="Start key">
-              <KeyHelp keyPart="start" />
-            </Help>
+            <div class="pb-3">
+              <Help dialogId="startHelp" dialogTitle="Start key">
+                <KeyHelp keyPart="start" />
+              </Help>
+            </div>
           </div>
           <div class="w-full flex items-center mt-2">
             <label for="end" class="w-24">End</label>
@@ -94,9 +98,11 @@ export function SearchBox(data: SearchDataProps) {
                 value={end}
               />
             </div>
-            <Help dialogId="endHelp" dialogTitle="End key">
-              <KeyHelp keyPart="end" />
-            </Help>
+            <div class="pb-3">
+              <Help dialogId="endHelp" dialogTitle="End key">
+                <KeyHelp keyPart="end" />
+              </Help>
+            </div>
           </div>
         </div>
         <div class="w-1/3">
@@ -106,7 +112,7 @@ export function SearchBox(data: SearchDataProps) {
               id="limit"
               form="pageForm"
               name="limit"
-              class="select select-bordered w-24 p-2 my-2 "
+              class="select select-bordered select-sm w-24 my-2 "
             >
               <option value="10" selected={limit === "10"}>10</option>
               <option value="20" selected={limit === "20"}>20</option>
@@ -129,14 +135,15 @@ export function SearchBox(data: SearchDataProps) {
           <div class="w-full flex items-center justify-end mt-5">
             <label for="reverse" class="w-24">Reverse</label>
             <div class="w-24 flex justify-center">
-            <input
-              id="reverse"
-              form="pageForm"
-              type="checkbox"
-              name="reverse"
-              class="checkbox checkbox-sm checkbox-primary w-4 h-4"
-              checked={reverse}
-            /></div>
+              <input
+                id="reverse"
+                form="pageForm"
+                type="checkbox"
+                name="reverse"
+                class="checkbox checkbox-sm checkbox-primary w-4 h-4"
+                checked={reverse}
+              />
+            </div>
             <Help dialogId="reverseHelp" dialogTitle="Reverse">
               <p>Return the key-value pairs in lexicographically descending order</p>
             </Help>
@@ -144,14 +151,15 @@ export function SearchBox(data: SearchDataProps) {
           <div class="w-full flex items-center justify-end mt-5">
             <label for="disableCache" class="w-24">Disable cache</label>
             <div class="w-24 flex justify-center">
-            <input
-              id="disableCache"
-              form="pageForm"
-              type="checkbox"
-              name="disableCache"
-              class="checkbox checkbox-sm checkbox-primary w-4 h-4"
-              checked={disableCache}
-            /></div>
+              <input
+                id="disableCache"
+                form="pageForm"
+                type="checkbox"
+                name="disableCache"
+                class="checkbox checkbox-sm checkbox-primary w-4 h-4"
+                checked={disableCache}
+              />
+            </div>
             <Help dialogId="disableCacheHelp" dialogTitle="Disable cache">
               <p>
                 Do not use the server cache when querying KV. Get all results direct from KV

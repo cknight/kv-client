@@ -11,7 +11,7 @@ import { UnknownAvatarMenu } from "../islands/avatarMenu/UnknownAvatarMenu.tsx";
 import { TabBar } from "../islands/TabBar.tsx";
 
 export default async function defineLayout(req: Request, ctx: FreshContext) {
-  const tabBarRoutes = ["search", "add"];
+  const tabBarRoutes = ["search", "set"];
   const state = getUserState(ctx);
   const session = (ctx.state as Record<string, unknown>).session as string;
   let deployUser: DeployUser | null = state.deployUserData;

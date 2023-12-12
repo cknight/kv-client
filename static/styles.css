@@ -9,7 +9,8 @@
 
 .card {
   background-color: #353535;
-  border: 1px solid #555
+  border: 1px solid #555;
+  /* color: #ca6d30; */
 }
 
 .checkbox{
@@ -25,3 +26,104 @@
 .modal-box {
   border: 1px solid #444;
 }
+
+code {
+  background: #404040;
+  border-radius: 5px;
+  padding: 3px;
+  padding-left: 5px;
+  padding-right: 5px;  
+}
+
+/* .ace-merbivore .ace_gutter {
+  background: #202020;
+  color: #e6e1dc;
+}
+.ace-merbivore .ace_print-margin {
+  width: 1px;
+  background: #555651;
+}
+.ace-merbivore {
+  background-color: #161616;
+  color: #e6e1dc;
+}
+.ace-merbivore .ace_cursor {
+  color: #ffffff;
+}
+.ace-merbivore .ace_marker-layer .ace_selection {
+  background: #454545;
+}
+.ace-merbivore.ace_multiselect .ace_selection.ace_start {
+  box-shadow: 0 0 3px 0px #161616;
+}
+.ace-merbivore .ace_marker-layer .ace_step {
+  background: rgb(102, 82, 0);
+}
+.ace-merbivore .ace_marker-layer .ace_bracket {
+  margin: -1px 0 0 -1px;
+  border: 1px solid #404040;
+}
+.ace-merbivore .ace_marker-layer .ace_active-line {
+  background: #333435;
+}
+.ace-merbivore .ace_gutter-active-line {
+  background-color: #333435;
+}
+.ace-merbivore .ace_marker-layer .ace_selected-word {
+  border: 1px solid #454545;
+}
+.ace-merbivore .ace_invisible {
+  color: #404040;
+}
+.ace-merbivore .ace_entity.ace_name.ace_tag,
+.ace-merbivore .ace_keyword,
+.ace-merbivore .ace_meta,
+.ace-merbivore .ace_meta.ace_tag,
+.ace-merbivore .ace_storage,
+.ace-merbivore .ace_support.ace_function {
+  color: #fc6f09;
+}
+.ace-merbivore .ace_constant,
+.ace-merbivore .ace_constant.ace_character,
+.ace-merbivore .ace_constant.ace_character.ace_escape,
+.ace-merbivore .ace_constant.ace_other,
+.ace-merbivore .ace_support.ace_type {
+  color: #1edafb;
+}
+.ace-merbivore .ace_constant.ace_character.ace_escape {
+  color: #519f50;
+}
+.ace-merbivore .ace_constant.ace_language {
+  color: #fdc251;
+}
+.ace-merbivore .ace_constant.ace_library,
+.ace-merbivore .ace_string,
+.ace-merbivore .ace_support.ace_constant {
+  color: #ca6d30;
+}
+.ace-merbivore .ace_constant.ace_numeric {
+  color: #58c554;
+}
+.ace-merbivore .ace_invalid {
+  color: #ffffff;
+  background-color: #990000;
+}
+.ace-merbivore .ace_fold {
+  background-color: #fc6f09;
+  border-color: #e6e1dc;
+}
+.ace-merbivore .ace_comment {
+  font-style: italic;
+  color: #ad2ea4;
+}
+.ace-merbivore .ace_entity.ace_other.ace_attribute-name {
+  color: #ffff89;
+}
+.ace-merbivore .ace_indent-guide {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAEklEQVQImWMQFxf3ZXB1df0PAAdsAmERTkEHAAAAAElFTkSuQmCC)
+    right repeat-y;
+}
+.ace-merbivore .ace_indent-guide-active {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAEklEQVQIW2PQ1dX9zzBz5sz/ABCcBFFentLlAAAAAElFTkSuQmCC)
+    right repeat-y;
+} */

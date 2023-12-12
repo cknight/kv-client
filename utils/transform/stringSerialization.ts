@@ -20,6 +20,7 @@ interface KvType {
   value: unknown;
 }
 
+/* Convert to string */
 function replacer(_key: unknown, value: unknown) {
   if (value instanceof Map) {
     return {
@@ -64,6 +65,7 @@ function replacer(_key: unknown, value: unknown) {
   }
 }
 
+/* Restore to original type from string */
 function reviver(_key: unknown, value: unknown) {
   if (typeof value === "object" && isKvType(value)) {
     if (value.type === "Map") {

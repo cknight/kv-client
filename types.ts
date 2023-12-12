@@ -94,7 +94,7 @@ export interface KvSearchOptions {
   disableCache: boolean;
 }
 
-export type AuditLog<T extends "list" | "delete" | "copy" | "update" | "add"> = {
+export type AuditLog<T extends "list" | "delete" | "copy" | "update" | "set"> = {
   auditType: T;
   executorId: string;
   connection: string;
@@ -136,8 +136,8 @@ export type UpdateAuditLog = AuditLog<"update"> & {
   newValue: string;
 };
 
-export type AddAuditLog = AuditLog<"add"> & {
-  addSuccessful: boolean;
+export type SetAuditLog = AuditLog<"set"> & {
+  setSuccessful: boolean;
   writeUnitsConsumed: number;
   key: string;
   value: string;
@@ -148,7 +148,7 @@ export type AuditRecord =
   | DeleteAuditLog
   | CopyAuditLog
   | UpdateAuditLog
-  | AddAuditLog;
+  | SetAuditLog;
 
 export type UnitsConsumed = {
   operations: number;

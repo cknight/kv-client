@@ -7,6 +7,9 @@ export function buildKvValue(valueInput: string, valueType: SupportedValueTypes)
   switch (valueType) {
     case "bigint": {
       try {
+        if (value.endsWith("n")) {
+          return BigInt(value.slice(0, -1));
+        }
         return BigInt(value);
       } catch (_e) {
         throw new ValidationError(`Value is not a bigint`);
@@ -78,6 +81,8 @@ export function buildKvValue(valueInput: string, valueType: SupportedValueTypes)
       try {
         if (/^(0|[1-9]\d*)$/.test(value)) {
           return new Deno.KvU64(BigInt(value));
+        } else if (/^(0|[1-9]\d*)n$/.test(value)) {
+          return new Deno.KvU64(BigInt(value.slice(0, -1)));
         } else {
           const parsedKvU64 = json5Parse(value) as Deno.KvU64;
           if (notType(parsedKvU64, "KvU64")) {

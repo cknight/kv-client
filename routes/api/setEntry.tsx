@@ -1,5 +1,5 @@
 import { Handlers } from "$fresh/server.ts";
-import { AddAuditLog, SupportedValueTypes } from "../../types.ts";
+import { SetAuditLog, SupportedValueTypes } from "../../types.ts";
 import { executorId } from "../../utils/connections/denoDeploy/deployUser.ts";
 import { ValidationError } from "../../utils/errors.ts";
 import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";
@@ -11,7 +11,7 @@ import { buildKvValue } from "../../utils/transform/kvValueParser.ts";
 import { json5Stringify } from "../../utils/transform/stringSerialization.ts";
 import { asMaxLengthString } from "../../utils/utils.ts";
 
-export interface KvAddEntry {
+export interface KvSetEntry {
   key: string;
   value: string;
   valueType: SupportedValueTypes;
@@ -30,7 +30,7 @@ export const handler: Handlers = {
   async POST(req, ctx) {
     const start = Date.now();
     const { key: keyString, value: valueString, valueType, doNotOverwrite, connectionId } =
-      await req.json() as KvAddEntry;
+      await req.json() as KvSetEntry;
 
     let status = 200;
     let body = "";
@@ -61,33 +61,33 @@ export const handler: Handlers = {
 
       const overallDuration = Date.now() - start;
 
-      const addAudit: AddAuditLog = {
-        auditType: "add",
+      const setAudit: SetAuditLog = {
+        auditType: "set",
         executorId: executorId(session),
         connection: auditConnectionName(state.connection!),
         isDeploy: state.connection!.isRemote,
         rtms: overallDuration,
-        addSuccessful: setKeyCount === 1,
+        setSuccessful: setKeyCount === 1,
         key: keyString,
         value: asMaxLengthString(json5Stringify(kvValue, true), 30000),
         writeUnitsConsumed: writeUnitsConsumed,
       };
-      await auditAction(addAudit);
+      await auditAction(setAudit);
 
-      console.debug("Add result", result);
+      console.debug("Set result", result);
 
       if (result.setKeyCount === 1) {
-        body = "Entry successfully added";
+        body = "Entry successfully set";
         getUserState(session).cache.clear();
       } else {
-        body = "Entry failed to add";
+        body = "Entry failed to set";
         status = 500;
       }
     } catch (e) {
       console.log(e);
-      console.error("Error adding entry", e);
+      console.error("Error setting entry", e);
       status = 500;
-      body = "Error adding entry: " + e.message;
+      body = "Error setting entry: " + e.message;
     }
 
     return new Response(body, {
