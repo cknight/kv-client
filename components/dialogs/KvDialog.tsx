@@ -146,11 +146,11 @@ export function KvDialog(props: KvDialogProps) {
           <div class="mt-3">
             {/* <pre class="border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 pr-10">{props.kvKey.value}</pre> */}
             <textarea
-                    type="text"
-                    disabled={true}
-                    value={props.kvKey.value}
-                    class="textarea textarea-bordered text-area-sm w-full"
-                  />
+              type="text"
+              disabled={true}
+              value={props.kvKey.value}
+              class="textarea textarea-bordered text-area-sm w-full"
+            />
           </div>
           <div class="mt-3 font-bold text-xl">
             Value <span class="font-light text-base">(~ {valueSize})</span>

@@ -177,18 +177,25 @@ Deno.test("asString", () => {
   assertEquals(asString(-1.1), "-1.1");
   assertEquals(asString(1n), "1n");
   assertEquals(asString(-1n), "-1n");
-  assertEquals(asString("a"), 'a');
+  assertEquals(asString("a"), "a");
   assertEquals(asString(Symbol("a")), "Symbol(a)");
-  assertEquals(asString({a: "hello", b: 2}), "{\n  a: \"hello\",\n  b: 2,\n}");
-  assertEquals(asString([1,2,3]), "[\n  1,\n  2,\n  3,\n]");
-  assertEquals(asString(() => {console.log("hello")}), "()=>{\n    console.log(\"hello\");\n  }");
-  assertEquals(asString(new Map([["a", "1"], ["b", "2"]])), "[\n  [\n    \"a\",\n    \"1\",\n  ],\n  [\n    \"b\",\n    \"2\",\n  ],\n]");
-  assertEquals(asString(new Set(["a", "b"])), "[\n  \"a\",\n  \"b\",\n]");
+  assertEquals(asString({ a: "hello", b: 2 }), '{\n  a: "hello",\n  b: 2,\n}');
+  assertEquals(asString([1, 2, 3]), "[\n  1,\n  2,\n  3,\n]");
+  assertEquals(
+    asString(() => {
+      console.log("hello");
+    }),
+    '()=>{\n    console.log("hello");\n  }',
+  );
+  assertEquals(
+    asString(new Map([["a", "1"], ["b", "2"]])),
+    '[\n  [\n    "a",\n    "1",\n  ],\n  [\n    "b",\n    "2",\n  ],\n]',
+  );
+  assertEquals(asString(new Set(["a", "b"])), '[\n  "a",\n  "b",\n]');
   assertEquals(asString(new Date(1702678459424)), "2023-12-15T22:14:19.424Z");
   assertEquals(asString(new RegExp("a")), "/a/");
-  assertEquals(asString(new Uint8Array([1,2,3])), "[\n  1,\n  2,\n  3,\n]");
+  assertEquals(asString(new Uint8Array([1, 2, 3])), "[\n  1,\n  2,\n  3,\n]");
   assertEquals(asString(new Deno.KvU64(1234n)), "1234n");
-
 });
 
 function assertSerialization(obj: unknown) {
@@ -201,4 +208,3 @@ function assertSerialization(obj: unknown) {
     assertEquals(obj2, obj);
   }
 }
-

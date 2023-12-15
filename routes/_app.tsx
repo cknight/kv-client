@@ -8,19 +8,22 @@ export default function App({ Component }: PageProps) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>KV Client</title>
-        {/* <link
+        {
+          /* <link
           href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/full.min.css"
           rel="stylesheet"
           type="text/css"
-        /> */}
+        /> */
+        }
         <link rel="stylesheet" href="/styles.css" />
         {
-          <style>{`
+          <style>
+            {`
           ::backdrop {
             backdrop-filter: blur(1px);
             background: rgba(0,0,0,0.2);
           }`}
-        </style>
+          </style>
         }
       </head>
       <body class="h-full py-4" f-client-nav>

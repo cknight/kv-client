@@ -36,7 +36,7 @@ export async function buildRemoteData(accessToken: string): Promise<DeployUser> 
   if (tempEntry.value !== null) {
     return tempEntry.value;
   }
-  
+
   //Get user details and the orgs they belong to
   const rootData = await getRootData(accessToken);
   const deployUser = {

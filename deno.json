@@ -10,7 +10,10 @@
     "update": "deno run -A -r https://fresh.deno.dev/update ."
   },
   "lint": { "rules": { "tags": ["fresh", "recommended"] } },
-  "fmt": { "lineWidth": 100 },
+  "fmt": {
+    "lineWidth": 100,
+    "exclude": ["static/"]
+  },
   "nodeModulesDir": true,
   "imports": {
     "daisyui": "npm:daisyui@4.4.19",

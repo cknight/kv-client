@@ -48,8 +48,13 @@ export function Help(props: HelpProps) {
           <div class="mt-3">
             {props.children}
           </div>
-           <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={cancelDialog}>✕</button>
-           <div class="sticky bottom-0 flex mt-3 py-3 justify-center">
+          <button
+            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            onClick={cancelDialog}
+          >
+            ✕
+          </button>
+          <div class="sticky bottom-0 flex mt-3 py-3 justify-center">
             <button class="btn btn-primary" onClick={cancelDialog}>OK</button>
           </div>
         </div>

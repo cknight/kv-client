@@ -40,7 +40,9 @@ export async function entriesToOperateOn(
   const cachedListResults = state.cache.get({ connectionId, prefix, start, end, reverse });
 
   if (!cachedListResults) {
-    console.error("Cache entry not found for list operation criteria from which operation was requested");
+    console.error(
+      "Cache entry not found for list operation criteria from which operation was requested",
+    );
     throw new Error("Internal error.  Cache entry not found.  Aborting.");
   }
 

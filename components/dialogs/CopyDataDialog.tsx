@@ -212,12 +212,14 @@ export function CopyDataDialog(props: CopyDeleteProps) {
             </div>
           )}
           <div class="flex gap-x-3 mt-5 justify-center">
-            {isCopying.value ? <button class="btn btn-secondary" onClick={abortCopy}>Abort</button> : (
-              <>
-                <button class="btn btn-secondary" onClick={cancelDialog}>Cancel</button>
-                <button class="btn btn-primary" onClick={copyConfirmed}>Copy</button>
-              </>
-            )}
+            {isCopying.value
+              ? <button class="btn btn-secondary" onClick={abortCopy}>Abort</button>
+              : (
+                <>
+                  <button class="btn btn-secondary" onClick={cancelDialog}>Cancel</button>
+                  <button class="btn btn-primary" onClick={copyConfirmed}>Copy</button>
+                </>
+              )}
           </div>
         </div>
       </dialog>

@@ -14,7 +14,7 @@ export function KvKeyInput(props: KvKeyInputProps) {
 
   useEffect(() => {
     if (disableTypes) return;
-    
+
     fetch("/api/keyTypes", {
       method: "POST",
       body: (document.getElementById(props.id as string) as HTMLInputElement).value,
@@ -53,7 +53,8 @@ export function KvKeyInput(props: KvKeyInputProps) {
         <span class="ml-2 my-2">{`]`}</span>
       </div>
       <div class="flex flex-row ml-5 h-4 pt-1 mt-1 text-xs ">
-        <p class="mr-2">Types:</p><div id={typesId.value}>{types}</div>
+        <p class="mr-2">Types:</p>
+        <div id={typesId.value}>{types}</div>
       </div>
     </div>
   );

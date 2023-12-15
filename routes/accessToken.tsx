@@ -57,40 +57,39 @@ export default function AccessToken(data: PageProps<boolean>) {
   //<div class="w-full bg-white rounded-lg shadow sm:max-w-md">
   return (
     <div class="h-full flex items-center justify-center">
-
-    <div class="card w-full sm:max-w-md shadow">
-      <div class="card-body">
-        <h1 class="card-title">Connect with an access token</h1>
-        {error && (
-          <h2 class="text-lg font-bold p-2 bg-red-400 text-center">
-            Invalid access token.
-          </h2>
-        )}
-        <form class="space-y-4 md:space-y-6" action="/accessToken" method="post">
-          <div>
-            <AccessTokenInput />
-          </div>
-          <div class="flex justify-center">
-            <button
-              type="submit"
-              class="btn btn-primary"
-            >
-              Sign in
-            </button>
-          </div>
-          <p class="text-sm ">
-            Need an access token?{" "}
-            <a
-              href="https://dash.deno.com/account#access-tokens"
-              class="font-medium text-primary-600 underline ml-2"
-              target="_blank"
-            >
-              Create one
-            </a>
-          </p>
-        </form>
+      <div class="card w-full sm:max-w-md shadow">
+        <div class="card-body">
+          <h1 class="card-title">Connect with an access token</h1>
+          {error && (
+            <h2 class="text-lg font-bold p-2 bg-red-400 text-center">
+              Invalid access token.
+            </h2>
+          )}
+          <form class="space-y-4 md:space-y-6" action="/accessToken" method="post">
+            <div>
+              <AccessTokenInput />
+            </div>
+            <div class="flex justify-center">
+              <button
+                type="submit"
+                class="btn btn-primary"
+              >
+                Sign in
+              </button>
+            </div>
+            <p class="text-sm ">
+              Need an access token?{" "}
+              <a
+                href="https://dash.deno.com/account#access-tokens"
+                class="font-medium text-primary-600 underline ml-2"
+                target="_blank"
+              >
+                Create one
+              </a>
+            </p>
+          </form>
+        </div>
       </div>
-    </div>
     </div>
   );
 }

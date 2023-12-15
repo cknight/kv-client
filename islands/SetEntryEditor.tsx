@@ -79,7 +79,6 @@ export function SetEntryEditor() {
       kvValue = complexValue.value;
     }
 
-
     fetch("/api/setEntry", {
       method: "POST",
       headers: {

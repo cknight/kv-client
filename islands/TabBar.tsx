@@ -27,13 +27,15 @@ export function TabBar(props: TabBarProps) {
       >
         Set
       </a>
-      {/* <a
+      {
+        /* <a
         href={`importExport?connectionId=${props.connectionId}`}
         id="importExport"
         class={props.tab === "importExport" ? "tab tab-active" : "tab hover:bg-[#454545]"}
       >
         Import/Export
-      </a> */}
+      </a> */
+      }
     </div>
   );
 }

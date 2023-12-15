@@ -262,11 +262,12 @@ export function KvValueEditor() {
                       the type.
                     </p>
                     <p class="mt-2">
-                      Since the value type chosen for this KV value can potentially contain multiple types, it
-                      is necessary to include the type information for each part of this value. E.g.
-                      an Array can contain many elements, each of different types.  Thus value types which
-                      themselves can contain multiple types need type definitions embedded within them.  An 
-                      example is <code>{`{type: "Map", value: [["foo","bar"],["hello", "world"]]}`}</code>.
+                      Since the value type chosen for this KV value can potentially contain multiple
+                      types, it is necessary to include the type information for each part of this
+                      value. E.g. an Array can contain many elements, each of different types. Thus
+                      value types which themselves can contain multiple types need type definitions
+                      embedded within them. An example is{" "}
+                      <code>{`{type: "Map", value: [["foo","bar"],["hello", "world"]]}`}</code>.
                     </p>
                     <p class="mt-2">
                       As a worked example, let's say your KV value is a Map whose key is a Date and

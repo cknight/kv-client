@@ -31,7 +31,7 @@ export default async function defineLayout(req: Request, ctx: FreshContext) {
   const pathParts = url.pathname.split("/");
   const path = url.pathname.length > 1 ? pathParts[1] : "";
   const tabEnabledPath = tabBarRoutes.includes(path);
-  
+
   function camelToTitleCase(str: string) {
     if (str === "") return "Connections";
     const result = str.replace(/([A-Z])/g, " $1");

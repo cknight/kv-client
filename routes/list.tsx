@@ -145,35 +145,35 @@ export default async function Search(req: Request, props: RouteContext<ListData>
         class="m-8 mt-0 "
       >
         <Partial name="list">
-        <ListCriteriaBox
-          prefix={prefix}
-          start={start}
-          end={end}
-          limit={limit}
-          validationError={validationError}
-          reverse={reverse}
-          disableCache={disableCache}
-        />
-        <ListResults
-          results={results}
-          resultsCount={fullResultsCount}
-          show={show}
-          from={from}
-          filter={filter}
-          filtered={filtered}
-          listComplete={searchComplete}
-          stats={props.data?.stats}
-          session={props.state.session as string}
-          prefix={prefix}
-          start={start}
-          end={end}
-          reverse={reverse}
-          connections={connections}
-          connectionId={connectionId}
-          connectionName={connectionName}
-          connectionLocation={connectionLocation}
+          <ListCriteriaBox
+            prefix={prefix}
+            start={start}
+            end={end}
+            limit={limit}
+            validationError={validationError}
+            reverse={reverse}
+            disableCache={disableCache}
           />
-          </Partial>
+          <ListResults
+            results={results}
+            resultsCount={fullResultsCount}
+            show={show}
+            from={from}
+            filter={filter}
+            filtered={filtered}
+            listComplete={searchComplete}
+            stats={props.data?.stats}
+            session={props.state.session as string}
+            prefix={prefix}
+            start={start}
+            end={end}
+            reverse={reverse}
+            connections={connections}
+            connectionId={connectionId}
+            connectionName={connectionName}
+            connectionLocation={connectionLocation}
+          />
+        </Partial>
       </form>
     </>
   );
