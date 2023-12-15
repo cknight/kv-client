@@ -203,7 +203,7 @@ function assertSerialization(obj: unknown) {
   const obj2 = json5Parse(str);
 
   if (typeof obj === "symbol") {
-    assertEquals(obj.toString(), (obj2 as symbol).toString());
+    assertEquals(obj.toString(), (obj2 as {type:string, value:unknown}).value!.toString());
   } else {
     assertEquals(obj2, obj);
   }
