@@ -5,6 +5,7 @@ export default {
   content: [
     "{routes,islands,components}/**/*.{ts,tsx}",
   ],
+  //@ts-ignore - Unsure how to enable types for this library
   plugins: [daisyui as any],
   daisyui: {
     themes: [

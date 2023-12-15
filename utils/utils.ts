@@ -4,8 +4,6 @@ import { KvUIEntry } from "../types.ts";
 import { asString, json5Stringify } from "./transform/stringSerialization.ts";
 import { identifyType } from "./transform/typeIdentifier.ts";
 
-const encoder = new TextEncoder();
-
 export async function createKvUIEntry(entry: Deno.KvEntry<unknown>): Promise<KvUIEntry> {
   const value = asString(entry.value);
   const displayValue = value.length > 180 ? value.slice(0, 180) + "..." : value;
@@ -77,13 +75,6 @@ function reviver(_key: string, value: unknown) {
   return value;
 }
 
-function bigIntReplacer(_key: string, value: unknown) {
-  if (typeof value === "bigint") {
-    return value.toString();
-  }
-  return value;
-}
-
 // Define Deno Core
 type DenoCore = {
   deserialize<T>(data: Uint8Array): T;
@@ -100,7 +91,6 @@ type DenoCore = {
  */
 export function approximateSize(value: unknown): number {
   if (value === undefined) return 0;
-  //return JSON.stringify(value, bigIntReplacer).length;
 
   // @ts-ignore Use internal Deno API to get access to actual serialization method.
   const DENO_CORE: DenoCore = Deno[Deno.internal].core;

@@ -40,7 +40,7 @@ export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
       console.error(locationDir + " does not exist or is not a directory");
       return [];
     }
-  } catch (e) {
+  } catch (_e) {
     console.error(locationDir + " does not exist or is not a directory");
     return [];
   }

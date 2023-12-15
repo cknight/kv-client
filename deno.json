@@ -9,7 +9,10 @@
     "preview": "deno run -A main.ts",
     "update": "deno run -A -r https://fresh.deno.dev/update ."
   },
-  "lint": { "rules": { "tags": ["fresh", "recommended"] } },
+  "lint": { 
+    "rules": { "tags": ["fresh", "recommended"] },
+    "exclude": ["static/"]
+  },
   "fmt": {
     "lineWidth": 100,
     "exclude": ["static/"]
