@@ -2,9 +2,9 @@ import { KvKeyInput } from "../components/KvKeyInput.tsx";
 import { Help } from "./Help.tsx";
 import { KeyHelp } from "../components/KeyHelp.tsx";
 import { JSX } from "preact";
-import { clearSearchForm, submitSearchForm } from "../utils/ui/form.ts";
+import { clearListForm, submitListForm } from "../utils/ui/form.ts";
 
-interface SearchDataProps {
+interface ListDataProps {
   prefix: string;
   start: string;
   end: string;
@@ -14,7 +14,7 @@ interface SearchDataProps {
   disableCache: boolean;
 }
 
-export function SearchBox(data: SearchDataProps) {
+export function ListCriteriaBox(data: ListDataProps) {
   const prefix = data.prefix;
   const start = data.start;
   const end = data.end;
@@ -25,7 +25,7 @@ export function SearchBox(data: SearchDataProps) {
 
   function resetForm(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     //event.preventDefault(); //e.g. don't submit the form
-    clearSearchForm();
+    clearListForm();
   }
 
   function submitForm(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
@@ -37,12 +37,12 @@ export function SearchBox(data: SearchDataProps) {
       filter.value = "";
     }
 
-    //if a new search is being done, reset the page to 1
+    //if a new list operation is being done, reset the page to 1
     const from = document.getElementById("from")! as HTMLInputElement;
     if (from) {
       from.value = "1";
     }
-    submitSearchForm();
+    submitListForm();
   }
 
   return (
@@ -126,7 +126,7 @@ export function SearchBox(data: SearchDataProps) {
             </select>
             <Help dialogId="limitHelp" dialogTitle="Limit">
               <p>
-                Set the maximum amount of key-value pairs to retrieve with this search. It is
+                Set the maximum amount of KV entries to retrieve with this list operation. It is
                 important to note that the subsequent actions of filtering or paging results is done
                 within the context of the rows returned within this limit.
               </p>
@@ -175,7 +175,7 @@ export function SearchBox(data: SearchDataProps) {
           type="button"
           onClick={resetForm}
           form="pageForm"
-          class="btn btn-secondary"
+          class="btn btn-secondary w-[72px]"
         >
           Reset
         </button>
@@ -183,9 +183,9 @@ export function SearchBox(data: SearchDataProps) {
           type="button"
           onClick={submitForm}
           form="pageForm"
-          class="btn btn-primary"
+          class="btn btn-primary w-[72px]"
         >
-          Search
+          List
         </button>
       </div>
     </div>

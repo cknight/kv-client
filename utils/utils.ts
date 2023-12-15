@@ -1,20 +1,22 @@
 import { format } from "$std/fmt/bytes.ts";
 import { encodeHex } from "$std/encoding/hex.ts";
 import { KvUIEntry } from "../types.ts";
-import { json5Stringify } from "./transform/stringSerialization.ts";
+import { asString, json5Stringify } from "./transform/stringSerialization.ts";
+import { identifyType } from "./transform/typeIdentifier.ts";
 
 const encoder = new TextEncoder();
 
 export async function createKvUIEntry(entry: Deno.KvEntry<unknown>): Promise<KvUIEntry> {
-  const value = json5Stringify(entry.value);
+  const value = asString(entry.value);
   const displayValue = value.length > 180 ? value.slice(0, 180) + "..." : value;
   const uiEntry = {
     key: json5Stringify(entry.key),
     value: displayValue,
     versionstamp: entry.versionstamp,
+    valueType: identifyType(entry.value),
     fullValue: value,
     keyHash: await hashKvKey(entry.key),
-  };
+  } satisfies KvUIEntry;
   return uiEntry;
 }
 

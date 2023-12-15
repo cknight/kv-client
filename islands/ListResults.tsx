@@ -3,7 +3,7 @@ import { IS_BROWSER } from "$fresh/runtime.ts";
 import { Help } from "./Help.tsx";
 import { KvUIEntry, Stats, ToastType } from "../types.ts";
 import { StatsBar } from "../components/StatsBar.tsx";
-import { submitSearchForm } from "../utils/ui/form.ts";
+import { submitListForm } from "../utils/ui/form.ts";
 import { KvDialog } from "../components/dialogs/KvDialog.tsx";
 import { JSX } from "preact";
 import { DeleteDataDialog } from "../components/dialogs/DeleteDataDialog.tsx";
@@ -14,14 +14,14 @@ import { SingleRightIcon } from "../components/svg/SingleRight.tsx";
 import { SingleLeftIcon } from "../components/svg/SingleLeft.tsx";
 import { DoubleLeftIcon } from "../components/svg/DoubleLeft.tsx";
 
-interface SearchResultsProps {
+interface ListResultsProps {
   results: KvUIEntry[] | undefined;
   resultsCount: number;
   show: number;
   from: number;
   filter: string | undefined;
   filtered: boolean;
-  searchComplete: boolean;
+  listComplete: boolean;
   stats?: Stats;
   session: string;
   prefix: string;
@@ -34,7 +34,32 @@ interface SearchResultsProps {
   connectionLocation: string;
 }
 
-export function SearchResults(props: SearchResultsProps) {
+const valueTypeColorMap: Record<string, string> = {
+  string: "border-green-500 text-green-500",
+  number: "border-blue-400 text-blue-400",
+  boolean: "border-pink-400 text-pink-400",
+  Array: "border-amber-500 text-amber-500",
+  object: "border-purple-400 text-purple-400",
+  null: "border-warm-gray-500 text-warm-gray-500",
+  undefined: "border-blue-gray-500 text-blue-gray-500",
+  bigint: "border-violet-400 text-violet-400",
+  symbol: "border-rose-400 text-rose-400",
+  function: "border-lime-500 text-lime-500",
+  Date: "border-emerald-500 text-emerald-500",
+  RegExp: "border-teal-500 text-teal-500",
+  error: "border-red-400 text-red-400",
+  unknown: "border-gray-300 text-gray-300",
+  Map: "border-cyan-500 text-cyan-500",
+  Set: "border-indigo-400 text-indigo-400",
+  KvU64: "border-orange-500 text-orange-500",
+  Uint8Array: "border-fuchsia-400 text-fuchsia-400",
+};
+
+export function valueTypeColor(type: string): string {
+  console.log(type, valueTypeColorMap[type]);
+  return valueTypeColorMap[type] ?? "border-gray-500 text-gray-500";
+}
+export function ListResults(props: ListResultsProps) {
   const { results, resultsCount, filter, filtered } = props;
   const { prefix, start, end, reverse, session } = props;
   const entries = filtered ? " filtered entries" : " entries";
@@ -53,29 +78,30 @@ export function SearchResults(props: SearchResultsProps) {
     // FIXME: Seems brittle
     // GET request with POST data in URL, so submit form to redirect to POST
     setTimeout(() => {
-      submitSearchForm();
+      submitListForm();
     }, 0);
   }
 
   function onShowChange() {
     const from = document.getElementById("from") as HTMLInputElement;
     from.value = "1";
-    submitSearchForm();
+    submitListForm();
   }
 
   function applyFilter() {
     const from = document.getElementById("from") as HTMLInputElement;
     from.value = "1";
-    submitSearchForm();
+    submitListForm();
   }
 
   function clearFilter() {
     const filter = document.getElementById("filter") as HTMLInputElement;
     filter.value = "";
-    submitSearchForm();
+    submitListForm();
   }
 
-  function page(forward: boolean) {
+  function page(forward: boolean, event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
+    event.preventDefault();
     const newFrom = forward ? props.from + props.show : props.from - props.show;
     if (newFrom > resultsCount) {
       return;
@@ -83,23 +109,25 @@ export function SearchResults(props: SearchResultsProps) {
 
     const from = document.getElementById("from") as HTMLInputElement;
     from.value = newFrom < 1 ? "1" : newFrom.toString();
-    submitSearchForm();
+    submitListForm();
   }
 
-  function firstPage() {
+  function firstPage(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
+    event.preventDefault();
     const from = document.getElementById("from") as HTMLInputElement;
     from.value = "1";
-    submitSearchForm();
+    submitListForm();
   }
 
-  function lastPage() {
+  function lastPage(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
+    event.preventDefault();
     let newFrom = props.from;
     while (newFrom + props.show < resultsCount) {
       newFrom += props.show;
     }
     const from = document.getElementById("from") as HTMLInputElement;
     from.value = newFrom.toString();
-    submitSearchForm();
+    submitListForm();
   }
 
   function fullView(event: JSX.TargetedEvent<HTMLTableRowElement, MouseEvent>) {
@@ -197,14 +225,16 @@ export function SearchResults(props: SearchResultsProps) {
                   <div>
                     <p>
                       Free text search of key and values. Filtering only applies to the KV entries
-                      retrieved by the search, not the entire KV database.
+                      retrieved by the list operation, not the entire KV database.
                     </p>
                   </div>
                 </Help>
                 <button type="button" onClick={clearFilter} class="btn btn-secondary btn-sm mx-3">
                   Clear
                 </button>
-                <button type="button" onClick={applyFilter} class="btn btn-primary btn-sm">Apply</button>
+                <button type="button" onClick={applyFilter} class="btn btn-primary btn-sm">
+                  Apply
+                </button>
               </div>
               <div class="flex items-center justify-start">
                 <button type="button" onClick={deleteEntries} class="btn btn-primary btn-sm mr-3">
@@ -230,6 +260,7 @@ export function SearchResults(props: SearchResultsProps) {
                     </th>
                     <th class="text-[#d5d5d5] text-base bg-gray-700 shaodw-lg">Key</th>
                     <th class="text-[#d5d5d5] text-base bg-gray-700 shaodw-lg">Value</th>
+                    <th class="text-[#d5d5d5] text-base bg-gray-700 shaodw-lg">Value Type</th>
                   </tr>
                 </thead>
                 <tbody id="resultRows">
@@ -245,8 +276,13 @@ export function SearchResults(props: SearchResultsProps) {
                           />
                         </td>
                         <td>{result.key}</td>
-                        <td title={result.fullValue}>
+                        <td title={result.fullValue} class="break-all">
                           {result.value}
+                        </td>
+                        <td>
+                          <div class={"badge badge-outline " + valueTypeColor(result.valueType)}>
+                            {result.valueType}
+                          </div>
                         </td>
                       </tr>
                     );
@@ -274,25 +310,28 @@ export function SearchResults(props: SearchResultsProps) {
                 </div>
                 <div class="flex items-center gap-x-2">
                   Showing {props.from} to {to} of{" "}
-                  {props.searchComplete ? resultsCount + entries : " many"}
+                  {props.listComplete ? resultsCount + entries : " many"}
                   <input id="from" name="from" type="hidden" form="pageForm" value={props.from} />
                   <button
                     class="btn btn-primary btn-sm"
                     onClick={firstPage}
+                    f-partial="/list"
                     disabled={props.from === 1}
                   >
                     <DoubleLeftIcon />
                   </button>
                   <button
                     class="btn btn-primary btn-sm"
-                    onClick={() => page(false)}
+                    onClick={(e) => page(false, e)}
+                    f-partial="/list"
                     disabled={props.from === 1}
                   >
                     <SingleLeftIcon />
                   </button>
                   <button
                     class="btn btn-primary btn-sm"
-                    onClick={() => page(true)}
+                    onClick={(e) => page(true, e)}
+                    f-partial="/list"
                     disabled={props.from + props.show > resultsCount}
                   >
                     <SingleRightIcon />

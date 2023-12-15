@@ -23,10 +23,10 @@ export default function App({ Component }: PageProps) {
         </style>
         }
       </head>
-      <body class="h-full py-4" f-zzzzzzzzzzzz-client-nav>
-        {/* <Partial name="body"> */}
+      <body class="h-full py-4" f-client-nav>
+        <Partial name="body">
           <Component />
-        {/* </Partial> */}
+        </Partial>
       </body>
     </html>
   );

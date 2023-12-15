@@ -1,5 +1,5 @@
 import { Handlers } from "$fresh/server.ts";
-import { parseKvKey } from "../../utils/kv/kvKeyParser.ts";
+import { parseKvKey } from "../../utils/transform/kvKeyParser.ts";
 
 export const handler: Handlers = {
   /**

@@ -5,8 +5,7 @@ export function KeyHelp(props: { keyPart: string }) {
   return (
     <>
       <div>
-        This is the {props.keyPart} key to search for and is equivalent to the {props.keyPart}{" "}
-        option in the{" "}
+        This is the {props.keyPart} key of the{" "}
         <a href="https://docs.deno.com/kv/manual/operations#list" target="_blank" class={LINK}>
           Deno.Kv.prototype.list
         </a>{" "}

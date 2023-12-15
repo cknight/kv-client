@@ -56,7 +56,7 @@ export function ConnectionCard(props: ConnectionCardProps) {
   }
 
   function useConnection() {
-    window.location.href = "/search?connectionId=" + props.id;
+    window.location.href = "/list?connectionId=" + props.id;
   }
 
   return (

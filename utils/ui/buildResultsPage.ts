@@ -14,11 +14,11 @@ export interface KeyOperationData {
 }
 
 /**
- * Given a set of serialized hashed keys and a set of search criteria, return the keys to operate on. This
+ * Given a set of serialized hashed keys and a set of list operation criteria, return the keys to operate on. This
  * will be one of the 3:
- * 1. All Deno.KvEntry in the cache for the search criteria
- * 2. All filtered Deno.KvEntry in the cache for the search criteria
- * 3. The one or more specific Deno.KvEntry in the cache for the search criteria and keys selected
+ * 1. All Deno.KvEntry in the cache for the list operation criteria
+ * 2. All filtered Deno.KvEntry in the cache for the list operation criteria
+ * 3. The one or more specific Deno.KvEntry in the cache for the list operation criteria and keys selected
  *
  * @param data
  * @param session
@@ -36,11 +36,11 @@ export async function entriesToOperateOn(
     throw new Error("Internal error.  Connection not active.  Aborting.");
   }
 
-  //get all results from the cache for the search from which operation was requested
-  const cachedSearch = state.cache.get({ connectionId, prefix, start, end, reverse });
+  //get all results from the cache for the list operation
+  const cachedListResults = state.cache.get({ connectionId, prefix, start, end, reverse });
 
-  if (!cachedSearch) {
-    console.error("Cache entry not found for search criteria from which operation was requested");
+  if (!cachedListResults) {
+    console.error("Cache entry not found for list operation criteria from which operation was requested");
     throw new Error("Internal error.  Cache entry not found.  Aborting.");
   }
 
@@ -57,14 +57,14 @@ export async function entriesToOperateOn(
 
   if (keysSelected.length === 0 && (data.filter === undefined || data.filter === "")) {
     // Scenario 1 - Operate on all results
-    kvEntries = cachedSearch.dataRetrieved;
+    kvEntries = cachedListResults.dataRetrieved;
     console.debug(
       `Operating on all ${kvEntries.length} key${kvEntries.length > 1 ? "s" : ""}`,
     );
   } else {
     const { resultsPage, resultsWorkingSet } = buildResultsPage(
       data.filter,
-      cachedSearch.dataRetrieved,
+      cachedListResults.dataRetrieved,
       data.from,
       data.show,
     );

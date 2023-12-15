@@ -16,8 +16,8 @@ import * as $api_keyTypes from "./routes/api/keyTypes.tsx";
 import * as $api_setEntry from "./routes/api/setEntry.tsx";
 import * as $api_updateKey from "./routes/api/updateKey.tsx";
 import * as $index from "./routes/index.tsx";
+import * as $list from "./routes/list.tsx";
 import * as $logout from "./routes/logout.tsx";
-import * as $search from "./routes/search.tsx";
 import * as $set from "./routes/set.tsx";
 import * as $test from "./routes/test.tsx";
 import * as $AccessTokenInput from "./islands/AccessTokenInput.tsx";
@@ -25,8 +25,8 @@ import * as $DarkMode from "./islands/DarkMode.tsx";
 import * as $Help from "./islands/Help.tsx";
 import * as $KvKeyEditor from "./islands/KvKeyEditor.tsx";
 import * as $KvValueEditor from "./islands/KvValueEditor.tsx";
-import * as $SearchBox from "./islands/SearchBox.tsx";
-import * as $SearchResults from "./islands/SearchResults.tsx";
+import * as $ListCriteriaBox from "./islands/ListCriteriaBox.tsx";
+import * as $ListResults from "./islands/ListResults.tsx";
 import * as $SetEntryEditor from "./islands/SetEntryEditor.tsx";
 import * as $TabBar from "./islands/TabBar.tsx";
 import * as $TestToast from "./islands/TestToast.tsx";
@@ -58,8 +58,8 @@ const manifest = {
     "./routes/api/setEntry.tsx": $api_setEntry,
     "./routes/api/updateKey.tsx": $api_updateKey,
     "./routes/index.tsx": $index,
+    "./routes/list.tsx": $list,
     "./routes/logout.tsx": $logout,
-    "./routes/search.tsx": $search,
     "./routes/set.tsx": $set,
     "./routes/test.tsx": $test,
   },
@@ -69,8 +69,8 @@ const manifest = {
     "./islands/Help.tsx": $Help,
     "./islands/KvKeyEditor.tsx": $KvKeyEditor,
     "./islands/KvValueEditor.tsx": $KvValueEditor,
-    "./islands/SearchBox.tsx": $SearchBox,
-    "./islands/SearchResults.tsx": $SearchResults,
+    "./islands/ListCriteriaBox.tsx": $ListCriteriaBox,
+    "./islands/ListResults.tsx": $ListResults,
     "./islands/SetEntryEditor.tsx": $SetEntryEditor,
     "./islands/TabBar.tsx": $TabBar,
     "./islands/TestToast.tsx": $TestToast,

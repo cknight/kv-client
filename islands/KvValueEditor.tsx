@@ -85,7 +85,7 @@ export function KvValueEditor() {
     };
   }, []);
 
-  const simpleTypes = new Map([
+  const shorthandAvailableTypes = new Map([
     ["bigint", "example: 123456789"],
     ["boolean", "example: true"],
     ["null", "example: null"],
@@ -101,13 +101,13 @@ export function KvValueEditor() {
     const value = (document.getElementById("valueType") as HTMLSelectElement).value;
     selectedType.value = value;
 
-    isSimpleType.value = simpleTypes.get(value) !== undefined;
+    isSimpleType.value = shorthandAvailableTypes.get(value) !== undefined;
 
     const textarea = document.getElementById("textarea") as HTMLTextAreaElement;
     const editor = document.getElementById("editor") as HTMLDivElement;
     if (isSimpleType.value) {
       textarea.classList.remove("hidden");
-      textarea.placeholder = simpleTypes.get(value)!;
+      textarea.placeholder = shorthandAvailableTypes.get(value)!;
       editor.classList.add("hidden");
     } else {
       textarea.classList.add("hidden");
@@ -131,194 +131,190 @@ export function KvValueEditor() {
               onChange={updateTypeChosen}
             >
               <option value="" disabled={true} selected={true}>Please select</option>
-              <optgroup label="Primitive types">
-                <option value="bigint">bigint</option>
-                <option value="boolean">boolean</option>
-                <option value="null">null</option>
-                <option value="number">number</option>
-                <option value="string">string</option>
-              </optgroup>
-              <optgroup label="Complex types">
-                <option value="Array">Array</option>
-                <option value="Date">Date</option>
-                <option value="JSON">JSON</option>
-                <option value="KvU64">KvU64</option>
-                <option value="Map">Map</option>
-                <option value="Object">Object</option>
-                <option value="RegExp">RegExp</option>
-                <option value="Set">Set</option>
-                <option value="Uint8Array">Uint8Array</option>
-              </optgroup>
+              <option value="Array">Array</option>
+              <option value="bigint">bigint</option>
+              <option value="boolean">boolean</option>
+              <option value="Date">Date</option>
+              <option value="JSON">JSON</option>
+              <option value="KvU64">KvU64</option>
+              <option value="Map">Map</option>
+              <option value="null">null</option>
+              <option value="number">number</option>
+              <option value="Object">Object</option>
+              <option value="RegExp">RegExp</option>
+              <option value="Set">Set</option>
+              <option value="string">string</option>
+              <option value="Uint8Array">Uint8Array</option>
             </select>
           </div>
-            {selectedType.value !== "" && selectedType.value !== "JSON" &&
-                  !isSimpleType.value && (
-                    <div id="typeHelperSection" class="flex flex-row items-center">
-                      <label for="typeHelper" class="font-semibold whitespace-nowrap ml-6">
-                        Type templates
-                      </label>
-                      <div class="flex items-center">
-                        <select
-                          id="typeHelper"
-                          class="select select-bordered select-sm select-primary ml-3"
-                        >
-                          <option value="" disabled={true} selected={true}>Please select</option>
-                          <optgroup label="Primitive types">
-                            <option
-                              value="bigint"
-                              disabled={disabledTypeTemplates.value.includes("bigint")}
-                            >
-                              bigint
-                            </option>
-                            <option
-                              value="true"
-                              disabled={disabledTypeTemplates.value.includes("boolean")}
-                            >
-                              true
-                            </option>
-                            <option
-                              value="false"
-                              disabled={disabledTypeTemplates.value.includes("boolean")}
-                            >
-                              false
-                            </option>
-                            <option
-                              value="null"
-                              disabled={disabledTypeTemplates.value.includes("null")}
-                            >
-                              null
-                            </option>
-                            <option
-                              value="number"
-                              disabled={disabledTypeTemplates.value.includes("number")}
-                            >
-                              number
-                            </option>
-                            <option
-                              value="string"
-                              disabled={disabledTypeTemplates.value.includes("string")}
-                            >
-                              string
-                            </option>
-                          </optgroup>
-                          <optgroup label="Complex types">
-                            <option
-                              value="Array"
-                              disabled={disabledTypeTemplates.value.includes("Array")}
-                            >
-                              Array
-                            </option>
-                            <option
-                              value="Date"
-                              disabled={disabledTypeTemplates.value.includes("Date")}
-                            >
-                              Date
-                            </option>
-                            <option
-                              value="JSON"
-                              disabled={disabledTypeTemplates.value.includes("JSON")}
-                            >
-                              JSON
-                            </option>
-                            <option
-                              value="KvU64"
-                              disabled={disabledTypeTemplates.value.includes("KvU64")}
-                            >
-                              KvU64
-                            </option>
-                            <option
-                              value="Map"
-                              disabled={disabledTypeTemplates.value.includes("Map")}
-                            >
-                              Map
-                            </option>
-                            <option
-                              value="Object"
-                              disabled={disabledTypeTemplates.value.includes("Object")}
-                            >
-                              Object
-                            </option>
-                            <option
-                              value="RegExp"
-                              disabled={disabledTypeTemplates.value.includes("RegExp")}
-                            >
-                              RegExp
-                            </option>
-                            <option
-                              value="Set"
-                              disabled={disabledTypeTemplates.value.includes("Set")}
-                            >
-                              Set
-                            </option>
-                            <option
-                              value="Uint8Array"
-                              disabled={disabledTypeTemplates.value.includes("Uint8Array")}
-                            >
-                              Uint8Array
-                            </option>
-                          </optgroup>
-                        </select>
-                        <div>
-                          <Help dialogId="typeTemplateHelp" dialogTitle="Type template">
-                            <p>
-                              Choose an available type from the type template dropdown and insert it
-                              into the editor. This will you give you an example of the correct
-                              formatting for the type.
-                            </p>
-                            <p class="mt-2">
-                              Since the value type chosen for this KV value can contain multiple
-                              types, it is necessary to include the type information for each part
-                              of this value. E.g. an Array can contain many elements, each of
-                              different types.
-                            </p>
-                            <p class="mt-2">
-                              As a worked example, let's say your value is a Map who key is a Date
-                              and whose value is an Array of numbers, e.g.{" "}
-                              <code>Map&lt;Date, number[]&gt;</code>. The steps to create this would
-                              be as follows:
-                              <ol class="mt-2 list-decimal ml-4">
-                                <li>
-                                  Select <code>Map</code> from the <code>Value Type</code>{" "}
-                                  dropdown. This is the type of your KV value.
-                                </li>
-                                <li>
-                                  Select <code>Map</code> from the <code>Type template</code>{" "}
-                                  dropdown and click on Insert. This will insert the double-array
-                                  structure of the map.
-                                </li>
-                                <li>
-                                  This map is a <code>&lt;string, string&gt;</code>{" "}
-                                  type. Let's change that. Delete the key <code>"foo"</code>{" "}
-                                  leaving the cursor where it used to be. Select <code>Date</code>
-                                  {" "}
-                                  from the <code>Type template</code>{" "}
-                                  dropdown and choose insert. Modify the date value as needed.
-                                </li>
-                                <li>
-                                  Now delete the <code>"bar"</code>{" "}
-                                  value again leaving your cursor after deletion. Select{" "}
-                                  <code>Array</code> from the <code>Type template</code>{" "}
-                                  dropdown and click on Insert.
-                                </li>
-                                <li>
-                                  Change the default example <code>["foo", "hello"]</code> to{" "}
-                                  <code>[1,2,3]</code> or whatever number values you need.
-                                </li>
-                              </ol>
-                            </p>
-                          </Help>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={insertTypeTemplate}
-                        className="btn btn-primary btn-sm ml-6"
-                      >
-                        Insert example
-                      </button>
-                    </div>
-                  )
-            }
+          {selectedType.value !== "" && selectedType.value !== "JSON" &&
+            !isSimpleType.value && (
+            <div id="typeHelperSection" class="flex flex-row items-center">
+              <label for="typeHelper" class="font-semibold whitespace-nowrap ml-6">
+                Type templates
+              </label>
+              <div class="flex items-center">
+                <select
+                  id="typeHelper"
+                  class="select select-bordered select-sm select-primary ml-3"
+                >
+                  <option value="" disabled={true} selected={true}>Please select</option>
+                  <optgroup label="Primitive types">
+                    <option
+                      value="bigint"
+                      disabled={disabledTypeTemplates.value.includes("bigint")}
+                    >
+                      bigint
+                    </option>
+                    <option
+                      value="true"
+                      disabled={disabledTypeTemplates.value.includes("boolean")}
+                    >
+                      true
+                    </option>
+                    <option
+                      value="false"
+                      disabled={disabledTypeTemplates.value.includes("boolean")}
+                    >
+                      false
+                    </option>
+                    <option
+                      value="null"
+                      disabled={disabledTypeTemplates.value.includes("null")}
+                    >
+                      null
+                    </option>
+                    <option
+                      value="number"
+                      disabled={disabledTypeTemplates.value.includes("number")}
+                    >
+                      number
+                    </option>
+                    <option
+                      value="string"
+                      disabled={disabledTypeTemplates.value.includes("string")}
+                    >
+                      string
+                    </option>
+                  </optgroup>
+                  <optgroup label="Complex types">
+                    <option
+                      value="Array"
+                      disabled={disabledTypeTemplates.value.includes("Array")}
+                    >
+                      Array
+                    </option>
+                    <option
+                      value="Date"
+                      disabled={disabledTypeTemplates.value.includes("Date")}
+                    >
+                      Date
+                    </option>
+                    <option
+                      value="JSON"
+                      disabled={disabledTypeTemplates.value.includes("JSON")}
+                    >
+                      JSON
+                    </option>
+                    <option
+                      value="KvU64"
+                      disabled={disabledTypeTemplates.value.includes("KvU64")}
+                    >
+                      KvU64
+                    </option>
+                    <option
+                      value="Map"
+                      disabled={disabledTypeTemplates.value.includes("Map")}
+                    >
+                      Map
+                    </option>
+                    <option
+                      value="Object"
+                      disabled={disabledTypeTemplates.value.includes("Object")}
+                    >
+                      Object
+                    </option>
+                    <option
+                      value="RegExp"
+                      disabled={disabledTypeTemplates.value.includes("RegExp")}
+                    >
+                      RegExp
+                    </option>
+                    <option
+                      value="Set"
+                      disabled={disabledTypeTemplates.value.includes("Set")}
+                    >
+                      Set
+                    </option>
+                    <option
+                      value="Uint8Array"
+                      disabled={disabledTypeTemplates.value.includes("Uint8Array")}
+                    >
+                      Uint8Array
+                    </option>
+                  </optgroup>
+                </select>
+                <div>
+                  <Help dialogId="typeTemplateHelp" dialogTitle="Type template">
+                    <p>
+                      Choose an available type from the type template dropdown and insert it into
+                      the editor. This will you give you an example of the correct formatting for
+                      the type.
+                    </p>
+                    <p class="mt-2">
+                      Since the value type chosen for this KV value can potentially contain multiple types, it
+                      is necessary to include the type information for each part of this value. E.g.
+                      an Array can contain many elements, each of different types.  Thus value types which
+                      themselves can contain multiple types need type definitions embedded within them.  An 
+                      example is <code>{`{type: "Map", value: [["foo","bar"],["hello", "world"]]}`}</code>.
+                    </p>
+                    <p class="mt-2">
+                      As a worked example, let's say your KV value is a Map whose key is a Date and
+                      whose value is an Array of numbers, e.g.{" "}
+                      <code>Map&lt;Date, number[]&gt;</code>. The steps to create this would be as
+                      follows:
+                      <ol class="mt-2 list-decimal ml-4">
+                        <li>
+                          Select <code>Map</code> from the <code>Value Type</code>{" "}
+                          dropdown. This is the type of your KV value.
+                        </li>
+                        <li>
+                          Select <code>Map</code> from the <code>Type template</code>{" "}
+                          dropdown and click on Insert. This will insert an object denoting the type
+                          of <code>Map</code> and the value of a double-array structure of a map.
+                        </li>
+                        <li>
+                          This template map is of type{" "}
+                          <code>&lt;string, string&gt;</code>. Let's change that. Delete the key
+                          {" "}
+                          <code>"foo"</code> leaving the cursor where it is. Select{" "}
+                          <code>Date</code> from the <code>Type template</code>{" "}
+                          dropdown and choose insert. Modify the date value as needed.
+                        </li>
+                        <li>
+                          Now delete the <code>"bar"</code>{" "}
+                          value again leaving your cursor after deletion. Select <code>Array</code>
+                          {"  "}from the <code>Type template</code> dropdown and click on Insert.
+                        </li>
+                        <li>
+                          Change the default example <code>["foo", "hello"]</code> to{" "}
+                          <code>[1,2,3]</code> or whatever number values you need.
+                        </li>
+                        <li>Use this first entry as a guide for your additional entries.</li>
+                      </ol>
+                    </p>
+                  </Help>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={insertTypeTemplate}
+                className="btn btn-primary btn-sm ml-6"
+              >
+                Insert example
+              </button>
+            </div>
+          )}
         </div>
         <div class="mt-4 w-full flex flex-col items-center pr-8">
           <div id="simpleEditor" class="w-full">

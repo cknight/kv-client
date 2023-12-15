@@ -1,5 +1,5 @@
 {
-  "editor.codeLens": false,
+  "editor.codeLens": true,
   "deno.enable": true,
   "deno.disablePaths": [],
   "deno.lint": true,

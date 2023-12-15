@@ -1,4 +1,4 @@
-const searchFormIds = [
+const listFormIds = [
   "show",
   "from",
   "filter",
@@ -10,13 +10,13 @@ const searchFormIds = [
   "disableCache",
 ];
 
-export function submitSearchForm() {
-  searchFormIds.forEach(updateUrl);
+export function submitListForm() {
+  listFormIds.forEach(updateUrl);
   const form = document.getElementById("pageForm") as HTMLFormElement;
   form.submit();
 }
 
-export function clearSearchForm() {
+export function clearListForm() {
   const resetIds = ["prefix", "start", "end", "limit", "reverse", "filter"];
   resetIds.forEach(reset);
 }

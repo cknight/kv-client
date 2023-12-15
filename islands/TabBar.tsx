@@ -14,11 +14,11 @@ export function TabBar(props: TabBarProps) {
         Get
       </a>
       <a
-        href={`search?connectionId=${props.connectionId}`}
-        id="search"
-        class={"mr-1 " + (props.tab === "search" ? "tab tab-active" : "tab hover:bg-[#454545]")}
+        href={`list?connectionId=${props.connectionId}`}
+        id="list"
+        class={"mr-1 " + (props.tab === "list" ? "tab tab-active" : "tab hover:bg-[#454545]")}
       >
-        Search
+        List
       </a>
       <a
         href={`set?connectionId=${props.connectionId}`}
@@ -27,13 +27,13 @@ export function TabBar(props: TabBarProps) {
       >
         Set
       </a>
-      <a
+      {/* <a
         href={`importExport?connectionId=${props.connectionId}`}
         id="importExport"
         class={props.tab === "importExport" ? "tab tab-active" : "tab hover:bg-[#454545]"}
       >
         Import/Export
-      </a>
+      </a> */}
     </div>
   );
 }

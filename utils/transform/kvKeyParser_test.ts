@@ -1,4 +1,4 @@
-import { parseKvKey } from "./kvKeyParser.ts";
+import { parseKvKey } from "../kv./transform/kvKeyParser.ts";
 import { assertEquals, assertThrows } from "$std/assert/mod.ts";
 
 Deno.test("kvKeyParser - no input", () => {
@@ -54,6 +54,7 @@ Deno.test("kvKeyParser - multi-types input", () => {
   assertEquals(parseKvKey(`true, 456, 0, "B"`), [true, 456, 0, "B"]);
   assertEquals(parseKvKey(`[1,2,3], 456, 0, "B"`), [new Uint8Array([1, 2, 3]), 456, 0, "B"]);
   assertEquals(parseKvKey(`1, [1,2,3]`), [1, new Uint8Array([1, 2, 3])]);
+  assertEquals(parseKvKey(`1, 1n, true, "a", [1,2,3]`), [1, BigInt(1n), true, "a", new Uint8Array([1, 2, 3])]);
 });
 
 Deno.test("kvKeyParser - complex input", () => {

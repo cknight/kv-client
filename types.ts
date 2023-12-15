@@ -1,6 +1,6 @@
 import { DeployUser } from "./utils/connections/denoDeploy/deployUser.ts";
 
-export interface SearchData {
+export interface ListData {
   prefix: string;
   start: string;
   end: string;
@@ -13,15 +13,15 @@ export interface SearchData {
   fullResultsCount: number;
   filter: string | undefined;
   filtered: boolean;
-  searchComplete: boolean;
+  listComplete: boolean;
   validationError?: string;
   stats?: Stats;
 }
 
 export interface I_CacheManager {
-  get(parms: CacheKey): CachedSearch | undefined;
-  add(parms: SearchResults): void;
-  set(parms: SearchResults): void;
+  get(parms: CacheKey): CachedList | undefined;
+  add(parms: ListResults): void;
+  set(parms: ListResults): void;
   clear(): void;
 }
 
@@ -32,7 +32,7 @@ export interface State {
   cache: I_CacheManager;
 }
 
-export interface CachedSearch {
+export interface CachedList {
   cursor: string | false;
   dataRetrieved: Deno.KvEntry<unknown>[];
   cacheTime: number;
@@ -46,12 +46,12 @@ export interface CacheKey {
   reverse: boolean;
 }
 
-export interface SearchResults extends CacheKey {
+export interface ListResults extends CacheKey {
   results: Deno.KvEntry<unknown>[];
   cursor: string | false;
 }
 
-export interface PartialSearchResults {
+export interface PartialListResults {
   results: Deno.KvEntry<unknown>[];
   cursor: string | false;
   opStats: OpStats;
@@ -61,6 +61,7 @@ export interface KvUIEntry {
   key: string;
   value: string;
   versionstamp: string;
+  valueType: string;
   fullValue?: string;
   keyHash: string;
 }
@@ -83,7 +84,7 @@ export interface KvConnection {
   size: number;
 }
 
-export interface KvSearchOptions {
+export interface KvListOptions {
   session: string;
   connectionId: string;
   prefix: string;

@@ -33,7 +33,7 @@ function replacer(_key: unknown, value: unknown) {
       value: Array.from(value.keys()),
     };
   } else if (typeof value === "bigint") {
-    return { type: "bigint", value: String(value) };
+    return String(value) + "n";
   } else if (typeof value === "undefined") {
     /**
      * FIXME:  Is there some hack we can do here to make this work?
@@ -102,6 +102,8 @@ function reviver(_key: unknown, value: unknown) {
     } else if (value.type === "Date" && typeof value.value === "string") {
       return new Date(value.value);
     }
+  } else if (typeof value === "string" && /^-?\d+n$/.test(value)) {
+    return BigInt(value.slice(0, -1));
   }
   return value;
 }
@@ -200,4 +202,23 @@ function isKvType(obj: unknown): obj is KvType {
     supportedTypes.includes((obj as KvType).type) &&
     "value" in obj
   );
+}
+
+export function asString(value: unknown): string {
+  if (value === undefined) return "undefined";
+  if (value === null) return "null";
+  if (typeof value === "string") return value;
+  if (typeof value === "number") return String(value);
+  if (typeof value === "bigint") return String(value) + "n";
+  if (typeof value === "boolean") return String(value);
+  if (typeof value === "symbol") return value.toString();
+  if (typeof value === "function") return value.toString();
+  if (value instanceof Map) return json5Stringify(Array.from(value.entries()));
+  if (value instanceof Set) return json5Stringify(Array.from(value.keys()));
+  if (value instanceof RegExp) return value.toString();
+  if (value instanceof Uint8Array) return json5Stringify(Array.from(value));
+  if (value instanceof Date) return value.toISOString();
+  if (value instanceof Deno.KvU64) return String(value) + "n";
+
+  return json5Stringify(value);
 }

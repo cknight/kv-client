@@ -1,8 +1,8 @@
 import { Handlers, PageProps, RouteContext } from "$fresh/server.ts";
-import { SearchBox } from "../islands/SearchBox.tsx";
-import { PartialSearchResults, SearchData, Stats } from "../types.ts";
-import { SearchResults } from "../islands/SearchResults.tsx";
-import { searchKv } from "../utils/kv/kvList.ts";
+import { ListCriteriaBox } from "../islands/ListCriteriaBox.tsx";
+import { ListData, PartialListResults, Stats } from "../types.ts";
+import { ListResults } from "../islands/ListResults.tsx";
+import { listKv } from "../utils/kv/kvList.ts";
 import { PATError } from "../utils/errors.ts";
 
 import { getUserState } from "../utils/state/state.ts";
@@ -10,6 +10,7 @@ import { unitsConsumedToday } from "../utils/kv/kvUnitsConsumed.ts";
 import { createKvUIEntry } from "../utils/utils.ts";
 import { buildResultsPage } from "../utils/ui/buildResultsPage.ts";
 import { getConnections } from "../utils/connections/connections.ts";
+import { Partial } from "$fresh/runtime.ts";
 
 export const handler: Handlers = {
   async POST(req, ctx) {
@@ -40,7 +41,7 @@ export const handler: Handlers = {
 
     let failReason;
     let results: Deno.KvEntry<unknown>[] = [];
-    let searchComplete = false;
+    let listComplete = false;
     try {
       const cId = connectionId || connection?.id || "";
       const searchOptions = {
@@ -53,9 +54,9 @@ export const handler: Handlers = {
         reverse,
         disableCache,
       };
-      const partialResults = await searchKv(searchOptions);
+      const partialResults = await listKv(searchOptions);
       results = partialResults.results;
-      searchComplete = partialResults.cursor === false;
+      listComplete = partialResults.cursor === false;
 
       await getStats(partialResults);
     } catch (e) {
@@ -72,7 +73,7 @@ export const handler: Handlers = {
     const { resultsPage, resultsCount, filtered } = buildResultsPage(filter, results, from, show);
     const resultsToShow = await Promise.all(resultsPage.map(async (e) => await createKvUIEntry(e)));
 
-    const searchData: SearchData = {
+    const searchData: ListData = {
       prefix,
       start,
       end,
@@ -85,14 +86,14 @@ export const handler: Handlers = {
       filtered,
       show,
       from,
-      searchComplete,
+      listComplete,
       validationError: failReason,
       stats,
     };
 
     return await ctx.render(searchData);
 
-    async function getStats(partialResults: PartialSearchResults) {
+    async function getStats(partialResults: PartialListResults) {
       const unitsConsumed = await unitsConsumedToday();
       stats = {
         unitsConsumedToday: unitsConsumed,
@@ -103,7 +104,7 @@ export const handler: Handlers = {
   },
 };
 
-export default async function Search(req: Request, props: RouteContext<SearchData>) {
+export default async function Search(req: Request, props: RouteContext<ListData>) {
   const sp = props.url.searchParams;
   const prefix = props.data?.prefix || sp.get("prefix") || "";
   const start = props.data?.start || sp.get("start") || "";
@@ -119,7 +120,7 @@ export default async function Search(req: Request, props: RouteContext<SearchDat
   const results = props.data?.results;
   const fullResultsCount = props.data?.fullResultsCount || 0;
   const validationError = props.data?.validationError;
-  const searchComplete = props.data?.searchComplete || false;
+  const searchComplete = props.data?.listComplete || false;
   const filter = props.data?.filter || sp.get("filter") || undefined;
   const filtered = props.data?.filtered || false;
 
@@ -139,11 +140,12 @@ export default async function Search(req: Request, props: RouteContext<SearchDat
     <>
       <form
         id="pageForm"
-        xxxf-partial="/partials/results/search?hello=world"
         method="post"
+        f-partial="/list"
         class="m-8 mt-0 "
       >
-        <SearchBox
+        <Partial name="list">
+        <ListCriteriaBox
           prefix={prefix}
           start={start}
           end={end}
@@ -152,14 +154,14 @@ export default async function Search(req: Request, props: RouteContext<SearchDat
           reverse={reverse}
           disableCache={disableCache}
         />
-        <SearchResults
+        <ListResults
           results={results}
           resultsCount={fullResultsCount}
           show={show}
           from={from}
           filter={filter}
           filtered={filtered}
-          searchComplete={searchComplete}
+          listComplete={searchComplete}
           stats={props.data?.stats}
           session={props.state.session as string}
           prefix={prefix}
@@ -170,7 +172,8 @@ export default async function Search(req: Request, props: RouteContext<SearchDat
           connectionId={connectionId}
           connectionName={connectionName}
           connectionLocation={connectionLocation}
-        />
+          />
+          </Partial>
       </form>
     </>
   );

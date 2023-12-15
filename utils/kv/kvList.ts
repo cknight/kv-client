@@ -1,12 +1,6 @@
-import {
-  KvSearchOptions,
-  ListAuditLog,
-  OpStats,
-  PartialSearchResults,
-  State,
-} from "../../types.ts";
+import { KvListOptions, ListAuditLog, OpStats, PartialListResults, State } from "../../types.ts";
 import { establishKvConnection } from "./kvConnect.ts";
-import { parseKvKey } from "./kvKeyParser.ts";
+import { parseKvKey } from "../transform/kvKeyParser.ts";
 import { getUserState } from "../state/state.ts";
 import { ValidationError } from "../errors.ts";
 import { computeSize } from "./kvUnitsConsumed.ts";
@@ -15,28 +9,28 @@ import { auditAction, auditConnectionName } from "./kvAudit.ts";
 import { executorId } from "../connections/denoDeploy/deployUser.ts";
 import { toJSON } from "../utils.ts";
 
-export async function searchKv(
-  searchOptions: KvSearchOptions,
-): Promise<PartialSearchResults> {
+export async function listKv(
+  listOptions: KvListOptions,
+): Promise<PartialListResults> {
   const startTime = Date.now();
-  const { session, connectionId, prefix, start, end, limit, reverse, disableCache } = searchOptions;
+  const { session, connectionId, prefix, start, end, limit, reverse, disableCache } = listOptions;
   const state = getUserState(session);
-  const cachedSearch = !disableCache &&
+  const cachedListResults = !disableCache &&
     state.cache.get({ connectionId, prefix, start, end, reverse });
   const cachedResults: Deno.KvEntry<unknown>[] = [];
 
   let cursor: string | undefined = undefined;
   let maxEntries = limit === "all" ? Number.MAX_SAFE_INTEGER : parseInt(limit);
 
-  if (cachedSearch) {
-    const cachedData = cachedSearch.dataRetrieved.slice(0, maxEntries);
+  if (cachedListResults) {
+    const cachedData = cachedListResults.dataRetrieved.slice(0, maxEntries);
     console.debug(
       "Cached data:",
       cachedData.length,
       "Limit:",
       limit === "all" ? "all" : parseInt(limit),
       "More available?",
-      cachedSearch.cursor !== false,
+      cachedListResults.cursor !== false,
     );
     const cacheStats: OpStats = {
       opType: "read",
@@ -46,12 +40,12 @@ export async function searchKv(
       rtms: Date.now() - startTime,
     };
 
-    if (!cachedSearch.cursor) {
+    if (!cachedListResults.cursor) {
       // All data has already been retrieved, so return whatever we have
       console.debug("All data already retrieved from cache");
       return {
         results: cachedData,
-        cursor: cachedSearch.cursor,
+        cursor: cachedListResults.cursor,
         opStats: cacheStats,
       };
     } else if (cachedData.length === maxEntries) {
@@ -59,12 +53,12 @@ export async function searchKv(
       console.debug("All data requested already in cache");
       return {
         results: cachedData,
-        cursor: cachedSearch.cursor,
+        cursor: cachedListResults.cursor,
         opStats: cacheStats,
       };
     } else {
       // We don't have all the data, so fetch more using the cursor
-      cursor = cachedSearch.cursor;
+      cursor = cachedListResults.cursor;
       cachedResults.push(...cachedData);
       maxEntries -= cachedData.length;
     }
@@ -112,7 +106,7 @@ export async function searchKv(
   /**
    * Caching is always used if the user edits, deletes or copies a key(s) as the results from
    * the cache are used to determine which keys to operate on.  However, if the cache is disabled
-   * by the user then any results from this search are set in the cache (overwriting any previously)
+   * by the user then any results from this list op are set in the cache (overwriting any previously)
    * cached data), not added to any existing results already in the cache.
    */
   if (disableCache) {
@@ -158,7 +152,7 @@ export async function searchKv(
 
   const finalResults = cachedResults.concat(newResults);
   console.debug(
-    "Search results:",
+    "List results:",
     finalResults.length - newResults.length,
     "results from cache,",
     newResults.length,

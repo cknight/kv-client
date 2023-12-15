@@ -1,32 +1,32 @@
-import { CachedSearch, CacheKey, I_CacheManager, SearchResults } from "../../types.ts";
+import { CachedList, CacheKey, I_CacheManager, ListResults } from "../../types.ts";
 
 export class CacheManager implements I_CacheManager {
-  private cache: Map<string, CachedSearch> = new Map();
+  private cache: Map<string, CachedList> = new Map();
 
   constructor() {
   }
 
-  get(parms: CacheKey): CachedSearch | undefined {
+  get(parms: CacheKey): CachedList | undefined {
     const key = this.#key(parms.connectionId, parms.prefix, parms.start, parms.end, parms.reverse);
     const result = this.cache.get(key);
     //FIXME add cache expiration
     return result;
   }
 
-  add(parms: SearchResults): void {
+  add(parms: ListResults): void {
     const key = this.#key(parms.connectionId, parms.prefix, parms.start, parms.end, parms.reverse);
-    const cachedSearch = this.cache.get(key);
+    const cachedListResults = this.cache.get(key);
 
-    if (!cachedSearch) {
+    if (!cachedListResults) {
       this.cache.set(key, {
         cursor: parms.cursor,
         dataRetrieved: parms.results,
         cacheTime: Date.now(),
       });
     } else {
-      cachedSearch.cursor = parms.cursor;
-      cachedSearch.dataRetrieved = cachedSearch.dataRetrieved.concat(parms.results);
-      cachedSearch.cacheTime = Date.now();
+      cachedListResults.cursor = parms.cursor;
+      cachedListResults.dataRetrieved = cachedListResults.dataRetrieved.concat(parms.results);
+      cachedListResults.cacheTime = Date.now();
     }
 
     const result = this.cache.get(key);
@@ -40,7 +40,7 @@ export class CacheManager implements I_CacheManager {
     );
   }
 
-  set(parms: SearchResults): void {
+  set(parms: ListResults): void {
     const key = this.#key(parms.connectionId, parms.prefix, parms.start, parms.end, parms.reverse);
     this.cache.set(key, {
       cursor: parms.cursor,

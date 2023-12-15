@@ -138,6 +138,7 @@ export async function getEncryptedString(kvKey: Deno.KvKey): Promise<string | nu
   }
 }
 
+/* For testing purposes only */
 export function _setKv(newKv: Deno.Kv) {
   kv = newKv;
 }
