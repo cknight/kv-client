@@ -24,6 +24,7 @@ import * as $AccessTokenInput from "./islands/AccessTokenInput.tsx";
 import * as $DarkMode from "./islands/DarkMode.tsx";
 import * as $Help from "./islands/Help.tsx";
 import * as $KvKeyEditor from "./islands/KvKeyEditor.tsx";
+import * as $KvKeyInput from "./islands/KvKeyInput.tsx";
 import * as $KvValueEditor from "./islands/KvValueEditor.tsx";
 import * as $ListCriteriaBox from "./islands/ListCriteriaBox.tsx";
 import * as $ListResults from "./islands/ListResults.tsx";
@@ -68,6 +69,7 @@ const manifest = {
     "./islands/DarkMode.tsx": $DarkMode,
     "./islands/Help.tsx": $Help,
     "./islands/KvKeyEditor.tsx": $KvKeyEditor,
+    "./islands/KvKeyInput.tsx": $KvKeyInput,
     "./islands/KvValueEditor.tsx": $KvValueEditor,
     "./islands/ListCriteriaBox.tsx": $ListCriteriaBox,
     "./islands/ListResults.tsx": $ListResults,

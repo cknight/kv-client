@@ -222,3 +222,30 @@ export function asString(value: unknown): string {
 
   return json5Stringify(value);
 }
+
+export function keyAsString(key: Deno.KvKey): string {
+  const parts: string[] = [];
+  for (const part of key) {
+    if (typeof part === "string") parts.push(quotedString(part))
+    else if (part instanceof Uint8Array) parts.push("[" + Array.from(part) + "]")
+    else parts.push(asString(part));
+  }
+  return "[" + parts.join(", ") + "]";
+}
+
+function quotedString(value: string): string {
+  const hasDoubleQuote = value.includes('"');
+  const hasSingleQuote = value.includes("'");
+  const hasBacktick = value.includes("`");
+  switch (true) {
+    case hasDoubleQuote && !hasSingleQuote && !hasBacktick:
+      return `'${value}'`;
+
+    case !hasDoubleQuote && hasSingleQuote && !hasBacktick:
+    case !hasDoubleQuote && !hasSingleQuote && hasBacktick:
+      return `"${value}"`;
+
+    default:
+      return `"${value.replace(/"/g, '\\"')}"`;
+  }
+}

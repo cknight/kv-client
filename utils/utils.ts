@@ -1,14 +1,14 @@
 import { format } from "$std/fmt/bytes.ts";
 import { encodeHex } from "$std/encoding/hex.ts";
 import { KvUIEntry } from "../types.ts";
-import { asString, json5Stringify } from "./transform/stringSerialization.ts";
+import { asString, keyAsString } from "./transform/stringSerialization.ts";
 import { identifyType } from "./transform/typeIdentifier.ts";
 
 export async function createKvUIEntry(entry: Deno.KvEntry<unknown>): Promise<KvUIEntry> {
   const value = asString(entry.value);
   const displayValue = value.length > 180 ? value.slice(0, 180) + "..." : value;
   const uiEntry = {
-    key: json5Stringify(entry.key),
+    key: keyAsString(entry.key),
     value: displayValue,
     versionstamp: entry.versionstamp,
     valueType: identifyType(entry.value),

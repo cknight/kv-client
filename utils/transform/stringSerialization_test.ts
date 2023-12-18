@@ -1,5 +1,5 @@
 import { assertEquals } from "$std/assert/assert_equals.ts";
-import { asString, json5Parse, json5Stringify } from "./stringSerialization.ts";
+import { asString, json5Parse, json5Stringify, keyAsString } from "./stringSerialization.ts";
 
 Deno.test("String serialization/deserialization", () => {
   //string
@@ -197,6 +197,30 @@ Deno.test("asString", () => {
   assertEquals(asString(new Uint8Array([1, 2, 3])), "[\n  1,\n  2,\n  3,\n]");
   assertEquals(asString(new Deno.KvU64(1234n)), "1234n");
 });
+
+Deno.test("keyPart to string", () => {
+  assertEquals(keyAsString([]), '[]');
+  assertEquals(keyAsString(["a"]), '["a"]');
+  assertEquals(keyAsString(["a", "b"]), '["a", "b"]');
+  assertEquals(keyAsString(["a", 1]), '["a", 1]');
+  assertEquals(keyAsString(["a", 0]), '["a", 0]');
+  assertEquals(keyAsString(["a", -1]), '["a", -1]');
+  assertEquals(keyAsString(["a", 1n]), '["a", 1n]');
+  assertEquals(keyAsString(["a", 0n]), '["a", 0n]');
+  assertEquals(keyAsString(["a", -1n]), '["a", -1n]');
+  assertEquals(keyAsString(["a", true]), '["a", true]');
+  assertEquals(keyAsString(["a", false]), '["a", false]');
+  assertEquals(keyAsString(["a", new Uint8Array([1,2,3])]), '["a", [1,2,3]]');
+});
+
+Deno.test("keyPart to string with different quote characters characters", () => {
+  assertEquals(keyAsString([`"a"`]), `['"a"']`);
+  assertEquals(keyAsString([`'a'`]), `["'a'"]`);
+  assertEquals(keyAsString(["`a`"]), '["`a`"]');
+  assertEquals(keyAsString(["`'a'`"]), '["`\'a\'`"]');
+  assertEquals(keyAsString(["`'\"a\"'`"]), '["`\'\\"a\\"\'`"]');
+});
+
 
 function assertSerialization(obj: unknown) {
   const str = json5Stringify(obj);

@@ -1,20 +1,43 @@
 import { Signal, useSignal } from "@preact/signals";
-import { KvKeyInput } from "../components/KvKeyInput.tsx";
+import { KvKeyInput } from "./KvKeyInput.tsx";
 import { Help } from "./Help.tsx";
 import { KeyHelp } from "../components/KeyHelp.tsx";
+import { readableSize } from "../utils/utils.ts";
 
 export function KvKeyEditor() {
   const keyParts: Signal<{ key: string; type: string }[]> = useSignal([]);
+  const keySize = useSignal("0");
+
+  function debounce(func: (event: Event) => void, delay: number) {
+    let debounceTimer: number | undefined;
+    return function(event: Event) {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => func(event), delay);
+    }
+  }
+  const debouncedUpdateKeyLength = debounce(updateKeyLength, 300);
+
+  function updateKeyLength(event: Event) {
+    const key = (event.target as HTMLInputElement).value;
+    keySize.value = readableSize(JSON.stringify(key).length);
+    const keySizeSpan = document.getElementById("keySizeSpan")!;
+    if (key === "") {
+      keySizeSpan.classList.add("hidden");
+    } else {
+      keySizeSpan.classList.remove("hidden");
+    }
+  }
 
   return (
     <div>
-      <h1 class="text-2xl font-bold">Key</h1>
+      <h1 class="text-2xl font-bold">Key <span id="keySizeSpan" class="hidden font-light text-base">(~ {keySize.value})</span></h1>
       <div class="w-full flex items-center mt-1">
         <div class="w-full">
           <KvKeyInput
             id="kvKey"
             form="pageForm"
             type="text"
+            onInput={debouncedUpdateKeyLength}
             name="kvKey"
             class="input input-bordered input-primary w-full p-2"
           />

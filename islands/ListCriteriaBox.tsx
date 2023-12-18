@@ -1,4 +1,4 @@
-import { KvKeyInput } from "../components/KvKeyInput.tsx";
+import { KvKeyInput } from "./KvKeyInput.tsx";
 import { Help } from "./Help.tsx";
 import { KeyHelp } from "../components/KeyHelp.tsx";
 import { JSX } from "preact";

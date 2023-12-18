@@ -7,7 +7,7 @@ export interface KvKeyInputProps extends JSX.HTMLAttributes<HTMLInputElement> {
 }
 
 export function KvKeyInput(props: KvKeyInputProps) {
-  const { disableTypes = false, ...inputProps } = props;
+  const { onInput: parentOnInput, disableTypes = false, ...inputProps } = props;
   const types = useSignal("");
   const typesId = useSignal(crypto.randomUUID());
   let timeoutId = -1;
@@ -26,10 +26,11 @@ export function KvKeyInput(props: KvKeyInputProps) {
       });
   }, []);
 
-  function parseTypes(event: JSX.TargetedEvent<HTMLInputElement, Event>) {
+  function handleInput(event: JSX.TargetedEvent<HTMLInputElement, Event>) {
     event.preventDefault();
     if (disableTypes) return;
 
+    //Debounce checking types of the key parts
     clearTimeout(timeoutId);
     const value = event.currentTarget.value;
     timeoutId = setTimeout(() => {
@@ -39,17 +40,42 @@ export function KvKeyInput(props: KvKeyInputProps) {
       })
         .then((res) => res.text())
         .then((res) => {
+          const input = document.getElementById(inputProps.id as string) as HTMLInputElement;
+          if (res !== "<invalid>") {
+            // if the types are valid, remove the error class, but only re-validate on blur
+            input.classList.remove("input-error");
+          }
+
           const safeRes = res.replace(/</g, "&lt;").replace(/>/g, "&gt;");
           (document.getElementById(typesId.value) as HTMLDivElement).innerHTML = safeRes;
         });
     }, 250);
+
+    // Call the onInput handler defined in a parent component, if defined
+    // E.g. <KvKeyInput onInput={debouncedUpdateKeyLength} ... />
+    if (parentOnInput) {
+      parentOnInput(event);
+    }
+  }
+
+  function validate(event: JSX.TargetedEvent<HTMLInputElement, Event>) {
+    event.preventDefault();
+    if (disableTypes) return;
+
+    const types = (document.getElementById(typesId.value) as HTMLDivElement).innerHTML;
+    if (types === "&lt;invalid&gt;") {
+      event.currentTarget.classList.add("input-error");
+    } else {
+      event.currentTarget.classList.remove("input-error");
+    }
+
   }
 
   return (
     <div>
       <div class="flex items-center w-full mt-2">
         <span class="ml-2 mx-2">{`[`}</span>
-        <input onInput={parseTypes} {...inputProps} />
+        <input onInput={handleInput} onBlur={validate} {...inputProps} />
         <span class="ml-2 my-2">{`]`}</span>
       </div>
       <div class="flex flex-row ml-5 h-4 pt-1 mt-1 text-xs ">
