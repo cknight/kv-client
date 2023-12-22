@@ -10,27 +10,21 @@ export function SetEntryEditor() {
   const showToastSignal = useSignal(false);
   const toastMsg = useSignal("");
   const toastType = useSignal<ToastType>("info");
+  const valueType = useSignal("");
+  const kvValue = useSignal("");
+  const readOnly = useSignal(false);
 
   function clearForm() {
     const key = document.getElementById("kvKey")! as HTMLInputElement;
-    const simpleValue = document.getElementById("textarea")! as HTMLTextAreaElement;
-    const complexValue = document.getElementById("kvValue")! as HTMLTextAreaElement;
-    const valueType = document.getElementById("valueType")! as HTMLSelectElement;
     const typeHelper = document.getElementById("typeHelper")! as HTMLSelectElement;
     const doNotOverwrite = document.getElementById("doNotOverwrite")! as HTMLInputElement;
 
-    key.value = "";
-    simpleValue.value = "";
-    complexValue.value = "";
-    //@ts-ignore - ace editor is globaldavid
+    //@ts-ignore - ace editor is global
     globalThis.editor.setValue("");
-    valueType.value = "";
+    key.value = "";
     typeHelper.value = "";
+    valueType.value = "";
     doNotOverwrite.checked = true;
-
-    (document.getElementById("textarea") as HTMLTextAreaElement).classList.add("hidden");
-    (document.getElementById("editor") as HTMLDivElement).classList.add("hidden");
-    (document.getElementById("typeHelperSection") as HTMLDivElement).classList.add("hidden");
   }
 
   function validate(): boolean {
@@ -54,30 +48,12 @@ export function SetEntryEditor() {
     event.preventDefault();
 
     if (!validate()) return;
-
+    
     const key = document.getElementById("kvKey")! as HTMLInputElement;
-    const simpleValue = document.getElementById("textarea")! as HTMLTextAreaElement;
-    const complexValue = document.getElementById("kvValue")! as HTMLTextAreaElement;
     const valueType = document.getElementById("valueType")! as HTMLSelectElement;
     const doNotOverwrite = document.getElementById("doNotOverwrite")! as HTMLInputElement;
-
-    const simpleTypes = [
-      "bigint",
-      "boolean",
-      "null",
-      "number",
-      "string",
-      "Date",
-      "KvU64",
-      "RegExp",
-      "Uint8Array",
-    ];
-    let kvValue = "";
-    if (simpleTypes.includes(valueType.value)) {
-      kvValue = simpleValue.value;
-    } else {
-      kvValue = complexValue.value;
-    }
+    //@ts-ignore - ace editor is global
+    const kvValue = globalThis.editor.value.getValue();
 
     fetch("/api/setEntry", {
       method: "POST",
@@ -87,7 +63,7 @@ export function SetEntryEditor() {
       body: JSON.stringify(
         {
           key: key.value,
-          value: kvValue,
+          kvValue,
           valueType: valueType.value as SupportedValueTypes,
           doNotOverwrite: doNotOverwrite.checked,
           connectionId: new URLSearchParams(window.location.search).get("connectionId")!,
@@ -123,7 +99,7 @@ export function SetEntryEditor() {
     <Fragment>
       <KvKeyEditor />
       <div class="divider"></div>
-      <KvValueEditor />
+      <KvValueEditor kvValueType={valueType} kvValue={kvValue} readOnly={readOnly}/>
       <div class="flex w-full justify-center mt-8 gap-x-3">
         <button type="button" onClick={clearForm} class="btn btn-secondary">
           Clear

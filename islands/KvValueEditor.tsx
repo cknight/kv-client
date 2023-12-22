@@ -1,31 +1,37 @@
-import { useSignal } from "@preact/signals";
+import { Signal, useSignal, useSignalEffect } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import { JSX } from "preact/jsx-runtime";
 import { Help } from "./Help.tsx";
+import { SupportedValueTypes } from "../types.ts";
+import { KvValueJson } from "../routes/api/valueSize.tsx";
+import { debounce } from "../utils/ui/debounce.ts";
 
-export function KvValueEditor() {
+interface KvValueEditorProps {
+  kvValue: Signal<string>;
+  kvValueType: Signal<string>;
+  readOnly: Signal<boolean>;
+}
+
+export function KvValueEditor(props: KvValueEditorProps) {
   // deno-lint-ignore no-explicit-any
   const editor = useSignal<any>(null);
   const disabledTypeTemplates = useSignal<string[]>([]);
-  const selectedType = useSignal("");
   const isSimpleType = useSignal(false);
+  const valueSize = useSignal("0");
 
   function initAce() {
     //@ts-ignore - ace is a global export from ace.js
     editor.value = ace.edit("editor");
-    document.querySelector("#editor textarea")!.id = "kvValue";
     editor.value.setOptions({
       printMargin: false,
       readOnly: false,
     });
-    editor.value.session.setMode("ace/mode/json5");
-    editor.value.session.placeholder = "Hello world";
     editor.value.setTheme("ace/theme/merbivore");
+    editor.value.setOption("placeholder", "Placeholder text")
     editor.value.getSession().setUseWrapMode(true);
-    // editor.value.on("changeStatus", updateLineCol);
-    // editor.value.on("changeSelection", updateLineCol);
-    // editor.value.on("keyboardActivity", updateLineCol);
-
+    editor.value.session.on('change', debouncedUpdateValueSize);
+    editor.value.setReadOnly(props.readOnly.value);
+    
     //@ts-ignore - For browser console testing
     globalThis.editor = editor.value;
   }
@@ -84,6 +90,20 @@ export function KvValueEditor() {
       // document.body.removeChild(beautifyScript);
     };
   }, []);
+  
+  useSignalEffect(() => {
+    if (editor.value === null) return;
+
+    editor.value.setValue(props.kvValue.value);
+    updateEditorMode(props.kvValueType.value);
+    editor.value.selection.moveCursorTo(0, 0);
+  });
+
+  useSignalEffect(() => {
+    if (editor.value === null) return;
+
+    editor.value.setReadOnly(props.readOnly.value);
+  });
 
   const shorthandAvailableTypes = new Map([
     ["bigint", "example: 123456789"],
@@ -99,35 +119,67 @@ export function KvValueEditor() {
 
   function updateTypeChosen() {
     const value = (document.getElementById("valueType") as HTMLSelectElement).value;
-    selectedType.value = value;
+    props.kvValueType.value = value;
+    updateEditorMode(value);
+  }
 
+  function updateEditorMode(value: string) {
     isSimpleType.value = shorthandAvailableTypes.get(value) !== undefined;
 
-    const textarea = document.getElementById("textarea") as HTMLTextAreaElement;
-    const editor = document.getElementById("editor") as HTMLDivElement;
-    if (isSimpleType.value) {
-      textarea.classList.remove("hidden");
-      textarea.placeholder = shorthandAvailableTypes.get(value)!;
-      editor.classList.add("hidden");
+    if (value === "JSON") {
+      editor.value.session.setMode("ace/mode/json");
+    } else if (isSimpleType.value) {
+      editor.value.session.setMode("ace/mode/text");
     } else {
-      textarea.classList.add("hidden");
-      editor.classList.remove("hidden");
+      editor.value.session.setMode("ace/mode/json5");
     }
-
-    //@ts-ignore - ace is a global export from ace.js
-    globalThis.editor.session.setMode(value === "JSON" ? "ace/mode/json" : "ace/mode/json5");
   }
+
+  function updateValueSize() {
+    const valueType = document.getElementById("valueType")! as HTMLSelectElement;
+    const kvValue = editor.value.getValue();
+
+    const valueSizeSpan = document.getElementById("valueSizeSpan")! as HTMLSpanElement;
+    fetch("/api/valueSize", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(
+        {
+          valueString: kvValue,
+          valueType: valueType.value as SupportedValueTypes,
+        } satisfies KvValueJson,
+      ),
+    }).then((response) => {
+      response.text().then((text) => {
+        if (response.status === 200) {
+          valueSizeSpan.classList.remove("hidden");
+          valueSize.value = text;
+        } else {
+          valueSizeSpan.classList.add("hidden");
+        }
+      }).catch((e) => {
+        valueSizeSpan.classList.add("hidden");
+      });
+    }).catch((e) => {
+      valueSizeSpan.classList.add("hidden");
+    });
+  }
+  const debouncedUpdateValueSize = debounce(updateValueSize, 300);
 
   return (
     <div class="flex flex-col w-full mt-4">
-      <h1 class="text-2xl font-bold">Value</h1>
+      <h1 class="text-2xl font-bold">Value <span id="valueSizeSpan" class="hidden font-light text-base">(~ {valueSize.value})</span></h1>
       <div class="flex flex-col w-full">
         <div class="mt-4 mr-4 w-[200px] flex flex-row justify-between">
-          <div class="flex flex-row items-center">
+          <div class="flex flex-col ">
             <label for="valueType" class="font-semibold whitespace-nowrap">Value Type</label>
             <select
               id="valueType"
-              class="select select-bordered select-sm select-primary ml-3"
+              class="select select-bordered select-sm select-primary mt-1"
+              value={props.kvValueType.value}
+              disabled={props.readOnly.value}
               onChange={updateTypeChosen}
             >
               <option value="" disabled={true} selected={true}>Please select</option>
@@ -147,16 +199,20 @@ export function KvValueEditor() {
               <option value="Uint8Array">Uint8Array</option>
             </select>
           </div>
-          {selectedType.value !== "" && selectedType.value !== "JSON" &&
-            !isSimpleType.value && (
-            <div id="typeHelperSection" class="flex flex-row items-center">
-              <label for="typeHelper" class="font-semibold whitespace-nowrap ml-6">
+          {props.kvValueType.value !== ""
+            && props.kvValueType.value !== "JSON"
+            && !isSimpleType.value
+            && !props.readOnly.value
+            && (
+            <div id="typeHelperSection" class="flex flex-row items-end ml-6">
+              <div class="flex flex-col">
+              <label for="typeHelper" class="font-semibold whitespace-nowrap">
                 Type templates
               </label>
               <div class="flex items-center">
                 <select
                   id="typeHelper"
-                  class="select select-bordered select-sm select-primary ml-3"
+                  class="select select-bordered select-sm select-primary mt-1"
                 >
                   <option value="" disabled={true} selected={true}>Please select</option>
                   <optgroup label="Primitive types">
@@ -281,8 +337,7 @@ export function KvValueEditor() {
                         </li>
                         <li>
                           Select <code>Map</code> from the <code>Type template</code>{" "}
-                          dropdown and click on Insert. This will insert an object denoting the type
-                          of <code>Map</code> and the value of a double-array structure of a map.
+                          dropdown and click on Insert. This will insert a double-array structure of a map.
                         </li>
                         <li>
                           This template map is of type{" "}
@@ -307,28 +362,21 @@ export function KvValueEditor() {
                   </Help>
                 </div>
               </div>
+                </div>
               <button
                 type="button"
                 onClick={insertTypeTemplate}
                 className="btn btn-primary btn-sm ml-6"
               >
-                Insert example
+                Insert
               </button>
             </div>
           )}
         </div>
-        <div class="mt-4 w-full flex flex-col items-center pr-8">
-          <div id="simpleEditor" class="w-full">
-            <textarea
-              id="textarea"
-              class="hidden textarea textarea-bordered textarea-primary h-[500px] w-full"
-              placeholder="Hello world"
-            >
-            </textarea>
-          </div>
+        <div class={"mt-4 w-full flex flex-col items-center pr-8 " + (props.kvValueType.value === "" ? "hidden" : "")}>
           <div
             id="editor"
-            class="hidden text-sm h-[500px] border border-primary rounded focus:outline-none focus:ring-1 focus:ring-blue-400 font-mono w-full p-3"
+            class="text-sm h-[500px] border border-primary rounded focus:outline-none focus:ring-1 focus:ring-blue-400 font-mono w-full p-3"
           >
           </div>
         </div>

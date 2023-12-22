@@ -13,7 +13,7 @@ import { asMaxLengthString } from "../../utils/utils.ts";
 
 export interface KvSetEntry {
   key: string;
-  value: string;
+  kvValue: string;
   valueType: SupportedValueTypes;
   doNotOverwrite: boolean;
   connectionId: string;
@@ -29,7 +29,7 @@ export const handler: Handlers = {
    */
   async POST(req, ctx) {
     const start = Date.now();
-    const { key: keyString, value: valueString, valueType, doNotOverwrite, connectionId } =
+    const { key: keyString, kvValue: valueString, valueType, doNotOverwrite, connectionId } =
       await req.json() as KvSetEntry;
 
     let status = 200;

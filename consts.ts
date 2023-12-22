@@ -16,3 +16,16 @@ export const env = {
 // Regular expressions
 export const UINT8_REGEX =
   /^\[((?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)(?:,(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d))*)?]?$/;
+
+// Type helpers
+export const simpleTypes = [
+  "bigint",
+  "boolean",
+  "null",
+  "number",
+  "string",
+  "Date",
+  "KvU64",
+  "RegExp",
+  "Uint8Array",
+];

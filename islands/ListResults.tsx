@@ -13,6 +13,7 @@ import { DoubleRightIcon } from "../components/svg/DoubleRight.tsx";
 import { SingleRightIcon } from "../components/svg/SingleRight.tsx";
 import { SingleLeftIcon } from "../components/svg/SingleLeft.tsx";
 import { DoubleLeftIcon } from "../components/svg/DoubleLeft.tsx";
+import { UpdateEntryEditor } from "./UpdateEntryEditor.tsx";
 
 interface ListResultsProps {
   results: KvUIEntry[] | undefined;
@@ -56,7 +57,6 @@ const valueTypeColorMap: Record<string, string> = {
 };
 
 export function valueTypeColor(type: string): string {
-  console.log(type, valueTypeColorMap[type]);
   return valueTypeColorMap[type] ?? "border-gray-500 text-gray-500";
 }
 export function ListResults(props: ListResultsProps) {
@@ -67,6 +67,7 @@ export function ListResults(props: ListResultsProps) {
   const fullViewKey = useSignal("");
   const fullViewValue = useSignal("");
   const fullViewKeyHash = useSignal("");
+  const fullViewValueType = useSignal("");
   const selected = useSignal<string[]>([]);
   const showToastSignal = useSignal(false);
   const toastMsg = useSignal("");
@@ -135,10 +136,12 @@ export function ListResults(props: ListResultsProps) {
     if (target.tagName === "TD") {
       const key = target.parentElement!.children[1].textContent;
       const value = (target.parentElement!.children[2] as HTMLTableCellElement).title;
+      const valueType = (target.parentElement!.children[3] as HTMLTableCellElement).title;
       const keyHash = target.parentElement!.id;
       fullViewKey.value = key || "";
       fullViewValue.value = value || "";
       fullViewKeyHash.value = keyHash || "";
+      fullViewValueType.value = valueType || "";
 
       const dialog = document.getElementById("kvDialog") as HTMLDialogElement;
       dialog.showModal();
@@ -279,7 +282,7 @@ export function ListResults(props: ListResultsProps) {
                         <td title={result.fullValue} class="break-all">
                           {result.value}
                         </td>
-                        <td>
+                        <td title={result.valueType} >
                           <div class={"badge badge-outline " + valueTypeColor(result.valueType)}>
                             {result.valueType}
                           </div>
@@ -349,7 +352,7 @@ export function ListResults(props: ListResultsProps) {
           </div>
         )}
       {props.stats && <StatsBar stats={props.stats} />}
-      <KvDialog
+      {/* <KvDialog
         kvKey={fullViewKey}
         kvValue={fullViewValue}
         kvKeyHash={fullViewKeyHash}
@@ -363,6 +366,17 @@ export function ListResults(props: ListResultsProps) {
         showToastSignal={showToastSignal}
         toastMsg={toastMsg}
         toastType={toastType}
+      /> */}
+      <UpdateEntryEditor
+        kvKey={fullViewKey}
+        kvValue={fullViewValue}
+        kvKeyHash={fullViewKeyHash}
+        kvValueType={fullViewValueType}
+        connectionId={props.connectionId}
+        showToastSignal={showToastSignal}
+        toastMsg={toastMsg}
+        toastType={toastType}
+
       />
       <DeleteDataDialog
         keysSelected={selected.value}

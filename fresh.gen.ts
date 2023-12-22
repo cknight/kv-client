@@ -15,6 +15,7 @@ import * as $api_deleteKeys from "./routes/api/deleteKeys.tsx";
 import * as $api_keyTypes from "./routes/api/keyTypes.tsx";
 import * as $api_setEntry from "./routes/api/setEntry.tsx";
 import * as $api_updateKey from "./routes/api/updateKey.tsx";
+import * as $api_valueSize from "./routes/api/valueSize.tsx";
 import * as $index from "./routes/index.tsx";
 import * as $list from "./routes/list.tsx";
 import * as $logout from "./routes/logout.tsx";
@@ -32,6 +33,7 @@ import * as $SetEntryEditor from "./islands/SetEntryEditor.tsx";
 import * as $TabBar from "./islands/TabBar.tsx";
 import * as $TestToast from "./islands/TestToast.tsx";
 import * as $Toast from "./islands/Toast.tsx";
+import * as $UpdateEntryEditor from "./islands/UpdateEntryEditor.tsx";
 import * as $avatarMenu_AvatarMenu from "./islands/avatarMenu/AvatarMenu.tsx";
 import * as $avatarMenu_UnknownAvatarMenu from "./islands/avatarMenu/UnknownAvatarMenu.tsx";
 import * as $connections_AddLocalConnectionButton from "./islands/connections/AddLocalConnectionButton.tsx";
@@ -58,6 +60,7 @@ const manifest = {
     "./routes/api/keyTypes.tsx": $api_keyTypes,
     "./routes/api/setEntry.tsx": $api_setEntry,
     "./routes/api/updateKey.tsx": $api_updateKey,
+    "./routes/api/valueSize.tsx": $api_valueSize,
     "./routes/index.tsx": $index,
     "./routes/list.tsx": $list,
     "./routes/logout.tsx": $logout,
@@ -77,6 +80,7 @@ const manifest = {
     "./islands/TabBar.tsx": $TabBar,
     "./islands/TestToast.tsx": $TestToast,
     "./islands/Toast.tsx": $Toast,
+    "./islands/UpdateEntryEditor.tsx": $UpdateEntryEditor,
     "./islands/avatarMenu/AvatarMenu.tsx": $avatarMenu_AvatarMenu,
     "./islands/avatarMenu/UnknownAvatarMenu.tsx": $avatarMenu_UnknownAvatarMenu,
     "./islands/connections/AddLocalConnectionButton.tsx": $connections_AddLocalConnectionButton,

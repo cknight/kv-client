@@ -26,7 +26,7 @@ export default function App({ Component }: PageProps) {
           </style>
         }
       </head>
-      <body class="h-full py-4" f-client-nav>
+      <body class="h-full py-4 overflow-auto" f-client-nav>
         <Partial name="body">
           <Component />
         </Partial>

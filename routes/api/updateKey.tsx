@@ -58,7 +58,6 @@ export const handler: Handlers = {
 
 async function updateKey(data: UpdateKeyData, session: string): Promise<UpdateOpResult> {
   const startTime = Date.now();
-  const rawData = data.value;
   const kvValue = json5Parse(data.value) as unknown;
 
   const { connectionId, prefix, start, end, from, show, reverse } = data;

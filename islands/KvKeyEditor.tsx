@@ -3,18 +3,12 @@ import { KvKeyInput } from "./KvKeyInput.tsx";
 import { Help } from "./Help.tsx";
 import { KeyHelp } from "../components/KeyHelp.tsx";
 import { readableSize } from "../utils/utils.ts";
+import { debounce } from "../utils/ui/debounce.ts";
 
 export function KvKeyEditor() {
   const keyParts: Signal<{ key: string; type: string }[]> = useSignal([]);
   const keySize = useSignal("0");
 
-  function debounce(func: (event: Event) => void, delay: number) {
-    let debounceTimer: number | undefined;
-    return function(event: Event) {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => func(event), delay);
-    }
-  }
   const debouncedUpdateKeyLength = debounce(updateKeyLength, 300);
 
   function updateKeyLength(event: Event) {

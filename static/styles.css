@@ -35,6 +35,10 @@ code {
   padding-right: 5px;  
 }
 
+.select[disabled], .textarea[disabled] {
+  border-color: #656565;
+}
+
 /* .ace-merbivore .ace_gutter {
   background: #202020;
   color: #e6e1dc;
