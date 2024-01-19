@@ -1,40 +1,18 @@
 import { JSX } from "preact";
 import { effect, useSignal } from "@preact/signals";
-import { DeleteKeysData } from "../../routes/api/deleteKeys.tsx";
-import { CopyDeleteProps, ToastType } from "../../types.ts";
+import { CopyDeleteSingleProps, ToastType } from "../../types.ts";
 import { Toast } from "../../islands/Toast.tsx";
 import { WarningTriangleIcon } from "../svg/WarningTriangle.tsx";
-import { useEffect } from "preact/hooks";
+import { DeleteKeyData } from "../../routes/api/deleteKey.tsx";
 
-export function DeleteKeyDialog(props: CopyDeleteProps) {
-
-  pick up here
-
-
-
-
-
-
-
-
-
-  
+export function DeleteKeyDialog(props: CopyDeleteSingleProps) {
   const {
-    keysSelected,
+    kvKey,
     connections,
     connectionLocation,
     connectionId,
-    prefix,
-    start,
-    end,
-    from,
-    show,
-    resultsCount,
-    reverse,
-    filter,
   } = props;
   const isDeleting = useSignal(false);
-  const abortId = useSignal(crypto.randomUUID());
   const showToastSignal = useSignal(false);
   const toastMsg = useSignal("");
   const toastType = useSignal<ToastType>("info");
@@ -63,10 +41,9 @@ export function DeleteKeyDialog(props: CopyDeleteProps) {
   function deleteConfirmed(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault(); //e.g. don't submit the form
     isDeleting.value = true;
-    abortId.value = crypto.randomUUID();
     document.body.style.cursor = "progress";
 
-    fetch("/api/deleteKeys", {
+    fetch("/api/deleteKey", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -74,26 +51,14 @@ export function DeleteKeyDialog(props: CopyDeleteProps) {
       body: JSON.stringify(
         {
           connectionId,
-          keysToDelete: keysSelected,
-          filter,
-          prefix,
-          start,
-          end,
-          from,
-          show,
-          reverse,
-          abortId: abortId.value,
-        } satisfies DeleteKeysData,
+          keyToDelete: kvKey,
+        } satisfies DeleteKeyData,
       ),
     }).then((response) => {
       response.text().then((text) => {
         if (response.status === 200) {
           showToast(text, "info");
-          console.log("Deletion successful:", keysSelected.length, "key(s) deleted");
-        } else if (response.status < 500) {
-          // e.g. aborted copy
-          showToast(text, "warn");
-          console.warn(text);
+          console.log("Deletion successful");
         } else {
           // unexpected error
           showToast(text, "error");
@@ -113,8 +78,8 @@ export function DeleteKeyDialog(props: CopyDeleteProps) {
 
       isDeleting.value = false;
       document.body.style.cursor = "default";
-      (document.getElementById("resultsPanel")! as HTMLDivElement).style.display = "none";
-      //window.location.reload();
+      (document.getElementById("getResults")! as HTMLDivElement).style.display = "none";
+      (document.getElementById("pageForm")! as HTMLFormElement).reset();
     });
   }
 
@@ -122,23 +87,6 @@ export function DeleteKeyDialog(props: CopyDeleteProps) {
     toastMsg.value = msg;
     toastType.value = type;
     showToastSignal.value = true;
-  }
-
-  function abortDelete(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
-    event.preventDefault(); //e.g. don't submit the form
-
-    fetch("/api/abortDelete", {
-      method: "POST",
-      headers: {
-        "Content-Type": "text/plain",
-      },
-      body: abortId.value,
-    }).then((_resp) => {
-      console.log("Aborting delete");
-    }).catch((e) => {
-      console.error("Failure with abort request", e);
-      showToast("An unexpected error occurred: Unable to abort request", "error");
-    });
   }
 
   function connNameAndEnv() {
@@ -192,7 +140,7 @@ export function DeleteKeyDialog(props: CopyDeleteProps) {
                   <input
                     type="text"
                     disabled={true}
-                    value={keysSelected.length === 0 ? resultsCount : keysSelected.length}
+                    value={1}
                     class="input input-bordered w-full"
                   />
                 </td>
@@ -210,14 +158,12 @@ export function DeleteKeyDialog(props: CopyDeleteProps) {
             </div>
           )}
           <div class="flex gap-x-3 mt-5 justify-center">
-            {isDeleting.value
-              ? <button class="btn btn-secondary" onClick={abortDelete}>Abort</button>
-              : (
-                <>
-                  <button class="btn btn-secondary" onClick={cancelDialog}>Cancel</button>
-                  <button class="btn btn-primary" onClick={deleteConfirmed}>Delete</button>
-                </>
-              )}
+            <button class="btn btn-secondary" disabled={isDeleting} onClick={cancelDialog}>
+              Cancel
+            </button>
+            <button class="btn btn-primary" disabled={isDeleting} onClick={deleteConfirmed}>
+              Delete
+            </button>
           </div>
         </div>
       </dialog>

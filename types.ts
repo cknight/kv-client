@@ -168,7 +168,7 @@ export type Stats = {
   isDeploy: boolean;
 };
 
-export type CopyDeleteProps = {
+export type CopyDeleteMultiProps = {
   keysSelected: string[];
   connections?: { name: string; id: string; env: string }[];
   connectionLocation: string;
@@ -182,6 +182,13 @@ export type CopyDeleteProps = {
   reverse: boolean;
   filter?: string;
 };
+
+export type CopyDeleteSingleProps = {
+  kvKey: string;
+  connections?: { name: string; id: string; env: string }[];
+  connectionLocation: string;
+  connectionId: string;
+}
 
 export type ToastType = "info" | "warn" | "error";
 export type SupportedValueTypes =

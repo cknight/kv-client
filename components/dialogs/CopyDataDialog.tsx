@@ -1,11 +1,11 @@
 import { JSX } from "preact";
 import { effect, useSignal } from "@preact/signals";
-import { CopyDeleteProps, ToastType } from "../../types.ts";
+import { CopyDeleteMultiProps, ToastType } from "../../types.ts";
 import { CopyKeysData } from "../../routes/api/copyKeys.tsx";
 import { Toast } from "../../islands/Toast.tsx";
 import { WarningTriangleIcon } from "../svg/WarningTriangle.tsx";
 
-export function CopyDataDialog(props: CopyDeleteProps) {
+export function CopyDataDialog(props: CopyDeleteMultiProps) {
   const {
     keysSelected,
     connections,

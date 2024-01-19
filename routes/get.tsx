@@ -1,5 +1,4 @@
-import { Handlers, PageProps, RouteContext } from "$fresh/server.ts";
-import { Fragment } from "preact/jsx-runtime";
+import { Handlers, RouteContext } from "$fresh/server.ts";
 import { GetCriteriaBox } from "../islands/GetCriteriaBox.tsx";
 import { KvUIEntry } from "../types.ts";
 import { getUserState } from "../utils/state/state.ts";
@@ -7,6 +6,7 @@ import { getKv } from "../utils/kv/kvGet.ts";
 import { createKvUIEntry } from "../utils/utils.ts";
 import { Partial } from "$fresh/runtime.ts";
 import { GetResult } from "../islands/GetResult.tsx";
+import { getConnections } from "../utils/connections/connections.ts";
 
 export interface GetData {
   key: string;
@@ -46,12 +46,23 @@ export const handler: Handlers = {
   },
 };
 
-export default function Get(props: PageProps<GetData>) {
+export default async function Get(req: Request, props: RouteContext<GetData>) {
   const sp = props.url.searchParams;
   const kvKey = props.data?.key || sp.get("kvKey") || "";
   const connectionId = sp.get("connectionId") || "";
   const isPost = props.data?.isPost || false;
   console.log("GET page load", props.data);
+
+  const session = props.state.session as string;
+  const state = getUserState(session);
+  const connection = state!.connection;
+  const connectionName = connection?.name || "";
+  const connectionLocation = connection?.kvLocation || "";
+
+  const { local, remote } = await getConnections(session);
+  const connections: { name: string; id: string; env: string }[] = [];
+  local.forEach((c) => connections.push({ name: c.name, id: c.id, env: c.environment }));
+  remote.forEach((c) => connections.push({ name: c.name, id: c.id, env: c.environment }));
 
   return (
     <>
@@ -64,7 +75,13 @@ export default function Get(props: PageProps<GetData>) {
         <Partial name="get">
           <GetCriteriaBox kvKey={kvKey} />
           {isPost && (
-            <GetResult connectionId={connectionId} kvKey={kvKey} result={props.data?.result} />
+            <GetResult
+              connectionId={connectionId}
+              kvKey={kvKey}
+              result={props.data?.result}
+              connections={connections}
+              connectionLocation={connectionLocation}
+            />
           )}
         </Partial>
       </form>

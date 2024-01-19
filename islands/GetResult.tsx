@@ -6,9 +6,12 @@ import { KvValueEditor } from "./KvValueEditor.tsx";
 import { JSX } from "preact/jsx-runtime";
 import { Toast } from "./Toast.tsx";
 import { KvSetEntry } from "../routes/api/setEntry.tsx";
+import { DeleteKeyDialog } from "../components/dialogs/DeleteKeyDialog.tsx";
 
 interface GetResultProps {
   connectionId: string;
+  connections: { name: string; id: string; env: string }[];
+  connectionLocation: string;
   kvKey: string;
   result?: KvUIEntry;
 }
@@ -84,10 +87,17 @@ export function GetResult(props: GetResultProps) {
     });
   }
 
+  function deleteEntry(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
+    event.preventDefault();
+    const dialog = document.getElementById("deleteDialog") as HTMLDialogElement;
+    dialog.showModal();
+    dialog.classList.add("modal");
+  }
+
   return (
     <>
       {props.result && (
-        <div class="border border-1 border-[#666] bg-[#353535] rounded-md p-4 mt-3">
+        <div id="getResults" class="border border-1 border-[#666] bg-[#353535] rounded-md p-4 mt-3">
           <KvValueEditor
             kvValueType={fullViewValueType}
             kvValue={fullViewValue}
@@ -118,6 +128,7 @@ export function GetResult(props: GetResultProps) {
               <button
                 type="button"
                 form="pageForm"
+                onClick={deleteEntry}
                 class="btn btn-secondary w-[72px]"
               >
                 Delete
@@ -146,7 +157,12 @@ export function GetResult(props: GetResultProps) {
           No results found
         </div>
       )}
-
+      <DeleteKeyDialog
+        connectionId={props.connectionId}
+        connectionLocation={props.connectionLocation}
+        connections={props.connections}
+        kvKey={props.kvKey}
+      />
       <Toast
         id="getEntryToast"
         message={toastMsg.value}
