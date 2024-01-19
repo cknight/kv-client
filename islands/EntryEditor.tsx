@@ -7,29 +7,30 @@ import { Toast } from "./Toast.tsx";
 import { simpleTypes } from "../consts.ts";
 import { readableSize } from "../utils/utils.ts";
 
-interface KvDialogProps {
+interface EntryEditorProps {
   kvKey: Signal<string>;
   kvValue: Signal<string>;
-  kvValueType: Signal<string>
+  kvValueType: Signal<string>;
   connectionId: string;
   kvKeyHash: Signal<string>;
   showToastSignal: Signal<boolean>;
   toastMsg: Signal<string>;
   toastType: Signal<ToastType>;
+  shouldShowResults: Signal<boolean>;
 }
 
-export function UpdateEntryEditor(props: KvDialogProps) {
-  const showToastSignal = useSignal(false);
+export function EntryEditor(props: EntryEditorProps) {
+  const showErrorToastSignal = useSignal(false);
+  const showSuccessToastSignal = useSignal(false);
   const toastMsg = useSignal("");
   const toastType = useSignal<ToastType>("info");
   const keySize = readableSize(JSON.stringify(props.kvKey.value).length);
   const inEditMode = useSignal(false);
   const readOnly = useSignal(true);
-
   function clearForm() {
     // TODO clean up
 
-    const key = document.getElementById("kvKey")! as HTMLInputElement;
+    const key = document.getElementById("kvKey")! as HTMLTextAreaElement;
     const valueType = document.getElementById("valueType")! as HTMLSelectElement;
     const typeHelper = document.getElementById("typeHelper")! as HTMLSelectElement;
     const doNotOverwrite = document.getElementById("doNotOverwrite")! as HTMLInputElement;
@@ -45,7 +46,7 @@ export function UpdateEntryEditor(props: KvDialogProps) {
   function validate(): boolean {
     //TODO clean up (no key validation)
 
-    const key = document.getElementById("kvKey")! as HTMLInputElement;
+    const key = document.getElementById("kvKey")! as HTMLTextAreaElement;
     const valueType = document.getElementById("valueType")! as HTMLSelectElement;
 
     if (key.value.trim() === "") {
@@ -63,14 +64,14 @@ export function UpdateEntryEditor(props: KvDialogProps) {
 
   function submitValueUpdate(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault();
-
+    showErrorToastSignal.value = false;
     if (!validate()) return;
 
     //@ts-ignore - ace editor is global
     const kvValue = globalThis.editor.getValue();
-    const key = document.getElementById("kvKey")! as HTMLInputElement;
+    const key = document.getElementById("kvKey")! as HTMLTextAreaElement;
     const valueType = document.getElementById("valueType")! as HTMLSelectElement;
-    const doNotOverwrite = document.getElementById("doNotOverwrite")! as HTMLInputElement;
+    const keyValues = key.value.slice(1, -1);
 
     fetch("/api/setEntry", {
       method: "POST",
@@ -79,10 +80,10 @@ export function UpdateEntryEditor(props: KvDialogProps) {
       },
       body: JSON.stringify(
         {
-          key: key.value,
+          key: keyValues,
           kvValue,
           valueType: valueType.value as SupportedValueTypes,
-          doNotOverwrite: doNotOverwrite.checked,
+          doNotOverwrite: false,
           connectionId: new URLSearchParams(window.location.search).get("connectionId")!,
         } satisfies KvSetEntry,
       ),
@@ -90,7 +91,9 @@ export function UpdateEntryEditor(props: KvDialogProps) {
       response.text().then((text) => {
         if (response.status === 200) {
           showToast(text, "info");
-          console.log("Entry successfully set");
+          closeDialog(event);
+          props.shouldShowResults.value = false;
+          console.log("Entry successfully updated");
         } else {
           // unexpected error
           showToast(text, "error");
@@ -110,10 +113,6 @@ export function UpdateEntryEditor(props: KvDialogProps) {
     event.preventDefault(); //e.g. don't submit the form
     inEditMode.value = true;
     readOnly.value = false;
-    const textArea = document.getElementById("valueTextArea") as HTMLTextAreaElement;
-    setTimeout(() => {
-      textArea.focus();
-    }, 0);
   }
 
   function cancelEdit(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
@@ -139,7 +138,8 @@ export function UpdateEntryEditor(props: KvDialogProps) {
   function showToast(msg: string, type: ToastType) {
     toastMsg.value = msg;
     toastType.value = type;
-    showToastSignal.value = true;
+    if (type === "error") showErrorToastSignal.value = true;
+    else showSuccessToastSignal.value = true;
   }
 
   return (
@@ -154,14 +154,19 @@ export function UpdateEntryEditor(props: KvDialogProps) {
           </div>
           <div class="mt-3">
             <textarea
+              id="kvKey"
               type="text"
               disabled={true}
               value={props.kvKey.value}
-              class="textarea text-area-sm w-full"
+              class="textarea text-area-sm w-full h-8"
             />
           </div>
           <div class="divider"></div>
-          <KvValueEditor kvValueType={props.kvValueType} kvValue={props.kvValue} readOnly={readOnly}/>
+          <KvValueEditor
+            kvValueType={props.kvValueType}
+            kvValue={props.kvValue}
+            readOnly={readOnly}
+          />
           <div class="flex gap-x-3 mt-5 justify-center">
             {inEditMode.value
               ? (
@@ -194,11 +199,17 @@ export function UpdateEntryEditor(props: KvDialogProps) {
         </div> */
           }
         </div>
+        <Toast
+          id="setEntryErrorToast"
+          message={toastMsg.value}
+          show={showErrorToastSignal}
+          type={toastType.value}
+        />
       </dialog>
       <Toast
-        id="setEntryToast"
+        id="setEntrySuccessToast"
         message={toastMsg.value}
-        show={showToastSignal}
+        show={showSuccessToastSignal}
         type={toastType.value}
       />
     </Fragment>

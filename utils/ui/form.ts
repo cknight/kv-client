@@ -10,14 +10,30 @@ const listFormIds = [
   "disableCache",
 ];
 
+const getFormIds = [
+  "kvKey",
+  "disableCache",
+];
+
 export function submitListForm() {
   listFormIds.forEach(updateUrl);
   const form = document.getElementById("pageForm") as HTMLFormElement;
   form.submit();
 }
 
+export function submitGetForm() {
+  getFormIds.forEach(updateUrl);
+  const form = document.getElementById("pageForm") as HTMLFormElement;
+  form.submit();
+}
+
 export function clearListForm() {
-  const resetIds = ["prefix", "start", "end", "limit", "reverse", "filter"];
+  const resetIds = ["prefix", "start", "end", "limit", "reverse", "filter", "disableCache"];
+  resetIds.forEach(reset);
+}
+
+export function clearGetForm() {
+  const resetIds = ["key", "disableCache"];
   resetIds.forEach(reset);
 }
 

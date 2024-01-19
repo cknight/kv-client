@@ -1,12 +1,10 @@
 import { walk } from "$std/fs/walk.ts";
 import { join } from "$std/path/mod.ts";
-import cache_dir from "https://deno.land/x/dir@1.5.1/home_dir/mod.ts";
 import { KvInstance, KvUIEntry } from "../../types.ts";
 import { createKvUIEntry, hashKvKey } from "../utils.ts";
 import { env } from "../../consts.ts";
 
 const MAX_ROWS = 6; //should be even number
-const CACHE_DIR = ".cache";
 const DENO_CACHE_DIR = "deno";
 const LOCATION_DATA_DIR = "location_data";
 const DEFAULT_KV_FILENAME = "kv.sqlite3";
@@ -28,10 +26,9 @@ export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
   //FIXME test and/or compare/amend from KvView
 
   const denoDir = Deno.env.get(env.DENO_DIR);
-  const cacheDir = denoDir ||
-    join(cache_dir() || "", CACHE_DIR, DENO_CACHE_DIR);
-  const locationDir = join(cacheDir, LOCATION_DATA_DIR);
-
+  const fullCacheDir = denoDir || join(cacheDir() || "", DENO_CACHE_DIR);
+  const locationDir = join(fullCacheDir, LOCATION_DATA_DIR);
+  
   try {
     console.debug(
       "Attempting to auto-discover KV instances cached at " + locationDir,
@@ -101,3 +98,35 @@ export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
   );
   return instances;
 }
+
+function cacheDir(): string | undefined {
+  if (Deno.build.os === "darwin") {
+    const home = homeDir();
+    if (home) {
+      return join(home, "Library/Caches");
+    }
+  } else if (Deno.build.os === "windows") {
+    return Deno.env.get("LOCALAPPDATA");
+  } else {
+    const cacheHome = Deno.env.get("XDG_CACHE_HOME");
+    if (cacheHome) {
+      return cacheHome;
+    } else {
+      const home = homeDir();
+      if (home) {
+        return join(home, ".cache");
+      }
+    }
+  }
+}
+
+function homeDir(): string | undefined {
+  if (Deno.build.os === "windows") {
+    Deno.permissions.request({ name: "env", variable: "USERPROFILE" });
+    return Deno.env.get("USERPROFILE");
+  } else {
+    Deno.permissions.request({ name: "env", variable: "HOME" });
+    return Deno.env.get("HOME");
+  }
+}
+

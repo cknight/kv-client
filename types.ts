@@ -1,23 +1,5 @@
 import { DeployUser } from "./utils/connections/denoDeploy/deployUser.ts";
 
-export interface ListData {
-  prefix: string;
-  start: string;
-  end: string;
-  limit: string;
-  reverse: boolean;
-  disableCache: boolean;
-  show: number;
-  from: number;
-  results?: KvUIEntry[];
-  fullResultsCount: number;
-  filter: string | undefined;
-  filtered: boolean;
-  listComplete: boolean;
-  validationError?: string;
-  stats?: Stats;
-}
-
 export interface I_CacheManager {
   get(parms: CacheKey): CachedList | undefined;
   add(parms: ListResults): void;
@@ -95,7 +77,13 @@ export interface KvListOptions {
   disableCache: boolean;
 }
 
-export type AuditLog<T extends "list" | "delete" | "copy" | "update" | "set"> = {
+export interface KvGetOptions {
+  session: string;
+  connectionId: string;
+  key: string;
+}
+
+export type AuditLog<T extends "list" | "delete" | "copy" | "update" | "set" | "get"> = {
   auditType: T;
   executorId: string;
   connection: string;
@@ -135,6 +123,7 @@ export type UpdateAuditLog = AuditLog<"update"> & {
   key: string;
   originalValue: string;
   newValue: string;
+  newVersionstamp?: string;
 };
 
 export type SetAuditLog = AuditLog<"set"> & {
@@ -142,6 +131,13 @@ export type SetAuditLog = AuditLog<"set"> & {
   writeUnitsConsumed: number;
   key: string;
   value: string;
+  versionstamp?: string;
+};
+
+export type GetAuditLog = AuditLog<"get"> & {
+  key: string;
+  resultVersionstamp: string | null;
+  readUnitsConsumed: number;
 };
 
 export type AuditRecord =
@@ -149,7 +145,8 @@ export type AuditRecord =
   | DeleteAuditLog
   | CopyAuditLog
   | UpdateAuditLog
-  | SetAuditLog;
+  | SetAuditLog
+  | GetAuditLog;
 
 export type UnitsConsumed = {
   operations: number;

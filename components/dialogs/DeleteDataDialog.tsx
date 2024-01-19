@@ -4,6 +4,7 @@ import { DeleteKeysData } from "../../routes/api/deleteKeys.tsx";
 import { CopyDeleteProps, ToastType } from "../../types.ts";
 import { Toast } from "../../islands/Toast.tsx";
 import { WarningTriangleIcon } from "../svg/WarningTriangle.tsx";
+import { useEffect } from "preact/hooks";
 
 export function DeleteDataDialog(props: CopyDeleteProps) {
   const {
@@ -148,7 +149,7 @@ export function DeleteDataDialog(props: CopyDeleteProps) {
           <p class="font-bold text-xl">
             Confirm delete
           </p>
-          <div class="mt-3">
+          <div class="border border-1 border-[#666] bg-[#353535] rounded-md p-4 mt-3">
             <table class="table">
               <tr>
                 <td class="w-40 text-right pr-6 font-bold">Connection</td>
@@ -165,10 +166,11 @@ export function DeleteDataDialog(props: CopyDeleteProps) {
                 <td class="text-right pr-6 font-bold">Location</td>
                 <td class="break-all">
                   <textarea
+                    id="locationTextArea"
                     type="text"
                     disabled={true}
                     value={connectionLocation}
-                    class="textarea textarea-bordered text-area-sm w-full"
+                    class="textarea textarea-bordered text-area-sm w-full h-48"
                   />
                 </td>
               </tr>

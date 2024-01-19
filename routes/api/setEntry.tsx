@@ -57,7 +57,7 @@ export const handler: Handlers = {
 
       const entry: Deno.KvEntry<unknown> = { key: kvKey, value: kvValue, versionstamp: "1" };
       const result = await setAll([entry], kv, "");
-      const { setKeyCount, writeUnitsConsumed } = result;
+      const { setKeyCount, writeUnitsConsumed, lastSuccessfulVersionstamp } = result;
 
       const overallDuration = Date.now() - start;
 
@@ -71,6 +71,7 @@ export const handler: Handlers = {
         key: keyString,
         value: asMaxLengthString(json5Stringify(kvValue, true), 30000),
         writeUnitsConsumed: writeUnitsConsumed,
+        versionstamp: lastSuccessfulVersionstamp,
       };
       await auditAction(setAudit);
 

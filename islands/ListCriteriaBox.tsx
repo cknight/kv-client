@@ -51,7 +51,7 @@ export function ListCriteriaBox(data: ListDataProps) {
       <div class="flex w-full">
         <div class="w-2/3">
           <div class="w-full flex items-center">
-            <label for="prefix" class="w-24">Prefix</label>
+            <label for="prefix" class="w-16 pb-3">Prefix</label>
             <div class="w-full">
               <KvKeyInput
                 id="prefix"
@@ -69,7 +69,7 @@ export function ListCriteriaBox(data: ListDataProps) {
             </div>
           </div>
           <div class="w-full flex items-center mt-2">
-            <label for="start" class="w-24">Start</label>
+            <label for="start" class="w-16 pb-3">Start</label>
             <div class="w-full">
               <KvKeyInput
                 id="start"
@@ -87,7 +87,7 @@ export function ListCriteriaBox(data: ListDataProps) {
             </div>
           </div>
           <div class="w-full flex items-center mt-2">
-            <label for="end" class="w-24">End</label>
+            <label for="end" class="w-16 pb-3">End</label>
             <div class="w-full">
               <KvKeyInput
                 id="end"

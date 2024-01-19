@@ -92,7 +92,7 @@ async function updateKey(data: UpdateKeyData, session: string): Promise<UpdateOp
     value: kvValue,
     versionstamp: "1",
   };
-  const { failedKeys, setKeyCount, writeUnitsConsumed } = await setAll([entry], kv, "");
+  const { failedKeys, setKeyCount, writeUnitsConsumed, lastSuccessfulVersionstamp } = await setAll([entry], kv, "");
 
   const overallDuration = Date.now() - startTime;
 
@@ -107,6 +107,7 @@ async function updateKey(data: UpdateKeyData, session: string): Promise<UpdateOp
     originalValue: asMaxLengthString(json5Stringify(matchedEntry[0].value, true), 30000),
     newValue: asMaxLengthString(json5Stringify(kvValue, true), 30000),
     writeUnitsConsumed: writeUnitsConsumed,
+    newVersionstamp: lastSuccessfulVersionstamp,
   };
   await auditAction(updateAudit);
 

@@ -8,6 +8,7 @@ export interface SetResult {
   aborted: boolean;
   setKeyCount: number;
   writeUnitsConsumed: number;
+  lastSuccessfulVersionstamp?: string;
 }
 
 /**
@@ -47,6 +48,7 @@ export async function setAll(
   let totalWriteUnits = 0;
   let keysInAction = [];
   const failedKeys: Deno.KvKey[] = [];
+  let lastSuccessfulVersionstamp: string | undefined = undefined;
 
   for (const entry of entries) {
     if (abortSet.has(abortId)) {
@@ -55,6 +57,7 @@ export async function setAll(
         aborted: true,
         setKeyCount,
         writeUnitsConsumed: totalWriteUnits,
+        lastSuccessfulVersionstamp
       };
     }
 
@@ -72,13 +75,18 @@ export async function setAll(
     ) {
       // transaction count or size limit reached, commit transaction and reset
       try {
-        await atomic.commit();
+        const result = await atomic.commit();
+        if (!result.ok) {
+          throw new Error("Transaction failed");
+        }
+        lastSuccessfulVersionstamp = result.versionstamp;
         setKeyCount += count;
         totalWriteUnits += writeUnitsConsumed(totalTransactionSize);
       } catch (e) {
         console.error("Atomic set transaction failed.  Retrying keys individually.", e);
         const result = await retrySetIndividually(keysInAction, kv, abortId);
         failedKeys.push(...result.failedKeys);
+        lastSuccessfulVersionstamp = result.lastSuccessfulVersionstamp;
         setKeyCount += result.setKeyCount;
         totalWriteUnits += result.writeUnitsConsumed;
 
@@ -88,6 +96,7 @@ export async function setAll(
             aborted: true,
             setKeyCount,
             writeUnitsConsumed: totalWriteUnits,
+            lastSuccessfulVersionstamp,
           };
         }
       }
@@ -102,13 +111,18 @@ export async function setAll(
   // These are the remaining keys in the final transaction which have not been committed yet
   if (count > 0 && !abortSet.has(abortId)) {
     try {
-      await atomic.commit();
+      const result = await atomic.commit();
+      if (!result.ok) {
+        throw new Error("Transaction failed");
+      }
+      lastSuccessfulVersionstamp = result.versionstamp;
       setKeyCount += count;
       totalWriteUnits += writeUnitsConsumed(totalTransactionSize);
     } catch (e) {
       console.error("Atomic set transaction failed.  Retrying keys individually.", e);
       const result = await retrySetIndividually(keysInAction, kv, abortId);
       failedKeys.push(...result.failedKeys);
+      lastSuccessfulVersionstamp = result.lastSuccessfulVersionstamp;
       setKeyCount += result.setKeyCount;
       totalWriteUnits += result.writeUnitsConsumed;
 
@@ -118,6 +132,7 @@ export async function setAll(
           aborted: true,
           setKeyCount,
           writeUnitsConsumed: totalWriteUnits,
+          lastSuccessfulVersionstamp,
         };
       }
     }
@@ -128,6 +143,7 @@ export async function setAll(
     aborted: false,
     setKeyCount,
     writeUnitsConsumed: totalWriteUnits,
+    lastSuccessfulVersionstamp,
   };
 }
 
@@ -140,6 +156,7 @@ async function retrySetIndividually(
   const failedKeys: Deno.KvKey[] = [];
   let setKeys = 0;
   let totalWriteUnits = 0;
+  let lastSuccessfulVersionstamp: string | undefined = undefined;
 
   for (const entry of entries) {
     if (abortSet.has(abortId)) {
@@ -148,10 +165,15 @@ async function retrySetIndividually(
         aborted: true,
         setKeyCount: setKeys,
         writeUnitsConsumed: totalWriteUnits,
+        lastSuccessfulVersionstamp,
       };
     }
     try {
-      await kv.set(entry.key, entry.value);
+      const result = await kv.set(entry.key, entry.value);
+      if (!result.ok) {
+        throw new Error("Set failed");
+      }
+      lastSuccessfulVersionstamp = result.versionstamp;
       totalWriteUnits += writeUnitsConsumed(
         approximateSize(entry.key) + approximateSize(entry.value),
       );
@@ -166,5 +188,6 @@ async function retrySetIndividually(
     aborted: false,
     setKeyCount: setKeys,
     writeUnitsConsumed: totalWriteUnits,
+    lastSuccessfulVersionstamp,
   };
 }

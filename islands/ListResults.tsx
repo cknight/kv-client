@@ -4,7 +4,6 @@ import { Help } from "./Help.tsx";
 import { KvUIEntry, Stats, ToastType } from "../types.ts";
 import { StatsBar } from "../components/StatsBar.tsx";
 import { submitListForm } from "../utils/ui/form.ts";
-import { KvDialog } from "../components/dialogs/KvDialog.tsx";
 import { JSX } from "preact";
 import { DeleteDataDialog } from "../components/dialogs/DeleteDataDialog.tsx";
 import { CopyDataDialog } from "../components/dialogs/CopyDataDialog.tsx";
@@ -13,7 +12,7 @@ import { DoubleRightIcon } from "../components/svg/DoubleRight.tsx";
 import { SingleRightIcon } from "../components/svg/SingleRight.tsx";
 import { SingleLeftIcon } from "../components/svg/SingleLeft.tsx";
 import { DoubleLeftIcon } from "../components/svg/DoubleLeft.tsx";
-import { UpdateEntryEditor } from "./UpdateEntryEditor.tsx";
+import { EntryEditor } from "./EntryEditor.tsx";
 
 interface ListResultsProps {
   results: KvUIEntry[] | undefined;
@@ -59,6 +58,7 @@ const valueTypeColorMap: Record<string, string> = {
 export function valueTypeColor(type: string): string {
   return valueTypeColorMap[type] ?? "border-gray-500 text-gray-500";
 }
+
 export function ListResults(props: ListResultsProps) {
   const { results, resultsCount, filter, filtered } = props;
   const { prefix, start, end, reverse, session } = props;
@@ -72,6 +72,7 @@ export function ListResults(props: ListResultsProps) {
   const showToastSignal = useSignal(false);
   const toastMsg = useSignal("");
   const toastType = useSignal<ToastType>("info");
+  const shouldShowResults = useSignal(true);
 
   const to = Math.min(props.from + props.show - 1, resultsCount);
 
@@ -207,7 +208,7 @@ export function ListResults(props: ListResultsProps) {
 
   return (
     <div>
-      {(resultsCount > 0 || filtered) &&
+      {shouldShowResults.value && (resultsCount > 0 || filtered) &&
         (
           <div
             id="resultsPanel"
@@ -282,7 +283,7 @@ export function ListResults(props: ListResultsProps) {
                         <td title={result.fullValue} class="break-all">
                           {result.value}
                         </td>
-                        <td title={result.valueType} >
+                        <td title={result.valueType}>
                           <div class={"badge badge-outline " + valueTypeColor(result.valueType)}>
                             {result.valueType}
                           </div>
@@ -352,22 +353,8 @@ export function ListResults(props: ListResultsProps) {
           </div>
         )}
       {props.stats && <StatsBar stats={props.stats} />}
-      {/* <KvDialog
-        kvKey={fullViewKey}
-        kvValue={fullViewValue}
-        kvKeyHash={fullViewKeyHash}
-        connectionId={props.connectionId}
-        prefix={prefix}
-        start={start}
-        end={end}
-        from={props.from}
-        show={props.show}
-        reverse={reverse}
-        showToastSignal={showToastSignal}
-        toastMsg={toastMsg}
-        toastType={toastType}
-      /> */}
-      <UpdateEntryEditor
+
+      <EntryEditor
         kvKey={fullViewKey}
         kvValue={fullViewValue}
         kvKeyHash={fullViewKeyHash}
@@ -376,7 +363,7 @@ export function ListResults(props: ListResultsProps) {
         showToastSignal={showToastSignal}
         toastMsg={toastMsg}
         toastType={toastType}
-
+        shouldShowResults={shouldShowResults}
       />
       <DeleteDataDialog
         keysSelected={selected.value}

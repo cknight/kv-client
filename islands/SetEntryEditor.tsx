@@ -13,6 +13,7 @@ export function SetEntryEditor() {
   const valueType = useSignal("");
   const kvValue = useSignal("");
   const readOnly = useSignal(false);
+  const kvKey = useSignal("");
 
   function clearForm() {
     const key = document.getElementById("kvKey")! as HTMLInputElement;
@@ -53,7 +54,7 @@ export function SetEntryEditor() {
     const valueType = document.getElementById("valueType")! as HTMLSelectElement;
     const doNotOverwrite = document.getElementById("doNotOverwrite")! as HTMLInputElement;
     //@ts-ignore - ace editor is global
-    const kvValue = globalThis.editor.value.getValue();
+    const kvValue = globalThis.editor.getValue();
 
     fetch("/api/setEntry", {
       method: "POST",
@@ -97,7 +98,7 @@ export function SetEntryEditor() {
 
   return (
     <Fragment>
-      <KvKeyEditor />
+      <KvKeyEditor showDoNotOverwrite={true} kvKeyValue={kvKey}/>
       <div class="divider"></div>
       <KvValueEditor kvValueType={valueType} kvValue={kvValue} readOnly={readOnly}/>
       <div class="flex w-full justify-center mt-8 gap-x-3">

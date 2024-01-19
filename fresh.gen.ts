@@ -11,11 +11,13 @@ import * as $addLocalConnection from "./routes/addLocalConnection.tsx";
 import * as $api_abortCopy from "./routes/api/abortCopy.tsx";
 import * as $api_abortDelete from "./routes/api/abortDelete.tsx";
 import * as $api_copyKeys from "./routes/api/copyKeys.tsx";
+import * as $api_deleteKey from "./routes/api/deleteKey.tsx";
 import * as $api_deleteKeys from "./routes/api/deleteKeys.tsx";
 import * as $api_keyTypes from "./routes/api/keyTypes.tsx";
 import * as $api_setEntry from "./routes/api/setEntry.tsx";
 import * as $api_updateKey from "./routes/api/updateKey.tsx";
 import * as $api_valueSize from "./routes/api/valueSize.tsx";
+import * as $get from "./routes/get.tsx";
 import * as $index from "./routes/index.tsx";
 import * as $list from "./routes/list.tsx";
 import * as $logout from "./routes/logout.tsx";
@@ -23,6 +25,9 @@ import * as $set from "./routes/set.tsx";
 import * as $test from "./routes/test.tsx";
 import * as $AccessTokenInput from "./islands/AccessTokenInput.tsx";
 import * as $DarkMode from "./islands/DarkMode.tsx";
+import * as $EntryEditor from "./islands/EntryEditor.tsx";
+import * as $GetCriteriaBox from "./islands/GetCriteriaBox.tsx";
+import * as $GetResult from "./islands/GetResult.tsx";
 import * as $Help from "./islands/Help.tsx";
 import * as $KvKeyEditor from "./islands/KvKeyEditor.tsx";
 import * as $KvKeyInput from "./islands/KvKeyInput.tsx";
@@ -33,7 +38,6 @@ import * as $SetEntryEditor from "./islands/SetEntryEditor.tsx";
 import * as $TabBar from "./islands/TabBar.tsx";
 import * as $TestToast from "./islands/TestToast.tsx";
 import * as $Toast from "./islands/Toast.tsx";
-import * as $UpdateEntryEditor from "./islands/UpdateEntryEditor.tsx";
 import * as $avatarMenu_AvatarMenu from "./islands/avatarMenu/AvatarMenu.tsx";
 import * as $avatarMenu_UnknownAvatarMenu from "./islands/avatarMenu/UnknownAvatarMenu.tsx";
 import * as $connections_AddLocalConnectionButton from "./islands/connections/AddLocalConnectionButton.tsx";
@@ -56,11 +60,13 @@ const manifest = {
     "./routes/api/abortCopy.tsx": $api_abortCopy,
     "./routes/api/abortDelete.tsx": $api_abortDelete,
     "./routes/api/copyKeys.tsx": $api_copyKeys,
+    "./routes/api/deleteKey.tsx": $api_deleteKey,
     "./routes/api/deleteKeys.tsx": $api_deleteKeys,
     "./routes/api/keyTypes.tsx": $api_keyTypes,
     "./routes/api/setEntry.tsx": $api_setEntry,
     "./routes/api/updateKey.tsx": $api_updateKey,
     "./routes/api/valueSize.tsx": $api_valueSize,
+    "./routes/get.tsx": $get,
     "./routes/index.tsx": $index,
     "./routes/list.tsx": $list,
     "./routes/logout.tsx": $logout,
@@ -70,6 +76,9 @@ const manifest = {
   islands: {
     "./islands/AccessTokenInput.tsx": $AccessTokenInput,
     "./islands/DarkMode.tsx": $DarkMode,
+    "./islands/EntryEditor.tsx": $EntryEditor,
+    "./islands/GetCriteriaBox.tsx": $GetCriteriaBox,
+    "./islands/GetResult.tsx": $GetResult,
     "./islands/Help.tsx": $Help,
     "./islands/KvKeyEditor.tsx": $KvKeyEditor,
     "./islands/KvKeyInput.tsx": $KvKeyInput,
@@ -80,7 +89,6 @@ const manifest = {
     "./islands/TabBar.tsx": $TabBar,
     "./islands/TestToast.tsx": $TestToast,
     "./islands/Toast.tsx": $Toast,
-    "./islands/UpdateEntryEditor.tsx": $UpdateEntryEditor,
     "./islands/avatarMenu/AvatarMenu.tsx": $avatarMenu_AvatarMenu,
     "./islands/avatarMenu/UnknownAvatarMenu.tsx": $avatarMenu_UnknownAvatarMenu,
     "./islands/connections/AddLocalConnectionButton.tsx": $connections_AddLocalConnectionButton,

@@ -11,7 +11,7 @@ export function KvKeyInput(props: KvKeyInputProps) {
   const types = useSignal("");
   const typesId = useSignal(crypto.randomUUID());
   let timeoutId = -1;
-
+  
   useEffect(() => {
     if (disableTypes) return;
 

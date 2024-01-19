@@ -1,14 +1,28 @@
 import { JSX } from "preact";
 import { effect, useSignal } from "@preact/signals";
+import { DeleteKeysData } from "../../routes/api/deleteKeys.tsx";
 import { CopyDeleteProps, ToastType } from "../../types.ts";
-import { CopyKeysData } from "../../routes/api/copyKeys.tsx";
 import { Toast } from "../../islands/Toast.tsx";
 import { WarningTriangleIcon } from "../svg/WarningTriangle.tsx";
+import { useEffect } from "preact/hooks";
 
-export function CopyDataDialog(props: CopyDeleteProps) {
+export function DeleteKeyDialog(props: CopyDeleteProps) {
+
+  pick up here
+
+
+
+
+
+
+
+
+
+  
   const {
     keysSelected,
     connections,
+    connectionLocation,
     connectionId,
     prefix,
     start,
@@ -19,16 +33,15 @@ export function CopyDataDialog(props: CopyDeleteProps) {
     reverse,
     filter,
   } = props;
-  const isCopying = useSignal(false);
+  const isDeleting = useSignal(false);
   const abortId = useSignal(crypto.randomUUID());
   const showToastSignal = useSignal(false);
   const toastMsg = useSignal("");
   const toastType = useSignal<ToastType>("info");
-  const isProd = useSignal(false);
 
   effect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (isCopying.value && event.key === "Escape") {
+      if (isDeleting.value && event.key === "Escape") {
         event.preventDefault();
       }
     };
@@ -42,28 +55,26 @@ export function CopyDataDialog(props: CopyDeleteProps) {
 
   function cancelDialog(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault(); //e.g. don't submit the form
-    const dialog = document.getElementById("copyDialog")! as HTMLDialogElement;
+    const dialog = document.getElementById("deleteDialog")! as HTMLDialogElement;
     dialog.close();
     dialog.classList.remove("modal");
   }
 
-  function copyConfirmed(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
+  function deleteConfirmed(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault(); //e.g. don't submit the form
-    isCopying.value = true;
+    isDeleting.value = true;
     abortId.value = crypto.randomUUID();
-    const dest = document.getElementById("dest")! as HTMLSelectElement;
     document.body.style.cursor = "progress";
 
-    fetch("/api/copyKeys", {
+    fetch("/api/deleteKeys", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(
         {
-          sourceConnectionId: connectionId,
-          destConnectionId: dest.value,
-          keysToCopy: keysSelected,
+          connectionId,
+          keysToDelete: keysSelected,
           filter,
           prefix,
           start,
@@ -72,13 +83,13 @@ export function CopyDataDialog(props: CopyDeleteProps) {
           show,
           reverse,
           abortId: abortId.value,
-        } satisfies CopyKeysData,
+        } satisfies DeleteKeysData,
       ),
     }).then((response) => {
       response.text().then((text) => {
         if (response.status === 200) {
           showToast(text, "info");
-          console.log("Copy successful:", results(), "key(s) copied");
+          console.log("Deletion successful:", keysSelected.length, "key(s) deleted");
         } else if (response.status < 500) {
           // e.g. aborted copy
           showToast(text, "warn");
@@ -93,14 +104,17 @@ export function CopyDataDialog(props: CopyDeleteProps) {
         showToast("An unexpected error occurred: Unable to read response", "error");
       });
     }).catch((e) => {
-      console.error("Failure with copy request", e);
+      console.error("Failure with delete request", e);
       showToast("An unexpected error occurred: Unable to send request", "error");
     }).finally(() => {
-      const dialog = document.getElementById("copyDialog")! as HTMLDialogElement;
+      const dialog = document.getElementById("deleteDialog")! as HTMLDialogElement;
       dialog.close();
       dialog.classList.remove("modal");
-      isCopying.value = false;
+
+      isDeleting.value = false;
       document.body.style.cursor = "default";
+      (document.getElementById("resultsPanel")! as HTMLDivElement).style.display = "none";
+      //window.location.reload();
     });
   }
 
@@ -110,39 +124,21 @@ export function CopyDataDialog(props: CopyDeleteProps) {
     showToastSignal.value = true;
   }
 
-  function abortCopy(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
+  function abortDelete(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault(); //e.g. don't submit the form
 
-    fetch("/api/abortCopy", {
+    fetch("/api/abortDelete", {
       method: "POST",
       headers: {
         "Content-Type": "text/plain",
       },
       body: abortId.value,
     }).then((_resp) => {
-      console.log("Aborting copy");
+      console.log("Aborting delete");
     }).catch((e) => {
       console.error("Failure with abort request", e);
       showToast("An unexpected error occurred: Unable to abort request", "error");
     });
-  }
-
-  function results(): number {
-    return keysSelected.length === 0 ? resultsCount : keysSelected.length;
-  }
-
-  function connectionList(): Map<string, { name: string; id: string }[]> {
-    const envMap = new Map<string, { name: string; id: string }[]>();
-    connections?.filter((c) => c.id !== connectionId).forEach((connection) => {
-      if (!envMap.has(connection.env)) {
-        envMap.set(connection.env, []);
-      }
-      envMap.get(connection.env)!.push(connection);
-    });
-    envMap.forEach((connections, env) => {
-      envMap.set(env, connections.sort((a, b) => a.name.localeCompare(b.name)));
-    });
-    return envMap;
   }
 
   function connNameAndEnv() {
@@ -150,40 +146,25 @@ export function CopyDataDialog(props: CopyDeleteProps) {
     return conn ? conn.name + " (" + conn.env + ")" : "";
   }
 
-  function checkIfProd() {
-    const dest = document.getElementById("dest")! as HTMLSelectElement;
-    const conn = connections?.filter((c) => c.id === dest.value)[0];
-    isProd.value = conn?.env === "prod";
-  }
-
-  function prettyEnv(env: string) {
-    switch (env) {
-      case "prod":
-        return "Production";
-      case "staging":
-        return "Staging";
-      case "local":
-        return "Local";
-      default:
-        return env;
-    }
+  function isProd() {
+    const env = connections?.filter((c) => c.id === connectionId)[0]?.env;
+    return env === "prod";
   }
 
   return (
     <>
       <dialog
-        id="copyDialog"
+        id="deleteDialog"
         class=""
       >
         <div class="modal-box mb-3">
-          <h2 class="font-bold text-xl">
-            Copy results
-          </h2>
-          <p class="mt-3">Copy {results()} result{results() > 0 ? "s" : ""}</p>
-          <div class="border border-1 border-[#666] bg-[#353535] rounded-md p-4 my-3">
+          <p class="font-bold text-xl">
+            Confirm delete
+          </p>
+          <div class="border border-1 border-[#666] bg-[#353535] rounded-md p-4 mt-3">
             <table class="table">
               <tr>
-                <td class="w-[60px]">From</td>
+                <td class="w-40 text-right pr-6 font-bold">Connection</td>
                 <td>
                   <input
                     type="text"
@@ -194,50 +175,54 @@ export function CopyDataDialog(props: CopyDeleteProps) {
                 </td>
               </tr>
               <tr>
-                <td class="pt-3 w-[60px]">To</td>
-                <td class="pt-3">
-                  <select
-                    id="dest"
-                    onChange={checkIfProd}
-                    class="select select-bordered w-full"
-                  >
-                    <option value="" disabled selected>Please select</option>
-                    {[...connectionList().keys()].sort().map((environment) => (
-                      <optgroup label={prettyEnv(environment)}>
-                        {connectionList().get(environment)!.map((conn) => (
-                          <option value={conn.id}>{conn.name + " (" + environment + ")"}</option>
-                        ))}
-                      </optgroup>
-                    ))}
-                  </select>
+                <td class="text-right pr-6 font-bold">Location</td>
+                <td class="break-all">
+                  <textarea
+                    id="locationTextArea"
+                    type="text"
+                    disabled={true}
+                    value={connectionLocation}
+                    class="textarea textarea-bordered text-area-sm w-full h-48"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td class="text-right pr-6 font-bold">Entries to delete</td>
+                <td>
+                  <input
+                    type="text"
+                    disabled={true}
+                    value={keysSelected.length === 0 ? resultsCount : keysSelected.length}
+                    class="input input-bordered w-full"
+                  />
                 </td>
               </tr>
             </table>
           </div>
-          <p>Warning: Any existing keys will be overwritten</p>
-          {isProd.value && (
+          <p class="my-4">Check the above details carefully. This action cannot be undone.</p>
+          {isProd() && (
             <div class="my-4 flex flex-row">
               <WarningTriangleIcon />
               <span class="text-red-500 font-semibold pl-1 pr-2 underline decoration-red-500">
                 Caution:
               </span>
-              <p class="text-red-500 break-all">Copy destination is a production environment</p>
+              <p class="text-red-500">This is a production environment</p>
             </div>
           )}
           <div class="flex gap-x-3 mt-5 justify-center">
-            {isCopying.value
-              ? <button class="btn btn-secondary" onClick={abortCopy}>Abort</button>
+            {isDeleting.value
+              ? <button class="btn btn-secondary" onClick={abortDelete}>Abort</button>
               : (
                 <>
                   <button class="btn btn-secondary" onClick={cancelDialog}>Cancel</button>
-                  <button class="btn btn-primary" onClick={copyConfirmed}>Copy</button>
+                  <button class="btn btn-primary" onClick={deleteConfirmed}>Delete</button>
                 </>
               )}
           </div>
         </div>
       </dialog>
       <Toast
-        id="copyCompletedToast"
+        id="deleteCompletedToast"
         message={toastMsg.value}
         show={showToastSignal}
         type={toastType.value}

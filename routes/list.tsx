@@ -1,9 +1,8 @@
-import { Handlers, PageProps, RouteContext } from "$fresh/server.ts";
+import { Handlers, RouteContext } from "$fresh/server.ts";
 import { ListCriteriaBox } from "../islands/ListCriteriaBox.tsx";
-import { ListData, PartialListResults, Stats } from "../types.ts";
+import { KvUIEntry, PartialListResults, Stats } from "../types.ts";
 import { ListResults } from "../islands/ListResults.tsx";
 import { listKv } from "../utils/kv/kvList.ts";
-import { PATError } from "../utils/errors.ts";
 
 import { getUserState } from "../utils/state/state.ts";
 import { unitsConsumedToday } from "../utils/kv/kvUnitsConsumed.ts";
@@ -11,6 +10,25 @@ import { createKvUIEntry } from "../utils/utils.ts";
 import { buildResultsPage } from "../utils/ui/buildResultsPage.ts";
 import { getConnections } from "../utils/connections/connections.ts";
 import { Partial } from "$fresh/runtime.ts";
+
+
+export interface ListData {
+  prefix: string;
+  start: string;
+  end: string;
+  limit: string;
+  reverse: boolean;
+  disableCache: boolean;
+  show: number;
+  from: number;
+  results?: KvUIEntry[];
+  fullResultsCount: number;
+  filter: string | undefined;
+  filtered: boolean;
+  listComplete: boolean;
+  validationError?: string;
+  stats?: Stats;
+}
 
 export const handler: Handlers = {
   async POST(req, ctx) {
@@ -60,7 +78,7 @@ export const handler: Handlers = {
 
       await getStats(partialResults);
     } catch (e) {
-      if (e instanceof PATError || e instanceof TypeError) {
+      if (e instanceof TypeError) {
         failReason = "Issue authorizing with remote connection.  Please sign out and reconnect. " +
           e.message;
         console.error(e);
@@ -104,7 +122,7 @@ export const handler: Handlers = {
   },
 };
 
-export default async function Search(req: Request, props: RouteContext<ListData>) {
+export default async function List(req: Request, props: RouteContext<ListData>) {
   const sp = props.url.searchParams;
   const prefix = props.data?.prefix || sp.get("prefix") || "";
   const start = props.data?.start || sp.get("start") || "";
