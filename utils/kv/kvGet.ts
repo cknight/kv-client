@@ -42,7 +42,7 @@ export async function getKv(getOptions: KvGetOptions): Promise<Deno.KvEntryMaybe
     resultVersionstamp: entry.versionstamp,
     readUnitsConsumed: readUnitsConsumed(size),
   };
-  await auditAction(audit);  
+  await auditAction(audit);
 
   return entry;
 }

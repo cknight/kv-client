@@ -28,7 +28,7 @@ export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
   const denoDir = Deno.env.get(env.DENO_DIR);
   const fullCacheDir = denoDir || join(cacheDir() || "", DENO_CACHE_DIR);
   const locationDir = join(fullCacheDir, LOCATION_DATA_DIR);
-  
+
   try {
     console.debug(
       "Attempting to auto-discover KV instances cached at " + locationDir,
@@ -129,4 +129,3 @@ function homeDir(): string | undefined {
     return Deno.env.get("HOME");
   }
 }
-

@@ -11,7 +11,6 @@ export interface KvValueJson {
  * API to get the approximate size of a KV value, in readable format
  */
 export const handler: Handlers = {
-
   async POST(req, _ctx) {
     const value = await req.json();
     try {
@@ -26,5 +25,5 @@ export const handler: Handlers = {
         status: 422,
       });
     }
-  }
+  },
 };

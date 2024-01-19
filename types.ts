@@ -188,7 +188,7 @@ export type CopyDeleteSingleProps = {
   connections?: { name: string; id: string; env: string }[];
   connectionLocation: string;
   connectionId: string;
-}
+};
 
 export type ToastType = "info" | "warn" | "error";
 export type SupportedValueTypes =

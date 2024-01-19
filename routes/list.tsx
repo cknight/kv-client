@@ -11,7 +11,6 @@ import { buildResultsPage } from "../utils/ui/buildResultsPage.ts";
 import { getConnections } from "../utils/connections/connections.ts";
 import { Partial } from "$fresh/runtime.ts";
 
-
 export interface ListData {
   prefix: string;
   start: string;

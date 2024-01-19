@@ -57,7 +57,7 @@ export async function setAll(
         aborted: true,
         setKeyCount,
         writeUnitsConsumed: totalWriteUnits,
-        lastSuccessfulVersionstamp
+        lastSuccessfulVersionstamp,
       };
     }
 

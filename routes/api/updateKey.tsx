@@ -92,7 +92,11 @@ async function updateKey(data: UpdateKeyData, session: string): Promise<UpdateOp
     value: kvValue,
     versionstamp: "1",
   };
-  const { failedKeys, setKeyCount, writeUnitsConsumed, lastSuccessfulVersionstamp } = await setAll([entry], kv, "");
+  const { failedKeys, setKeyCount, writeUnitsConsumed, lastSuccessfulVersionstamp } = await setAll(
+    [entry],
+    kv,
+    "",
+  );
 
   const overallDuration = Date.now() - startTime;
 

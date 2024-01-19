@@ -226,8 +226,8 @@ export function asString(value: unknown): string {
 export function keyAsString(key: Deno.KvKey): string {
   const parts: string[] = [];
   for (const part of key) {
-    if (typeof part === "string") parts.push(quotedString(part))
-    else if (part instanceof Uint8Array) parts.push("[" + Array.from(part) + "]")
+    if (typeof part === "string") parts.push(quotedString(part));
+    else if (part instanceof Uint8Array) parts.push("[" + Array.from(part) + "]");
     else parts.push(asString(part));
   }
   return "[" + parts.join(", ") + "]";

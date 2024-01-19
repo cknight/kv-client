@@ -49,7 +49,7 @@ export function SetEntryEditor() {
     event.preventDefault();
 
     if (!validate()) return;
-    
+
     const key = document.getElementById("kvKey")! as HTMLInputElement;
     const valueType = document.getElementById("valueType")! as HTMLSelectElement;
     const doNotOverwrite = document.getElementById("doNotOverwrite")! as HTMLInputElement;
@@ -98,9 +98,9 @@ export function SetEntryEditor() {
 
   return (
     <Fragment>
-      <KvKeyEditor showDoNotOverwrite={true} kvKeyValue={kvKey}/>
+      <KvKeyEditor showDoNotOverwrite={true} kvKeyValue={kvKey} />
       <div class="divider"></div>
-      <KvValueEditor kvValueType={valueType} kvValue={kvValue} readOnly={readOnly}/>
+      <KvValueEditor kvValueType={valueType} kvValue={kvValue} readOnly={readOnly} />
       <div class="flex w-full justify-center mt-8 gap-x-3">
         <button type="button" onClick={clearForm} class="btn btn-secondary">
           Clear

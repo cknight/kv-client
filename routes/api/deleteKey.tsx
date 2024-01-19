@@ -79,5 +79,9 @@ async function deleteKey(data: DeleteKeyData, session: string): Promise<DeleteOp
   console.log("  Time to delete key", Date.now() - startDeleteTime, "ms");
 
   const overallDuration = Date.now() - startTime;
-  return { duration: overallDuration, success: deleteResult.deletedKeyCount === 1, writeUnitsConsumed: deleteResult.writeUnitsConsumed };
+  return {
+    duration: overallDuration,
+    success: deleteResult.deletedKeyCount === 1,
+    writeUnitsConsumed: deleteResult.writeUnitsConsumed,
+  };
 }

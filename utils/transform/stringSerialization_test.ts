@@ -199,7 +199,7 @@ Deno.test("asString", () => {
 });
 
 Deno.test("keyPart to string", () => {
-  assertEquals(keyAsString([]), '[]');
+  assertEquals(keyAsString([]), "[]");
   assertEquals(keyAsString(["a"]), '["a"]');
   assertEquals(keyAsString(["a", "b"]), '["a", "b"]');
   assertEquals(keyAsString(["a", 1]), '["a", 1]');
@@ -210,24 +210,23 @@ Deno.test("keyPart to string", () => {
   assertEquals(keyAsString(["a", -1n]), '["a", -1n]');
   assertEquals(keyAsString(["a", true]), '["a", true]');
   assertEquals(keyAsString(["a", false]), '["a", false]');
-  assertEquals(keyAsString(["a", new Uint8Array([1,2,3])]), '["a", [1,2,3]]');
+  assertEquals(keyAsString(["a", new Uint8Array([1, 2, 3])]), '["a", [1,2,3]]');
 });
 
 Deno.test("keyPart to string with different quote characters characters", () => {
   assertEquals(keyAsString([`"a"`]), `['"a"']`);
   assertEquals(keyAsString([`'a'`]), `["'a'"]`);
   assertEquals(keyAsString(["`a`"]), '["`a`"]');
-  assertEquals(keyAsString(["`'a'`"]), '["`\'a\'`"]');
+  assertEquals(keyAsString(["`'a'`"]), "[\"`'a'`\"]");
   assertEquals(keyAsString(["`'\"a\"'`"]), '["`\'\\"a\\"\'`"]');
 });
-
 
 function assertSerialization(obj: unknown) {
   const str = json5Stringify(obj);
   const obj2 = json5Parse(str);
 
   if (typeof obj === "symbol") {
-    assertEquals(obj.toString(), (obj2 as {type:string, value:unknown}).value!.toString());
+    assertEquals(obj.toString(), (obj2 as { type: string; value: unknown }).value!.toString());
   } else {
     assertEquals(obj2, obj);
   }

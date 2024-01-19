@@ -37,7 +37,7 @@ export function GetResult(props: GetResultProps) {
     fullViewValueType.value = props.result ? props.result.valueType : "";
   }
 
-    function showToast(msg: string, type: ToastType) {
+  function showToast(msg: string, type: ToastType) {
     toastMsg.value = msg;
     toastType.value = type;
     showToastSignal.value = true;
