@@ -162,7 +162,7 @@ export function GetResult(props: GetResultProps) {
         </div>
       )}
       {!props.result && props.kvKey !== "" && (
-        <div class="flex mt-5 ml-2 text-lg">
+        <div class="flex mt-5 ml-2 text-2xl text-red-400">
           No results found
         </div>
       )}
