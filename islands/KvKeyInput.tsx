@@ -77,10 +77,12 @@ export function KvKeyInput(props: KvKeyInputProps) {
         <input onInput={handleInput} onBlur={validate} {...inputProps} />
         <span class="ml-2 my-2">{`]`}</span>
       </div>
-      <div class="flex flex-row ml-5 h-4 pt-1 mt-1 text-xs ">
-        <p class="mr-2">Types:</p>
-        <div id={typesId.value}>{types}</div>
-      </div>
+      {!disableTypes && (
+        <div class="flex flex-row ml-5 h-4 pt-1 mt-1 text-xs ">
+          <p class="mr-2">Types:</p>
+          <div id={typesId.value}>{types}</div>
+        </div>
+      )}
     </div>
   );
 }

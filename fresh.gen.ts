@@ -10,6 +10,7 @@ import * as $accessToken from "./routes/accessToken.tsx";
 import * as $addLocalConnection from "./routes/addLocalConnection.tsx";
 import * as $api_abortCopy from "./routes/api/abortCopy.tsx";
 import * as $api_abortDelete from "./routes/api/abortDelete.tsx";
+import * as $api_copyKey from "./routes/api/copyKey.tsx";
 import * as $api_copyKeys from "./routes/api/copyKeys.tsx";
 import * as $api_deleteKey from "./routes/api/deleteKey.tsx";
 import * as $api_deleteKeys from "./routes/api/deleteKeys.tsx";
@@ -59,6 +60,7 @@ const manifest = {
     "./routes/addLocalConnection.tsx": $addLocalConnection,
     "./routes/api/abortCopy.tsx": $api_abortCopy,
     "./routes/api/abortDelete.tsx": $api_abortDelete,
+    "./routes/api/copyKey.tsx": $api_copyKey,
     "./routes/api/copyKeys.tsx": $api_copyKeys,
     "./routes/api/deleteKey.tsx": $api_deleteKey,
     "./routes/api/deleteKeys.tsx": $api_deleteKeys,

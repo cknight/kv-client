@@ -52,6 +52,10 @@ interface DashOrganizationDetail extends DashOrganization {
   quotas: Record<string, unknown>;
 }
 
+interface DashOrganizationEntry {
+  organization: DashOrganizationDetail;
+}
+
 interface DashCommit {
   hash: string;
   message: string;
@@ -207,7 +211,7 @@ export async function getProjectDetails(name: string, accessToken: string): Prom
 export async function getOrganizationDetail(
   id: string,
   accessToken: string,
-): Promise<DashOrganizationDetail> {
+): Promise<DashOrganizationEntry> {
   const req = await fetch(`${DASH_BASE_URL}orgs/${id}?_data_`, {
     method: "GET",
     headers: {

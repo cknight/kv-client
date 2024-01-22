@@ -1,5 +1,5 @@
 import { JSX } from "preact/jsx-runtime";
-import { KeyHelp } from "../components/KeyHelp.tsx";
+import { KeyHelp } from "../components/ListKeyHelp.tsx";
 import { clearGetForm, submitGetForm } from "../utils/ui/form.ts";
 import { Help } from "./Help.tsx";
 import { KvKeyInput } from "./KvKeyInput.tsx";
@@ -16,6 +16,7 @@ export function GetCriteriaBox(data: GetDataProps) {
   function resetForm(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault(); //e.g. don't submit the form
     clearGetForm();
+    document.getElementById('getResults')!.style.display='none';
   }
 
   function submitForm(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {

@@ -32,6 +32,8 @@ export interface DeployKvInstance {
 
 export async function buildRemoteData(accessToken: string): Promise<DeployUser> {
   const kv = await Deno.openKv();
+
+  //FIXME TODO DELETE THIS CODE (I think)
   const tempEntry = await kv.get<DeployUser>(["temp-deploy-user"]);
   if (tempEntry.value !== null) {
     return tempEntry.value;
@@ -53,12 +55,12 @@ export async function buildRemoteData(accessToken: string): Promise<DeployUser> 
   const orgDetails = await Promise.all(
     orgs.map((org) => getOrganizationDetail(org.id, accessToken)),
   );
-
   orgDetails.forEach((o) => {
+    const org = o.organization;
     deployUser.organisations.push({
-      id: o.id,
-      name: o.name,
-      projects: o.projects.map((p) => {
+      id: org.id,
+      name: org.name,
+      projects: org.projects.map((p) => {
         return {
           id: p.id,
           name: p.name,
@@ -82,7 +84,6 @@ export async function buildRemoteData(accessToken: string): Promise<DeployUser> 
   const projectDbs = await Promise.all(
     projectNames.map((name) => getProjectDbs(name, accessToken)),
   );
-
   deployUser.organisations.forEach((o) => {
     o.projects.forEach((p) => {
       const db = projectDbs.find((db) => db.projectName === p.name);

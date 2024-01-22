@@ -24,14 +24,14 @@ export const handler: Handlers = {
 
       /*
        * Store:
-       * 1. Deploy user object in KV for 30 days
-       * 2. Access token in KV for 30 days
+       * 1. Deploy user object in KV for 1 day
+       * 2. Access token in KV for 30 days (TODO is this a sensible default?)
        * 3. Remote connections data indefinitely (will get overwritten on next user connection)
        * 4. Deploy user object in state
        */
       const state = getUserState(ctx);
       await localKv.set([DEPLOY_USER_KEY_PREFIX, session], deployUser, {
-        expireIn: 30 * _24_HOURS_IN_MS,
+        expireIn: _24_HOURS_IN_MS,
       });
       await storeEncryptedString(
         [ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session],

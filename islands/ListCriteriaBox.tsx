@@ -1,6 +1,6 @@
 import { KvKeyInput } from "./KvKeyInput.tsx";
 import { Help } from "./Help.tsx";
-import { KeyHelp } from "../components/KeyHelp.tsx";
+import { KeyHelp } from "../components/ListKeyHelp.tsx";
 import { JSX } from "preact";
 import { clearListForm, submitListForm } from "../utils/ui/form.ts";
 

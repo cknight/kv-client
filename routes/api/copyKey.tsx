@@ -1,41 +1,33 @@
 import { Handlers } from "$fresh/server.ts";
 import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
-import { CopyAuditLog, KvConnection } from "../../types.ts";
+import { CopyAuditLog, KvConnection, KvGetOptions } from "../../types.ts";
 import { executorId } from "../../utils/connections/denoDeploy/deployUser.ts";
 import { localKv } from "../../utils/kv/db.ts";
 import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";
 import { setAll, SetResult } from "../../utils/kv/kvSet.ts";
 import { getUserState } from "../../utils/state/state.ts";
-import { entriesToOperateOn, KeyOperationData } from "../../utils/ui/buildResultsPage.ts";
+import { getKv } from "../../utils/kv/kvGet.ts";
 import { connectToDestKv } from "../../utils/connections/connections.ts";
 
-export interface CopyKeysData {
+export interface CopyKeyData {
   sourceConnectionId: string;
   destConnectionId: string;
-  keysToCopy: string[];
-  filter?: string;
-  prefix: string;
-  start: string;
-  end: string;
-  from: number;
-  show: number;
-  reverse: boolean;
-  abortId: string;
-}
+  keyToCopy: string;
+} 
 
 interface CopyOpResult {
   duration: number;
-  copyEntries: number;
+  success: boolean;
   copyResult: SetResult;
 }
 
 export const handler: Handlers = {
   async POST(req, ctx) {
     const session = ctx.state.session as string;
-    const data = await req.json() as CopyKeysData;
+    const data = await req.json() as CopyKeyData;
 
     try {
-      const result = await copyKeys(data, session);
+      const result = await copyKey(data, session);
       const copyResult = result.copyResult;
       console.debug("Copy result", copyResult);
 
@@ -46,6 +38,7 @@ export const handler: Handlers = {
         data.destConnectionId,
       ]);
 
+      //TODO Remove/change 'isDestinationDeploy' and 'isDeploy' from audit log
       const copyAudit: CopyAuditLog = {
         auditType: "copy",
         executorId: executorId(session),
@@ -65,77 +58,56 @@ export const handler: Handlers = {
       let body = "";
       const kc = copyResult.setKeyCount;
 
-      if (copyResult.aborted) {
-        const percComplete = kc / result.copyEntries;
-        const percCompleteString = `${Math.round(percComplete * 100)}%`;
-        body = `Copy aborted at ${percCompleteString} complete. ${kc} key${
-          kc > 1 ? "s" : ""
-        } copied`;
-        status = 499;
-      } else if (copyResult.failedKeys.length > 0) {
-        body = `Copied ${kc} key${
-          kc > 1 ? "s" : ""
-        }.  Failed to copy ${copyResult.failedKeys.length} key${
-          copyResult.failedKeys.length > 1 ? "s" : ""
-        }`;
+      if (copyResult.failedKeys.length > 0) {
+        body = `Copy failed`;
         status = 500;
       } else {
-        body = kc > 1 ? `${kc} KV entries successfully copied` : `KV entry successfully copied`;
+        body = `KV entry successfully copied`;
       }
 
       return new Response(body, {
         status,
       });
     } catch (e) {
-      console.error("Failed to copy keys", e);
+      console.error("Failed to copy entry", e);
 
-      return new Response("Failed to copy keys", {
+      return new Response("Failed to copy entry", {
         status: 500,
       });
     }
   },
 };
 
-async function copyKeys(data: CopyKeysData, session: string): Promise<CopyOpResult> {
+async function copyKey(data: CopyKeyData, session: string): Promise<CopyOpResult> {
   const {
     sourceConnectionId,
     destConnectionId,
-    keysToCopy,
-    prefix,
-    start,
-    end,
-    reverse,
-    from,
-    show,
-    abortId,
+    keyToCopy,
   } = data;
-  const keyOperationData = {
-    connectionId: sourceConnectionId,
-    keysSelected: keysToCopy,
-    prefix,
-    start,
-    end,
-    reverse,
-    from,
-    show,
-  } satisfies KeyOperationData;
+
   const startTime = Date.now();
 
-  //Compute which keys to copy
-  const copyEntries = await entriesToOperateOn(keyOperationData, session);
+  const getKvOptions: KvGetOptions = {
+    session: session,
+    connectionId: sourceConnectionId,
+    key: keyToCopy
+  };
+  const copyEntry = await getKv(getKvOptions);
+  if (copyEntry.versionstamp === null) {
+    throw new Error(`Key [${keyToCopy}] does not exist`);
+  }
 
   const destKv = await connectToDestKv(session, destConnectionId);
 
-  //TODO - implement SSE progress updates.  Client can register progress id through POST body,
-  //      and then GET progress updates through a separate endpoint.
   const startCopyTime = Date.now();
-  const copyResult = await setAll(copyEntries, destKv, abortId);
-  console.debug("  Time to copy keys", Date.now() - startCopyTime, "ms");
+  const copyResult = await setAll([copyEntry], destKv, "no abort");
+  console.debug("  Time to copy key", Date.now() - startCopyTime, "ms");
 
   const overallDuration = Date.now() - startTime;
+
   return {
     duration: overallDuration,
-    copyEntries: copyEntries.length,
+    success: copyResult.setKeyCount === 1,
     copyResult,
   };
 }

@@ -7,6 +7,7 @@ import { JSX } from "preact/jsx-runtime";
 import { Toast } from "./Toast.tsx";
 import { KvSetEntry } from "../routes/api/setEntry.tsx";
 import { DeleteKeyDialog } from "../components/dialogs/DeleteKeyDialog.tsx";
+import { CopyKeyDialog } from "../components/dialogs/CopyKeyDialog.tsx";
 
 interface GetResultProps {
   connectionId: string;
@@ -94,6 +95,13 @@ export function GetResult(props: GetResultProps) {
     dialog.classList.add("modal");
   }
 
+  function copyEntry(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
+    event.preventDefault();
+    const dialog = document.getElementById("copyDialog") as HTMLDialogElement;
+    dialog.showModal();
+    dialog.classList.add("modal");
+  }
+
   return (
     <>
       {props.result && (
@@ -136,6 +144,7 @@ export function GetResult(props: GetResultProps) {
               <button
                 type="button"
                 form="pageForm"
+                onClick={copyEntry}
                 class="btn btn-primary w-[72px]"
               >
                 Copy
@@ -152,12 +161,18 @@ export function GetResult(props: GetResultProps) {
           )}
         </div>
       )}
-      {!props.result && (
+      {!props.result && props.kvKey !== "" && (
         <div class="flex mt-5 ml-2 text-lg">
           No results found
         </div>
       )}
       <DeleteKeyDialog
+        connectionId={props.connectionId}
+        connectionLocation={props.connectionLocation}
+        connections={props.connections}
+        kvKey={props.kvKey}
+      />
+      <CopyKeyDialog
         connectionId={props.connectionId}
         connectionLocation={props.connectionLocation}
         connections={props.connections}

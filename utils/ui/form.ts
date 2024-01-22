@@ -33,7 +33,7 @@ export function clearListForm() {
 }
 
 export function clearGetForm() {
-  const resetIds = ["key", "disableCache"];
+  const resetIds = ["kvKey"];
   resetIds.forEach(reset);
 }
 

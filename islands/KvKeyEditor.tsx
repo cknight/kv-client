@@ -1,9 +1,10 @@
 import { effect, Signal, useSignal, useSignalEffect } from "@preact/signals";
 import { KvKeyInput } from "./KvKeyInput.tsx";
 import { Help } from "./Help.tsx";
-import { KeyHelp } from "../components/KeyHelp.tsx";
+import { KeyHelp } from "../components/ListKeyHelp.tsx";
 import { readableSize } from "../utils/utils.ts";
 import { debounce } from "../utils/ui/debounce.ts";
+import { BasicKeyHelp } from "../components/BasicKeyHelp.tsx";
 
 interface KvKeyEditorProps {
   kvKeyValue: Signal<string>;
@@ -49,7 +50,7 @@ export function KvKeyEditor(props: KvKeyEditorProps) {
         </div>
         <div class="pb-3">
           <Help dialogId="kvKeyHelp" dialogTitle="KV key">
-            <KeyHelp keyPart="key" />
+            <BasicKeyHelp />
           </Help>
         </div>
       </div>
