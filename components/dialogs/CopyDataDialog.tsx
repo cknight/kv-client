@@ -199,7 +199,7 @@ export function CopyDataDialog(props: CopyDeleteMultiProps) {
                   <select
                     id="dest"
                     onChange={checkIfProd}
-                    class="select select-bordered w-full"
+                    class="select select-primary w-full"
                   >
                     <option value="" disabled selected>Please select</option>
                     {[...connectionList().keys()].sort().map((environment) => (

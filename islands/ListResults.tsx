@@ -301,7 +301,7 @@ export function ListResults(props: ListResultsProps) {
                     form="pageForm"
                     name="show"
                     onChange={onShowChange}
-                    class="select select-bordered select-sm mx-2"
+                    class="select select-primary select-sm mx-2"
                   >
                     <option value="10" selected={props.show === 10}>10</option>
                     <option value="20" selected={props.show === 20}>20</option>

@@ -112,7 +112,7 @@ export function ListCriteriaBox(data: ListDataProps) {
               id="limit"
               form="pageForm"
               name="limit"
-              class="select select-bordered select-sm w-24 my-2 "
+              class="select select-primary select-sm w-24 my-2 "
             >
               <option value="10" selected={limit === "10"}>10</option>
               <option value="20" selected={limit === "20"}>20</option>

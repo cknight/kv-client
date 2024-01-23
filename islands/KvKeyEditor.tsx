@@ -67,7 +67,7 @@ export function KvKeyEditor(props: KvKeyEditorProps) {
           />
           <Help dialogId="doNotOverwriteHelp" dialogTitle="Do not overwrite">
             <p>
-              If selected, the <code>set</code> operation will fail if the key already exists in KV
+              If selected, the <code>set</code> operation will fail if the key already exists in KV.
             </p>
           </Help>
         </div>

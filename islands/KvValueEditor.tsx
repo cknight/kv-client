@@ -105,6 +105,10 @@ export function KvValueEditor(props: KvValueEditorProps) {
     if (editor.value === null) return;
 
     editor.value.setReadOnly(props.readOnly.value);
+    const editorDiv = document.getElementById("editor")!;
+    editorDiv.classList.toggle("border-[#666]", props.readOnly.value);
+    editorDiv.classList.toggle("border-primary", !props.readOnly.value);
+    editorDiv.querySelectorAll("div, textarea").forEach(node => node.classList.toggle("cursor-not-allowed", props.readOnly.value));
   });
 
   const shorthandAvailableTypes = new Map([
@@ -386,7 +390,7 @@ export function KvValueEditor(props: KvValueEditorProps) {
         >
           <div
             id="editor"
-            class={"text-sm h-[500px] border border-primary rounded focus:outline-none focus:ring-1 focus:ring-blue-400 font-mono w-full p-3"}
+            class={"text-sm h-[500px] rounded focus:outline-none focus:ring-1 focus:ring-blue-400 font-mono w-full p-3 border"}
           >
           </div>
         </div>

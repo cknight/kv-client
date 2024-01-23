@@ -137,7 +137,7 @@ export function GetResult(props: GetResultProps) {
                 type="button"
                 form="pageForm"
                 onClick={deleteEntry}
-                class="btn btn-secondary w-[72px]"
+                class="btn btn-primary w-[72px]"
               >
                 Delete
               </button>

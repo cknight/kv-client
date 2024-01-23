@@ -38,7 +38,7 @@ export function LocalConnectionRadioButton(props: LocalConnectionRadioButtonProp
   return (
     <input
       type="radio"
-      class="radio radio-secondary"
+      class="radio radio-primary bg-base-100"
       name="localLocation"
       id={props.id}
       onClick={kvInstanceChosen}

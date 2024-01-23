@@ -22,7 +22,7 @@ export function AccessTokenInput() {
           type={showPassword.value ? "text" : "password"}
           name="accessToken"
           id="accessToken"
-          class="sm:text-sm rounded-lg block w-full p-2.5 pr-10"
+          class="sm:text-sm input input-primary block w-full p-2.5 pr-10"
           placeholder="Deno Deploy Access Token"
           required
         />

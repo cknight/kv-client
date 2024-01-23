@@ -1,7 +1,7 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
 import { ulid } from "$std/ulid/mod.ts";
+import { JSX } from "preact/jsx-runtime";
 import { CONNECTIONS_KEY_PREFIX } from "../consts.ts";
-import { CancelAddConnectionButton } from "../islands/connections/CancelAddConnectionButton.tsx";
 import { LocalConnectionRadioButton } from "../islands/connections/LocalConnectionRadio.tsx";
 import { KvConnection, KvInstance } from "../types.ts";
 import { peekAtLocalKvInstances } from "../utils/connections/autoDiscoverKv.ts";
@@ -84,20 +84,25 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
   const connectionName = props.data?.connectionName || "";
   const connectionLocation = props.data?.connectionLocation || "";
 
+  function cancel(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
+    event.preventDefault();
+    window.location.href = "/";
+  }
+
   return (
     <div class="max-w-full">
       <div class="p-4">
         <div class="mb-3">
           <p class="font-bold text-xl ml-2">Add local KV connection</p>
         </div>
-        <div class="border-1 rounded-xl flex py-3 justify-center pt-3">
+        <div class="border border-1 border-[#666] bg-[#353535] rounded-md p-4 mt-3 mx-auto">
           <form method="post">
             {isError && (
               <h2 class="text-lg font-bold p-2 bg-red(400) text-center break-all">
                 {errorText || "Invalid connection"}
               </h2>
             )}
-            <div class="mt-3">
+            <div class="mt-3 flex flex-row items-center">
               <label
                 for="connectionName"
                 class="inline-block mr-3 w-16 mb-2 text-sm font-medium"
@@ -108,10 +113,10 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
                 id="connectionName"
                 name="connectionName"
                 value={connectionName}
-                class="rounded w-96 p-2"
+                class="input input-primary w-full p-2"
               />
             </div>
-            <div class="mt-5">
+            <div class="mt-5 flex flex-row items-center">
               <label
                 for="connectionLocation"
                 class="inline-block mr-3 w-16 mb-2 text-sm font-medium"
@@ -122,10 +127,19 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
                 id="connectionLocation"
                 name="connectionLocation"
                 value={connectionLocation}
-                class="rounded w-96 p-2"
+                class="input input-primary w-full p-2"
               />
             </div>
             <div class="flex gap-x-3 mt-3 justify-center">
+              <button
+                class="btn btn-secondary"
+                type="submit"
+                name="connectionAction"
+                onClick={cancel}
+                value="add"
+              >
+                Cancel
+              </button>
               <button
                 class="btn btn-primary"
                 type="submit"
@@ -134,7 +148,6 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
               >
                 Add
               </button>
-              <CancelAddConnectionButton />
             </div>
           </form>
         </div>
@@ -143,11 +156,11 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
             Below are auto-discovered KV stores with a selection of sample data to help identify
             each KV store. Select one below or manually enter a location above.
           </p>
-          <div class="border-1 rounded-xl pr-5 w-full overflow-auto">
+                {localKVInstances.map((kv) => (
+          <div class="rounded-xl w-full overflow-auto mb-3">
             <table class="table bg-[#353535]">
               <tbody>
-                {localKVInstances.map((kv) => (
-                  <tr class="border-b-2 border-primary p-2">
+                  <tr class="p-2">
                     <td class="text-center w-20 ">
                       <LocalConnectionRadioButton id={kv.kvLocation} />
                     </td>
@@ -170,12 +183,12 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
                         </tbody>
                       </table>
                     </td>
-                    <td class="w-20 text-center">{readableSize(kv.size)}</td>
+                    <td class="w-20 text-center text-xl font-bold">{readableSize(kv.size, 0)}</td>
                   </tr>
-                ))}
               </tbody>
             </table>
           </div>
+                ))}
         </div>
       </div>
     </div>

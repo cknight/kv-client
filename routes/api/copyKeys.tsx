@@ -8,6 +8,7 @@ import { setAll, SetResult } from "../../utils/kv/kvSet.ts";
 import { getUserState } from "../../utils/state/state.ts";
 import { entriesToOperateOn, KeyOperationData } from "../../utils/ui/buildResultsPage.ts";
 import { connectToDestKv } from "../../utils/connections/connections.ts";
+import { CacheInvalidationError } from "../../utils/errors.ts";
 
 export interface CopyKeysData {
   sourceConnectionId: string;
@@ -87,9 +88,9 @@ export const handler: Handlers = {
         status,
       });
     } catch (e) {
-      console.error("Failed to copy keys", e);
-
-      return new Response("Failed to copy keys", {
+      console.log("Failed to copy keys", e.message)
+      const errorMessage = e instanceof CacheInvalidationError ? e.message : "Failed to copy keys";
+      return new Response(errorMessage, {
         status: 500,
       });
     }

@@ -1,3 +1,4 @@
+import { CacheInvalidationError } from "../errors.ts";
 import { getUserState } from "../state/state.ts";
 import { hashKvKey, toJSON } from "../utils.ts";
 
@@ -41,9 +42,9 @@ export async function entriesToOperateOn(
 
   if (!cachedListResults) {
     console.error(
-      "Cache entry not found for list operation criteria from which operation was requested",
+      "Cache data not found, unable to complete operation.  Aborting.",
     );
-    throw new Error("Internal error.  Cache entry not found.  Aborting.");
+    throw new CacheInvalidationError("Cache data not found.  This can happen if the data has been changed through this UI.  Please reload the data and try again.");
   }
 
   /**

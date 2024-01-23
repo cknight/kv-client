@@ -34,11 +34,11 @@ async function hash(bytes: Uint8Array): Promise<string> {
  * @param size in bytes
  * @returns local specific human readable size
  */
-export function readableSize(size: number) {
+export function readableSize(size: number, maximumFractionDigits = 1): string {
   const locale = navigator.language;
   return locale
-    ? format(size, { locale, maximumFractionDigits: 1 })
-    : format(size, { maximumFractionDigits: 1 });
+    ? format(size, { locale, maximumFractionDigits })
+    : format(size, { maximumFractionDigits });
 }
 
 /**
