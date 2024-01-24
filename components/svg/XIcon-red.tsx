@@ -1,7 +1,7 @@
 export function XIcon({ title }: { title: string }) {
   return (
     <svg
-      class="h-6 w-6 text-red-800"
+      class="h-6 w-6 text-red-500"
       title={title}
       fill="none"
       viewBox="0 0 24 24"

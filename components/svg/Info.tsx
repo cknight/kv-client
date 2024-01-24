@@ -1,7 +1,7 @@
 export function InfoIcon({ title }: { title: string }) {
   return (
     <svg
-      class="h-6 w-6 text-blue-800"
+      class="h-6 w-6 text-blue-500"
       title={title}
       viewBox="0 0 24 24"
       fill="none"
