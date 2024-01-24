@@ -65,7 +65,7 @@ export default function AccessToken(data: PageProps<boolean>) {
               Invalid access token.
             </h2>
           )}
-          <form class="space-y-4 md:space-y-6" action="/accessToken" method="post">
+          <form class="space-y-4 md:space-y-6" action="/accessToken" f-client-nav={false} method="post">
             <div>
               <AccessTokenInput />
             </div>
