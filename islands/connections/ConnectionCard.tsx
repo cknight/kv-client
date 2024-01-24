@@ -86,8 +86,6 @@ export function ConnectionCard(props: ConnectionCardProps) {
         </div>
         <div class="flex">
           <InfoIcon title="View details" />
-          <div class="w-2"></div>
-          <ExportIcon title="Export data" />
         </div>
       </div>
     </div>
