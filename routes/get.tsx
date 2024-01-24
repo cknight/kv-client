@@ -20,7 +20,6 @@ export const handler: Handlers = {
     const form = await req.formData();
     const key = form.get("kvKey")?.toString() || "";
 
-
     const kvUiEntry = await getData(key, req, ctx);
     return await ctx.render({ key, result: kvUiEntry, isPost: true });
   },
@@ -29,12 +28,16 @@ export const handler: Handlers = {
     if (urlKvKey) {
       const kvUiEntry = await getData(urlKvKey, req, ctx);
       return await ctx.render({ key: urlKvKey, result: kvUiEntry, isPost: false });
-    } 
+    }
     return await ctx.render({ key: "", isPost: false });
   },
 };
 
-async function getData(kvKey: string, req: Request, ctx: FreshContext<Record<string, unknown>>): Promise<KvUIEntry | undefined> {
+async function getData(
+  kvKey: string,
+  req: Request,
+  ctx: FreshContext<Record<string, unknown>>,
+): Promise<KvUIEntry | undefined> {
   const session = ctx.state.session as string;
   const state = getUserState(session);
   const connection = state!.connection;
@@ -84,13 +87,13 @@ export default async function Get(req: Request, props: RouteContext<GetData>) {
       >
         <Partial name="get">
           <GetCriteriaBox kvKey={kvKey} />
-            <GetResult
-              connectionId={connectionId}
-              kvKey={kvKey}
-              result={props.data?.result}
-              connections={connections}
-              connectionLocation={connectionLocation}
-            />
+          <GetResult
+            connectionId={connectionId}
+            kvKey={kvKey}
+            result={props.data?.result}
+            connections={connections}
+            connectionLocation={connectionLocation}
+          />
         </Partial>
       </form>
     </>
