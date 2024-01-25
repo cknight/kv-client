@@ -8,6 +8,7 @@ import { peekAtLocalKvInstances } from "../utils/connections/autoDiscoverKv.ts";
 import { resetLocalConnectionList } from "../utils/connections/connections.ts";
 import { localKv } from "../utils/kv/db.ts";
 import { readableSize } from "../utils/utils.ts";
+import { CancelLocalConnectionButton } from "../islands/connections/CancelLocalConnectionButton.tsx";
 
 interface AllLocalConnectionProps {
   connectionName?: string;
@@ -131,15 +132,7 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
               />
             </div>
             <div class="flex gap-x-3 mt-3 justify-center">
-              <button
-                class="btn btn-secondary"
-                type="submit"
-                name="connectionAction"
-                onClick={cancel}
-                value="add"
-              >
-                Cancel
-              </button>
+              <CancelLocalConnectionButton />
               <button
                 class="btn btn-primary"
                 type="submit"

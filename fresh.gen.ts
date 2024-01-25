@@ -42,6 +42,7 @@ import * as $Toast from "./islands/Toast.tsx";
 import * as $avatarMenu_AvatarMenu from "./islands/avatarMenu/AvatarMenu.tsx";
 import * as $avatarMenu_UnknownAvatarMenu from "./islands/avatarMenu/UnknownAvatarMenu.tsx";
 import * as $connections_AddLocalConnectionButton from "./islands/connections/AddLocalConnectionButton.tsx";
+import * as $connections_CancelLocalConnectionButton from "./islands/connections/CancelLocalConnectionButton.tsx";
 import * as $connections_ConnectButton from "./islands/connections/ConnectButton.tsx";
 import * as $connections_ConnectionCard from "./islands/connections/ConnectionCard.tsx";
 import * as $connections_ConnectionDropDown from "./islands/connections/ConnectionDropDown.tsx";
@@ -93,6 +94,8 @@ const manifest = {
     "./islands/avatarMenu/AvatarMenu.tsx": $avatarMenu_AvatarMenu,
     "./islands/avatarMenu/UnknownAvatarMenu.tsx": $avatarMenu_UnknownAvatarMenu,
     "./islands/connections/AddLocalConnectionButton.tsx": $connections_AddLocalConnectionButton,
+    "./islands/connections/CancelLocalConnectionButton.tsx":
+      $connections_CancelLocalConnectionButton,
     "./islands/connections/ConnectButton.tsx": $connections_ConnectButton,
     "./islands/connections/ConnectionCard.tsx": $connections_ConnectionCard,
     "./islands/connections/ConnectionDropDown.tsx": $connections_ConnectionDropDown,

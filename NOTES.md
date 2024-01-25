@@ -22,6 +22,9 @@ TODO Phase 1:
 7. Validation of inputs => auto enable/disable primary buttons
 8. Reload of DB sizes on connections page
 9. Implement "info" icon on connections page
+10. Enforce timeouts for ops
+11. Clean up every module (document, imports, formatting)
+12. Write more tests
 
 Blocked:
 10. Partials for list page navigation (possibly blocked by https://github.com/denoland/fresh/issues/2174)
