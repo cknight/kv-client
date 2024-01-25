@@ -8,7 +8,7 @@ export const LINK = "text-[#0000ee] visited:text-violet-700 underline";
 // Environment variables
 export const env = {
   KV_CLIENT_ENCRYPTION_KEY: "KV_CLIENT_ENCRYPTION_KEY",
-  LOG_LEVEL: "LOG_LEVEL",
+  LOG_LEVEL: "KV_CLIENT_LOG_LEVEL",
   DENO_DIR: "DENO_DIR",
   DENO_KV_ACCESS_TOKEN: "DENO_KV_ACCESS_TOKEN",
 };
