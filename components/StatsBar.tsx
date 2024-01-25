@@ -14,7 +14,6 @@ export function StatsBar({ stats }: { stats: Stats }) {
 
   function opOutcome(s: Stats) {
     if (s.opStats.opType === "read") {
-      //FIXME - need flag if 0 results is from cache or not
       const results = `${totalResults} result${s.opStats.kvResults === 1 ? "" : "s"}`;
       const cache = totalResults === 0
         ? ""
