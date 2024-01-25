@@ -40,7 +40,7 @@ export async function listKv(
       rtms: Date.now() - startTime,
     };
 
-    if (!cachedListResults.cursor) {
+    if (!cachedListResults.cursor && cachedData.length > 0) {
       // All data has already been retrieved, so return whatever we have
       console.debug("All data already retrieved from cache");
       return {
@@ -58,7 +58,7 @@ export async function listKv(
       };
     } else {
       // We don't have all the data, so fetch more using the cursor
-      cursor = cachedListResults.cursor;
+      cursor = cachedListResults.cursor || undefined;
       cachedResults.push(...cachedData);
       maxEntries -= cachedData.length;
     }
