@@ -93,7 +93,6 @@ function reviver(_key: unknown, value: unknown) {
         throw new Error("Invalid RegExp");
       }
     } else if (value.type === "Uint8Array" && Array.isArray(value.value)) {
-      // TODO: add validity check for value array contents
       return new Uint8Array(value.value);
     } else if (value.type === "KvU64" && typeof value.value === "string") {
       return new Deno.KvU64(BigInt(value.value));
@@ -109,8 +108,6 @@ function reviver(_key: unknown, value: unknown) {
 }
 
 /**
- * Dear Ecma Standard authors, please look the other way :)
- *
  * This is a hack to make Date objects deserialize from JSON5 strings.  By default, Date objects
  * are serialized to a string prior to JSON5 serialization.  This is a problem because the
  * stringified Date object is now indistinguishable from a string that happens to be a valid

@@ -41,6 +41,8 @@ Config
 * No global read, no global delete, no global copy/export
 * Log level
 * Cache time in ms
+* Record audit records - yes/no
+* Allow values in audit records - yes/no
 * EE - maximum execution time?  Or maybe maximum entries size?
 * EE - maximum memory usage?
 * EE - maximum budget for Deploy access read/write?

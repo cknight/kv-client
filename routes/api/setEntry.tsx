@@ -22,10 +22,6 @@ export interface KvSetEntry {
 export const handler: Handlers = {
   /**
    * Validate and set a new KV entry
-   *
-   * @param req
-   * @param ctx
-   * @returns TODO
    */
   async POST(req, ctx) {
     const start = Date.now();
