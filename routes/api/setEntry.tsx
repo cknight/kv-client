@@ -65,7 +65,7 @@ export const handler: Handlers = {
         auditType: "set",
         executorId: await executorId(session),
         connection: auditConnectionName(state.connection!),
-        isDeploy: state.connection!.isRemote,
+        infra: state.connection!.infra,
         rtms: overallDuration,
         setSuccessful: setKeyCount === 1,
         key: keyString,

@@ -5,8 +5,6 @@ Security model
 - Should values be logged? (yes, but offer ability to disable)
 - Should access to KV Client audit records be restricted? (yes, available only to admin roles)
 
-Change 'isDeploy' in Audit records to kvType (Local, Deploy, Managed)
-
 =======================
 EE = Enterprise edition
 =======================
@@ -42,6 +40,7 @@ Config
 * read only
 * No global read, no global delete, no global copy/export
 * Log level
+* Cache time in ms
 * EE - maximum execution time?  Or maybe maximum entries size?
 * EE - maximum memory usage?
 * EE - maximum budget for Deploy access read/write?

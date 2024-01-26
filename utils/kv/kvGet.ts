@@ -36,7 +36,7 @@ export async function getKv(getOptions: KvGetOptions): Promise<Deno.KvEntryMaybe
     auditType: "get",
     executorId: await executorId(session),
     connection: connectionId,
-    isDeploy: false,
+    infra: state.connection!.infra,
     rtms: queryTime,
     key: `[${key}]`,
     resultVersionstamp: entry.versionstamp,

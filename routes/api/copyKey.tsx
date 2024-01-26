@@ -38,14 +38,13 @@ export const handler: Handlers = {
         data.destConnectionId,
       ]);
 
-      //TODO Remove/change 'isDestinationDeploy' and 'isDeploy' from audit log
       const copyAudit: CopyAuditLog = {
         auditType: "copy",
         executorId: await executorId(session),
         connection: auditConnectionName(state.connection!),
         destinationConnection: conn.value ? auditConnectionName(conn.value) : "<unknown>",
-        isDestinationDeploy: conn.value ? conn.value.isRemote : false,
-        isDeploy: state.connection!.isRemote,
+        destinationInfra: conn.value ? conn.value.infra : "unknown",
+        infra: state.connection!.infra,
         rtms: result.duration,
         keysCopied: copyResult.setKeyCount,
         keysFailed: copyResult.failedKeys.length,

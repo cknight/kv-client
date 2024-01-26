@@ -27,25 +27,8 @@ export function EntryEditor(props: EntryEditorProps) {
   const keySize = readableSize(JSON.stringify(props.kvKey.value).length);
   const inEditMode = useSignal(false);
   const readOnly = useSignal(true);
-  function clearForm() {
-    // TODO clean up
-
-    const key = document.getElementById("kvKey")! as HTMLTextAreaElement;
-    const valueType = document.getElementById("valueType")! as HTMLSelectElement;
-    const typeHelper = document.getElementById("typeHelper")! as HTMLSelectElement;
-    const doNotOverwrite = document.getElementById("doNotOverwrite")! as HTMLInputElement;
-
-    key.value = "";
-    //@ts-ignore - ace editor is global
-    globalThis.editor.setValue("");
-    valueType.value = "";
-    typeHelper.value = "";
-    doNotOverwrite.checked = true;
-  }
 
   function validate(): boolean {
-    //TODO clean up (no key validation)
-
     const key = document.getElementById("kvKey")! as HTMLTextAreaElement;
     const valueType = document.getElementById("valueType")! as HTMLSelectElement;
 
@@ -187,17 +170,6 @@ export function EntryEditor(props: EntryEditorProps) {
                 </button>
               )}
           </div>
-
-          {
-            /* <div class="flex w-full justify-center mt-8 gap-x-3">
-        <button type="button" onClick={clearForm} class="btn btn-secondary">
-          Clear
-        </button>
-        <button type="button" onClick={submitEntry} class="btn btn-primary">
-          Submit
-        </button>
-        </div> */
-          }
         </div>
         <Toast
           id="setEntryErrorToast"

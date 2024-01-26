@@ -45,22 +45,24 @@ export async function unitsConsumedToday(): Promise<UnitsConsumed> {
     totalAuditsToday++;
     const auditLog = audit.value;
 
-    if (!auditLog.isDeploy) {
+    if (auditLog.infra !== "Deploy") {
       continue;
     }
 
     totalRemoteAuditsToday++;
     if (auditLog.auditType === "delete") {
       writeUnits += auditLog.writeUnitsConsumed;
-      //FIXME Hmm, deletes are batched into transactions.  Should 'operation' be per key or per transaction?
-      operations += auditLog.keysDeleted;
+      //N.b. 1000 keys deleted may take place across multiple transactions, 
+      //     but we only record a single operation for this
+      operations++;
     } else if (auditLog.auditType === "list") {
       readUnits += auditLog.readUnitsConsumed;
       operations++;
     } else if (auditLog.auditType === "copy") {
       writeUnits += auditLog.writeUnitsConsumed;
-      //FIXME Hmm, copies are batched into transactions.  Should 'operation' be per key or per transaction?
-      operations += auditLog.keysCopied;
+      //N.b. 1000 keys copied may take place across multiple transactions, 
+      //     but we only record a single operation for this
+      operations++;
     }
   }
   const result = { operations, read: readUnits, write: writeUnits };

@@ -53,7 +53,8 @@ export interface KvInstance {
   size: number;
 }
 
-export type Environment = "local" | "prod" | "preview" | "playground" | "other";
+export type Environment = "local" | "Deploy prod" | "Deploy preview" | "Deploy playground" | "other";
+export type Infra = "local" | "Deploy" | "unknown";
 
 export interface KvConnection {
   kvLocation: string;
@@ -61,7 +62,7 @@ export interface KvConnection {
   name: string;
   organisation?: string;
   id: string;
-  isRemote: boolean;
+  infra: Infra;
   size: number;
 }
 
@@ -82,11 +83,12 @@ export interface KvGetOptions {
   key: string;
 }
 
+
 export type AuditLog<T extends "list" | "delete" | "copy" | "update" | "set" | "get"> = {
   auditType: T;
   executorId: string;
   connection: string;
-  isDeploy: boolean;
+  infra: Infra;
   rtms: number; //Round trip milliseconds
 };
 
@@ -109,7 +111,7 @@ export type DeleteAuditLog = AuditLog<"delete"> & {
 
 export type CopyAuditLog = AuditLog<"copy"> & {
   destinationConnection: string;
-  isDestinationDeploy: boolean;
+  destinationInfra: Infra;
   keysCopied: number;
   keysFailed: number;
   aborted: boolean;

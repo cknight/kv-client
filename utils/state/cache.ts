@@ -1,3 +1,4 @@
+import { _24_HOURS_IN_MS } from "../../consts.ts";
 import { CachedList, CacheKey, I_CacheManager, ListResults } from "../../types.ts";
 
 export class CacheManager implements I_CacheManager {
@@ -9,7 +10,10 @@ export class CacheManager implements I_CacheManager {
   get(parms: CacheKey): CachedList | undefined {
     const key = this.#key(parms.connectionId, parms.prefix, parms.start, parms.end, parms.reverse);
     const result = this.cache.get(key);
-    //FIXME add cache expiration
+    if (result && (result.cacheTime + _24_HOURS_IN_MS) < Date.now()) {
+      this.cache.delete(key);
+      return undefined;
+    }
     return result;
   }
 

@@ -114,7 +114,7 @@ async function getStats(session: string, partialResults: PartialListResults): Pr
   return {
     unitsConsumedToday: unitsConsumed,
     opStats: partialResults.opStats,
-    isDeploy: getUserState(session)?.connection?.isRemote || false,
+    isDeploy: getUserState(session)?.connection?.infra === "Deploy" || false,
   };
 }
 

@@ -104,7 +104,7 @@ async function updateKey(data: UpdateKeyData, session: string): Promise<UpdateOp
     auditType: "update",
     executorId: await executorId(session),
     connection: auditConnectionName(state.connection!),
-    isDeploy: state.connection!.isRemote,
+    infra: state.connection!.infra,
     rtms: overallDuration,
     updateSuccessful: setKeyCount === 1,
     key: json5Stringify(entry.key, true),

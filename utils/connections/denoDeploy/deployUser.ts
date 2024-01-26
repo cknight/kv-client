@@ -116,9 +116,9 @@ export function deployKvEnvironment(
   instance: DeployKvInstance,
 ): Environment {
   if (project.type === "playground") {
-    return "playground";
+    return "Deploy playground";
   } else if (project.type === "git") {
-    return project.productionBranch === instance.branch ? "prod" : "preview";
+    return project.productionBranch === instance.branch ? "Deploy prod" : "Deploy preview";
   }
   return "other";
 }

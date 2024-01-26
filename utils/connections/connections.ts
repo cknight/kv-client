@@ -27,7 +27,7 @@ export async function getConnections(session: string): Promise<Connections> {
             environment: deployKvEnvironment(project, instance),
             id: instance.databaseId,
             organisation: org.name || undefined,
-            isRemote: true,
+            infra: "Deploy",
             size: instance.sizeBytes,
           });
         })
@@ -47,14 +47,15 @@ async function getLocalConnections(): Promise<KvConnection[]> {
   const connections: KvConnection[] = [];
   const connectionList = localKv.list<KvConnection>({ prefix: [CONNECTIONS_KEY_PREFIX] });
   for await (const connection of connectionList) {
-    if (connection.value.isRemote) continue;
-    try {
-      const fileInfo = await Deno.lstat(connection.value.kvLocation);
-      connection.value.size = fileInfo.size;
-      connections.push(connection.value);
-    } catch (e) {
-      console.error(`Failed to load connection ${connection.value.id}: ${e.message}`);
-      continue;
+    if (connection.value.infra === "local") {
+      try {
+        const fileInfo = await Deno.lstat(connection.value.kvLocation);
+        connection.value.size = fileInfo.size;
+        connections.push(connection.value);
+      } catch (e) {
+        console.error(`Failed to load connection ${connection.value.id}: ${e.message}`);
+        continue;
+      }
     }
   }
   return connections;
@@ -62,9 +63,9 @@ async function getLocalConnections(): Promise<KvConnection[]> {
 
 /**
  * Establish a secondary KV connection.  This is used for copying data between KV instances.
- * 
- * @param session 
- * @param destConnectionId 
+ *
+ * @param session
+ * @param destConnectionId
  * @returns Deno.Kv connection (untested)
  */
 export async function connectToDestKv(session: string, destConnectionId: string): Promise<Deno.Kv> {
@@ -80,8 +81,7 @@ export async function connectToDestKv(session: string, destConnectionId: string)
   }
 
   const location = connection.kvLocation;
-  if (connection.isRemote) {
-    // Remote KV access
+  if (connection.infra === "Deploy") {
     const accessToken = await getEncryptedString([ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session]);
     if (!accessToken) {
       console.error("No access token available");

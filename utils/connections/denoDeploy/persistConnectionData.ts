@@ -12,7 +12,7 @@ export async function persistConnectionData(deployUser: DeployUser): Promise<voi
         const kvConnection: KvConnection = {
           name: project.name,
           id: kvInstance.databaseId,
-          isRemote: true,
+          infra: "Deploy",
           kvLocation: `https://api.deno.com/databases/${kvInstance.databaseId}/connect`,
           environment: deployKvEnvironment(project, kvInstance),
           size: kvInstance.sizeBytes,

@@ -33,7 +33,7 @@ export const handler: Handlers = {
         auditType: "delete",
         executorId: await executorId(session),
         connection: auditConnectionName(state.connection!),
-        isDeploy: state.connection!.isRemote,
+        infra: state.connection!.infra,
         rtms: result.duration,
         keysDeleted: result.success ? 1 : 0,
         keysFailed: result.success ? 0 : 1,

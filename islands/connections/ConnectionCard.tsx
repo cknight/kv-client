@@ -21,11 +21,11 @@ export function ConnectionCard(props: ConnectionCardProps) {
     switch (props.environment) {
       case "local":
         return "bg-green-700";
-      case "prod":
+      case "Deploy prod":
         return "bg-red-700";
-      case "preview":
+      case "Deploy preview":
         return "bg-yellow-700";
-      case "playground":
+      case "Deploy playground":
         return "bg-purple-700";
       default:
         return "bg-blue-700";
@@ -36,11 +36,11 @@ export function ConnectionCard(props: ConnectionCardProps) {
     switch (props.environment) {
       case "local":
         return "Local";
-      case "prod":
+      case "Deploy prod":
         return "Production";
-      case "preview":
+      case "Deploy preview":
         return "Preview";
-      case "playground":
+      case "Deploy playground":
         return "Playground";
       default:
         return "Other";

@@ -1,7 +1,5 @@
 import { useSignal } from "@preact/signals";
 import { KvUIEntry, SupportedValueTypes, ToastType } from "../types.ts";
-import { EntryEditor } from "./EntryEditor.tsx";
-import { IS_BROWSER } from "$fresh/runtime.ts";
 import { KvValueEditor } from "./KvValueEditor.tsx";
 import { JSX } from "preact/jsx-runtime";
 import { Toast } from "./Toast.tsx";

@@ -145,7 +145,7 @@ export async function listKv(
     results: newResults.length,
     readUnitsConsumed: readUnits,
     connection: auditConnectionName(state.connection!),
-    isDeploy: state.connection!.isRemote,
+    infra: state.connection!.infra,
     rtms: queryOnlyTime,
   };
   await auditAction(audit);
