@@ -1,6 +1,6 @@
 import { Handlers, RouteContext } from "$fresh/server.ts";
 import { ListCriteriaBox } from "../islands/ListCriteriaBox.tsx";
-import { KvUIEntry, PartialListResults, Stats } from "../types.ts";
+import { KvConnection, KvUIEntry, PartialListResults, Stats } from "../types.ts";
 import { ListResults } from "../islands/ListResults.tsx";
 import { listKv } from "../utils/kv/kvList.ts";
 
@@ -29,97 +29,151 @@ export interface ListData {
   stats?: Stats;
 }
 
+interface ListInputData {
+  prefix: string;
+  start: string;
+  end: string;
+  limit: string;
+  reverse: boolean;
+  from: number;
+  show: number;
+  filter: string | undefined;
+  disableCache: boolean;
+  connectionId: string;
+}
+
 export const handler: Handlers = {
   async POST(req, ctx) {
     const form = await req.formData();
-    const prefix = form.get("prefix")?.toString() || "";
-    const start = form.get("start")?.toString() || "";
-    const end = form.get("end")?.toString() || "";
-    const limit = form.get("limit")?.toString() || "";
-    const reverse = form.get("reverse")?.toString() === "on";
-    const from = parseInt(form.get("from")?.toString() || "1");
-    const show = parseInt(form.get("show")?.toString() || "10");
-    const filter = form.get("filter")?.toString() || undefined;
-    const disableCache = form.get("disableCache")?.toString() === "on";
 
     const session = ctx.state.session as string;
     const state = getUserState(session);
     const connection = state!.connection;
-    const connectionId = new URL(req.url).searchParams.get("connectionId") || "";
 
-    if (!connection && !connectionId) {
+    const listInputData: ListInputData = {
+      prefix: form.get("prefix")?.toString() || "",
+      start: form.get("start")?.toString() || "",
+      end: form.get("end")?.toString() || "",
+      limit: form.get("limit")?.toString() || "",
+      reverse: form.get("reverse")?.toString() === "on",
+      from: parseInt(form.get("from")?.toString() || "1"),
+      show: parseInt(form.get("show")?.toString() || "10"),
+      filter: form.get("filter")?.toString() || undefined,
+      disableCache: form.get("disableCache")?.toString() === "on",
+      connectionId: new URL(req.url).searchParams.get("connectionId") || "",
+    };
+
+    if (!connection && !listInputData.connectionId) {
       return new Response("", {
         status: 303,
         headers: { Location: "/" },
       });
     }
 
-    let stats: Stats | undefined;
-
-    let failReason;
-    let results: Deno.KvEntry<unknown>[] = [];
-    let listComplete = false;
-    try {
-      const cId = connectionId || connection?.id || "";
-      const searchOptions = {
-        session,
-        connectionId: cId,
-        prefix,
-        start,
-        end,
-        limit,
-        reverse,
-        disableCache,
-      };
-      const partialResults = await listKv(searchOptions);
-      results = partialResults.results;
-      listComplete = partialResults.cursor === false;
-
-      await getStats(partialResults);
-    } catch (e) {
-      if (e instanceof TypeError) {
-        failReason = "Issue authorizing with remote connection.  Please sign out and reconnect. " +
-          e.message;
-        console.error(e);
-      } else {
-        failReason = e.message || "Unknown error occurred";
-        console.error(e);
-      }
-    }
-
-    const { resultsPage, resultsCount, filtered } = buildResultsPage(filter, results, from, show);
-    const resultsToShow = await Promise.all(resultsPage.map(async (e) => await createKvUIEntry(e)));
-
-    const searchData: ListData = {
-      prefix,
-      start,
-      end,
-      limit,
-      reverse,
-      disableCache,
-      results: resultsToShow,
-      fullResultsCount: resultsCount,
-      filter,
-      filtered,
-      show,
-      from,
-      listComplete,
-      validationError: failReason,
-      stats,
-    };
+    const searchData = await getResults(listInputData, session, connection);
 
     return await ctx.render(searchData);
-
-    async function getStats(partialResults: PartialListResults) {
-      const unitsConsumed = await unitsConsumedToday();
-      stats = {
-        unitsConsumedToday: unitsConsumed,
-        opStats: partialResults.opStats,
-        isDeploy: getUserState(session)?.connection?.isRemote || false,
+  },
+  async GET(req, ctx) {
+    const sp = new URL(req.url).searchParams;
+    if (sp.has("prefix")) {
+      const session = ctx.state.session as string;
+      const state = getUserState(session);
+      const connection = state!.connection;
+  
+      const listInputData: ListInputData = {
+        prefix: sp.get("prefix") || "",
+        start: sp.get("start") || "",
+        end: sp.get("end") || "",
+        limit: sp.get("limit") || "",
+        reverse: sp.get("reverse") === "true",
+        from: parseInt(sp.get("from") || "1"),
+        show: parseInt(sp.get("show") || "10"),
+        filter: sp.get("filter") || undefined,
+        disableCache: sp.get("disableCache") === "true",
+        connectionId: sp.get("connectionId") || "",
       };
+  
+      if (!connection && !listInputData.connectionId) {
+        return new Response("", {
+          status: 303,
+          headers: { Location: "/" },
+        });
+      }
+  
+      const searchData = await getResults(listInputData, session, connection);
+  
+      return await ctx.render(searchData);
     }
+    return await ctx.render({} as ListData);
   },
 };
+
+async function getStats(session: string, partialResults: PartialListResults): Promise<Stats> {
+  const unitsConsumed = await unitsConsumedToday();
+  return {
+    unitsConsumedToday: unitsConsumed,
+    opStats: partialResults.opStats,
+    isDeploy: getUserState(session)?.connection?.isRemote || false,
+  };
+}
+
+async function getResults(
+  listInputData: ListInputData,
+  session: string,
+  connection: KvConnection | null,
+): Promise<ListData> {
+  let failReason;
+  let results: Deno.KvEntry<unknown>[] = [];
+  let listComplete = false;
+  let stats: Stats | undefined;
+  try {
+    const cId = listInputData.connectionId || connection?.id || "";
+    const searchOptions = {
+      session,
+      connectionId: cId,
+      prefix: listInputData.prefix,
+      start: listInputData.start,
+      end: listInputData.end,
+      limit: listInputData.limit,
+      reverse: listInputData.reverse,
+      disableCache: listInputData.disableCache,
+    };
+    const partialResults = await listKv(searchOptions);
+    results = partialResults.results;
+    listComplete = partialResults.cursor === false;
+
+    stats = await getStats(session, partialResults);
+  } catch (e) {
+    if (e instanceof TypeError) {
+      failReason = "Issue authorizing with remote connection.  Please sign out and reconnect. " +
+        e.message;
+      console.error(e);
+    } else {
+      failReason = e.message || "Unknown error occurred";
+      console.error(e);
+    }
+  }
+
+  const { resultsPage, resultsCount, filtered } = buildResultsPage(
+    listInputData.filter,
+    results,
+    listInputData.from,
+    listInputData.show,
+  );
+  const resultsToShow = await Promise.all(resultsPage.map(async (e) => await createKvUIEntry(e)));
+
+  const searchData: ListData = {
+    ...listInputData,
+    results: resultsToShow,
+    fullResultsCount: resultsCount,
+    filtered,
+    listComplete,
+    validationError: failReason,
+    stats,
+  };
+  return searchData;
+}
 
 export default async function List(req: Request, props: RouteContext<ListData>) {
   const sp = props.url.searchParams;

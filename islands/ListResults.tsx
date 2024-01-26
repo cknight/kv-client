@@ -76,14 +76,6 @@ export function ListResults(props: ListResultsProps) {
 
   const to = Math.min(props.from + props.show - 1, resultsCount);
 
-  if (IS_BROWSER && (new URL(window.location.href)).searchParams.has("prefix") && !results) {
-    // FIXME: Seems brittle
-    // GET request with POST data in URL, so submit form to redirect to POST
-    setTimeout(() => {
-      submitListForm();
-    }, 0);
-  }
-
   function onShowChange() {
     const from = document.getElementById("from") as HTMLInputElement;
     from.value = "1";
