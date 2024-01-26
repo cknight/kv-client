@@ -45,7 +45,6 @@ import * as $connections_AddLocalConnectionButton from "./islands/connections/Ad
 import * as $connections_CancelLocalConnectionButton from "./islands/connections/CancelLocalConnectionButton.tsx";
 import * as $connections_ConnectButton from "./islands/connections/ConnectButton.tsx";
 import * as $connections_ConnectionCard from "./islands/connections/ConnectionCard.tsx";
-import * as $connections_ConnectionDropDown from "./islands/connections/ConnectionDropDown.tsx";
 import * as $connections_LocalConnectionRadio from "./islands/connections/LocalConnectionRadio.tsx";
 import * as $connections_RemoveLocalConnectionDialog from "./islands/connections/RemoveLocalConnectionDialog.tsx";
 import { type Manifest } from "$fresh/server.ts";
@@ -98,7 +97,6 @@ const manifest = {
       $connections_CancelLocalConnectionButton,
     "./islands/connections/ConnectButton.tsx": $connections_ConnectButton,
     "./islands/connections/ConnectionCard.tsx": $connections_ConnectionCard,
-    "./islands/connections/ConnectionDropDown.tsx": $connections_ConnectionDropDown,
     "./islands/connections/LocalConnectionRadio.tsx": $connections_LocalConnectionRadio,
     "./islands/connections/RemoveLocalConnectionDialog.tsx":
       $connections_RemoveLocalConnectionDialog,
