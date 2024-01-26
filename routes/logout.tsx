@@ -1,7 +1,6 @@
-import { Handlers, PageProps, RouteContext } from "$fresh/server.ts";
-import { deleteCookie, setCookie } from "$std/http/cookie.ts";
+import { Handlers, PageProps } from "$fresh/server.ts";
+import { deleteCookie } from "$std/http/cookie.ts";
 import { logout } from "../utils/connections/denoDeploy/logout.ts";
-import { getUserState } from "../utils/state/state.ts";
 
 interface LogoutProps {
   isDeployUser: boolean;
@@ -9,8 +8,6 @@ interface LogoutProps {
 
 export const handler: Handlers = {
   async POST(req, ctx) {
-    const state = getUserState(ctx);
-    const isDeployUser = state.deployUserData !== null;
     await logout(ctx.state.session as string);
 
     const headers = new Headers();

@@ -136,7 +136,7 @@ export async function listKv(
 
   const audit: ListAuditLog = {
     auditType: "list",
-    executorId: executorId(session),
+    executorId: await executorId(session),
     prefixKey: prefix,
     startKey: start,
     endKey: end,

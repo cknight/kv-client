@@ -49,7 +49,7 @@ export const handler: Handlers = {
 
       const copyAudit: CopyAuditLog = {
         auditType: "copy",
-        executorId: executorId(session),
+        executorId: await executorId(session),
         connection: auditConnectionName(state.connection!),
         destinationConnection: conn.value ? auditConnectionName(conn.value) : "<unknown>",
         isDestinationDeploy: conn.value ? conn.value.isRemote : false,

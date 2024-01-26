@@ -228,7 +228,6 @@ export async function getOrganizationDetail(
 
 /** For a given project, retrieve the project's KV DB details. */
 export async function getProjectDbs(name: string, accessToken: string): Promise<DashDbsForProject> {
-  console.log("getProjectDbs", DASH_BASE_URL, "**", name, "**", accessToken);
   const resp = await fetch(`${DASH_BASE_URL}projects/${name}/kv?_data_`, {
     method: "GET",
     headers: {

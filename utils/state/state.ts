@@ -1,12 +1,10 @@
-import { HandlerContext, LayoutContext, PageProps } from "$fresh/server.ts";
+import { PageProps } from "$fresh/server.ts";
 import { State } from "../../types.ts";
 import { CacheManager } from "./cache.ts";
 
 const states: Map<string, State> = new Map();
 
-export function getUserState(
-  sessionOrCtx: string | PageProps | HandlerContext | LayoutContext<void, unknown>,
-): State {
+export function getUserState(sessionOrCtx: string | PageProps): State {
   let sessionId = "";
   if (typeof sessionOrCtx === "string") {
     sessionId = sessionOrCtx;
@@ -21,7 +19,6 @@ export function getUserState(
       kv: null,
       connection: null,
       cache: new CacheManager(),
-      deployUserData: null,
     };
     states.set(sessionId, newState);
     return newState;

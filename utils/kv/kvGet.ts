@@ -34,7 +34,7 @@ export async function getKv(getOptions: KvGetOptions): Promise<Deno.KvEntryMaybe
 
   const audit: GetAuditLog = {
     auditType: "get",
-    executorId: executorId(session),
+    executorId: await executorId(session),
     connection: connectionId,
     isDeploy: false,
     rtms: queryTime,

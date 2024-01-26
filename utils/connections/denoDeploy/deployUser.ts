@@ -1,6 +1,16 @@
+import {
+  _24_HOURS_IN_MS,
+  DEPLOY_RATE_LIMITER_PREFIX,
+  DEPLOY_USER_KEY_PREFIX,
+  ENCRYPTED_USER_ACCESS_TOKEN_PREFIX,
+} from "../../../consts.ts";
 import { Environment } from "../../../types.ts";
-import { getUserState } from "../../state/state.ts";
+import { localKv } from "../../kv/db.ts";
+import { getEncryptedString } from "../../transform/encryption.ts";
 import { getOrganizationDetail, getProjectDbs, getRootData } from "./dash.ts";
+import { persistConnectionData } from "./persistConnectionData.ts";
+
+const rateLimits: Map<string, number> = new Map();
 
 export interface DeployUser {
   id: string;
@@ -30,15 +40,12 @@ export interface DeployKvInstance {
   branch: string;
 }
 
-export async function buildRemoteData(accessToken: string): Promise<DeployUser> {
-  const kv = await Deno.openKv();
+export async function buildRemoteData(accessToken: string, session: string): Promise<DeployUser> {
+  const lastSessionAccess = await localKv.get<number>([DEPLOY_RATE_LIMITER_PREFIX, session]);
 
-  //FIXME TODO DELETE THIS CODE (I think)
-  const tempEntry = await kv.get<DeployUser>(["temp-deploy-user"]);
-  if (tempEntry.value !== null) {
-    return tempEntry.value;
+  if (lastSessionAccess.value && Date.now() - lastSessionAccess.value < 30000) {
+    throw new Error("Rate limit for session exceeded");
   }
-
   //Get user details and the orgs they belong to
   const rootData = await getRootData(accessToken);
   const deployUser = {
@@ -99,9 +106,7 @@ export async function buildRemoteData(accessToken: string): Promise<DeployUser> 
     });
   });
 
-  //FIXME TODO DELETE THIS CODE
-  //TODO test rate limiting!
-  await kv.set(["temp-deploy-user"], deployUser);
+  await localKv.set([DEPLOY_RATE_LIMITER_PREFIX, session], Date.now(), { expireIn: _24_HOURS_IN_MS });
 
   return deployUser;
 }
@@ -118,10 +123,41 @@ export function deployKvEnvironment(
   return "other";
 }
 
-export function executorId(session: string) {
-  const userState = getUserState(session);
-  if (userState && userState.deployUserData) {
-    return userState.deployUserData.name + ` (${userState.deployUserData.login})`;
+export async function executorId(session: string) {
+  const deployUser: DeployUser | null = await getDeployUserData(session, true);
+  if (deployUser) {
+    return deployUser.name + ` (${deployUser.login})`;
   }
   return session;
+}
+
+export async function getDeployUserData(
+  session: string,
+  refreshIfNeeded: boolean,
+): Promise<DeployUser | null> {
+  let deployUser: DeployUser | null =
+    (await localKv.get<DeployUser>([DEPLOY_USER_KEY_PREFIX, session])).value;
+
+  if (deployUser === null && refreshIfNeeded) {
+    const accessToken = await getEncryptedString([ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session]);
+    
+    if (accessToken) {
+      try {
+        const newDeployUser = await buildRemoteData(accessToken, session);
+        if (newDeployUser) {
+          console.debug('Successfully loaded new Deploy user data');
+          await localKv.set([DEPLOY_USER_KEY_PREFIX, session], newDeployUser, {
+            expireIn: _24_HOURS_IN_MS,
+          });
+          await persistConnectionData(newDeployUser);
+          deployUser = newDeployUser;
+        }
+      } catch (e) {
+        console.error(`Failed to fetch Deploy user details: ${e.message}`);
+        return null;
+      }
+    }
+  }
+
+  return deployUser;
 }

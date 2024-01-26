@@ -20,31 +20,31 @@ export const handler: Handlers = {
       }
 
       const start = Date.now();
-      const deployUser = await buildRemoteData(accessToken);
+      const deployUser = await buildRemoteData(accessToken, session);
 
-      /*
-       * Store:
-       * 1. Deploy user object in KV for 1 day
-       * 2. Access token in KV for 30 days (TODO is this a sensible default?)
-       * 3. Remote connections data indefinitely (will get overwritten on next user connection)
-       * 4. Deploy user object in state
-       */
-      const state = getUserState(ctx);
-      await localKv.set([DEPLOY_USER_KEY_PREFIX, session], deployUser, {
-        expireIn: _24_HOURS_IN_MS,
-      });
-      await storeEncryptedString(
-        [ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session],
-        accessToken,
-        30 * _24_HOURS_IN_MS,
-      );
-      await persistConnectionData(deployUser);
-      state.deployUserData = deployUser;
-
-      return new Response("", {
-        status: 303,
-        headers: { Location: "/" },
-      });
+      if (deployUser) {
+        /*
+         * Store:
+         * 1. Deploy user object in KV for 1 day (will force refresh of data)
+         * 2. Access token in KV for duration of session
+         * 3. Remote connections data indefinitely (will get overwritten on next user connection)
+         */
+        await localKv.set([DEPLOY_USER_KEY_PREFIX, session], deployUser, {
+          expireIn: _24_HOURS_IN_MS,
+        });
+        await storeEncryptedString(
+          [ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session],
+          accessToken,
+        );
+        await persistConnectionData(deployUser);
+  
+        console.debug(`Fetched deploy user data in ${Date.now() - start}ms`);
+  
+        return new Response("", {
+          status: 303,
+          headers: { Location: "/" },
+        });
+      }
     }
     return ctx.render({ error: true });
   },

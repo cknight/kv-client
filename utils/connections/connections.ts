@@ -1,10 +1,10 @@
-import { CONNECTIONS_KEY_PREFIX, DEPLOY_USER_KEY_PREFIX, ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, env } from "../../consts.ts";
+import { CONNECTIONS_KEY_PREFIX, ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, env } from "../../consts.ts";
 import { KvConnection } from "../../types.ts";
 import { deployKvEnvironment, DeployUser } from "./denoDeploy/deployUser.ts";
 import { localKv } from "../kv/db.ts";
-import { getUserState } from "../state/state.ts";
 import { mutex } from "../kv/kvConnect.ts";
 import { getEncryptedString } from "../transform/encryption.ts";
+import { getDeployUserData } from "./denoDeploy/deployUser.ts";
 
 export interface Connections {
   local: KvConnection[];
@@ -14,13 +14,7 @@ export interface Connections {
 export const localConnections = await getLocalConnections();
 
 export async function getConnections(session: string): Promise<Connections> {
-  const state = getUserState(session);
-
-  let deployUser: DeployUser | null = state.deployUserData;
-  if (!deployUser) {
-    deployUser = (await localKv.get<DeployUser>([DEPLOY_USER_KEY_PREFIX, session])).value;
-    state.deployUserData = deployUser;
-  }
+  const deployUser: DeployUser | null = await getDeployUserData(session, true);
 
   const remote: KvConnection[] = [];
   if (deployUser) {

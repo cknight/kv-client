@@ -10,7 +10,6 @@ export interface I_CacheManager {
 export interface State {
   kv: Deno.Kv | null;
   connection: KvConnection | null;
-  deployUserData: DeployUser | null;
   cache: I_CacheManager;
 }
 

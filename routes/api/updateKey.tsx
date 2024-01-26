@@ -102,7 +102,7 @@ async function updateKey(data: UpdateKeyData, session: string): Promise<UpdateOp
 
   const updateAudit: UpdateAuditLog = {
     auditType: "update",
-    executorId: executorId(session),
+    executorId: await executorId(session),
     connection: auditConnectionName(state.connection!),
     isDeploy: state.connection!.isRemote,
     rtms: overallDuration,

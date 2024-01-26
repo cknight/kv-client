@@ -40,7 +40,7 @@ export const handler: Handlers = {
 
       const deleteAudit: DeleteAuditLog = {
         auditType: "delete",
-        executorId: executorId(session),
+        executorId: await executorId(session),
         connection: auditConnectionName(state.connection!),
         isDeploy: state.connection!.isRemote,
         rtms: result.duration,

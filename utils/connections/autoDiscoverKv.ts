@@ -23,7 +23,7 @@ const DEFAULT_KV_FILENAME = "kv.sqlite3";
 export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
   const start = Date.now();
 
-  //FIXME test and/or compare/amend from KvView
+  //TODO test
 
   const denoDir = Deno.env.get(env.DENO_DIR);
   const fullCacheDir = denoDir || join(cacheDir() || "", DENO_CACHE_DIR);

@@ -3,27 +3,23 @@ import { KvConnection } from "../types.ts";
 import { getUserState } from "../utils/state/state.ts";
 import { DeployUser } from "../utils/connections/denoDeploy/deployUser.ts";
 import { localKv } from "../utils/kv/db.ts";
-import { CONNECTIONS_KEY_PREFIX, DEPLOY_USER_KEY_PREFIX } from "../consts.ts";
+import { CONNECTIONS_KEY_PREFIX } from "../consts.ts";
 import { AvatarMenu } from "../islands/avatarMenu/AvatarMenu.tsx";
 import { HomeIcon } from "../components/svg/Home.tsx";
 import { RightArrowIcon } from "../components/svg/RightArrow.tsx";
 import { UnknownAvatarMenu } from "../islands/avatarMenu/UnknownAvatarMenu.tsx";
 import { TabBar } from "../islands/TabBar.tsx";
+import { getDeployUserData } from "../utils/connections/denoDeploy/deployUser.ts";
 
 export default async function defineLayout(req: Request, ctx: FreshContext) {
   const tabBarRoutes = ["list", "set", "get"];
   const state = getUserState(ctx);
   const session = (ctx.state as Record<string, unknown>).session as string;
-  let deployUser: DeployUser | null = state.deployUserData;
-  if (!deployUser) {
-    if (session) {
-      deployUser = (await localKv.get<DeployUser>([
-        DEPLOY_USER_KEY_PREFIX,
-        session,
-      ])).value;
-      state.deployUserData = deployUser;
-    }
+  let deployUser: DeployUser | null = null;
+  if (session) {
+    deployUser = await getDeployUserData(session, true);
   }
+
   const url = new URL(req.url);
   const connectionId = url.searchParams.get("connectionId") || "";
   const connection = await localKv.get<KvConnection>([CONNECTIONS_KEY_PREFIX, connectionId]);
@@ -67,7 +63,7 @@ export default async function defineLayout(req: Request, ctx: FreshContext) {
           <div class="flex ml-2 text-neutral-300">{camelToTitleCase(path)}</div>
         </div>
         <div class="flex-none">
-          {deployUser ? <AvatarMenu deployUser={deployUser} /> : <UnknownAvatarMenu />}
+          {deployUser !== null ? <AvatarMenu deployUser={deployUser} /> : <UnknownAvatarMenu />}
         </div>
       </div>
 

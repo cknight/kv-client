@@ -63,7 +63,7 @@ export const handler: Handlers = {
 
       const setAudit: SetAuditLog = {
         auditType: "set",
-        executorId: executorId(session),
+        executorId: await executorId(session),
         connection: auditConnectionName(state.connection!),
         isDeploy: state.connection!.isRemote,
         rtms: overallDuration,

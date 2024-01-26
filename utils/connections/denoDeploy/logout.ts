@@ -7,7 +7,6 @@ export async function logout(session: string) {
   state.kv?.close();
   state.kv = null;
   state.connection = null;
-  state.deployUserData = null;
   state.cache.clear();
 
   await localKv.delete([DEPLOY_USER_KEY_PREFIX, session]);

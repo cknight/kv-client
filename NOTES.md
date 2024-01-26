@@ -25,6 +25,7 @@ TODO Phase 1:
 10. Enforce timeouts for ops
 11. Clean up every module (document, imports, formatting)
 12. Write more tests
+13. Validate logout covers everything
 
 Blocked:
 10. Partials for list page navigation (possibly blocked by https://github.com/denoland/fresh/issues/2174)
