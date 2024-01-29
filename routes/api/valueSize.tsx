@@ -20,7 +20,7 @@ export const handler: Handlers = {
         status: 200,
       });
     } catch (_e) {
-      console.log("oops", _e);
+      console.debug("Failed to calculate value size", _e);
       return new Response("Invalid value", {
         status: 422,
       });
