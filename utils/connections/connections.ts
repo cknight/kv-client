@@ -11,8 +11,6 @@ export interface Connections {
   remote: KvConnection[];
 }
 
-export const localConnections = await getLocalConnections();
-
 export async function getConnections(session: string): Promise<Connections> {
   const deployUser: DeployUser | null = await getDeployUserData(session, true);
 
@@ -34,16 +32,12 @@ export async function getConnections(session: string): Promise<Connections> {
       ))
     ));
   }
-
+  const localConnections = await getLocalConnections();
   return { local: localConnections, remote };
 }
 
-export async function resetLocalConnectionList(): Promise<void> {
-  localConnections.length = 0;
-  localConnections.push(...await getLocalConnections());
-}
-
 async function getLocalConnections(): Promise<KvConnection[]> {
+  const start = Date.now();
   const connections: KvConnection[] = [];
   const connectionList = localKv.list<KvConnection>({ prefix: [CONNECTIONS_KEY_PREFIX] });
   for await (const connection of connectionList) {
@@ -58,6 +52,7 @@ async function getLocalConnections(): Promise<KvConnection[]> {
       }
     }
   }
+  console.debug(`Loaded ${connections.length} local connections in ${Date.now() - start}ms`);
   return connections;
 }
 

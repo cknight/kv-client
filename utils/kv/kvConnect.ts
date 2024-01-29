@@ -33,7 +33,7 @@ export async function establishKvConnection(session: string, connectionId: strin
   ]);
   const connection: KvConnection | null = conn.value;
 
-  if (connection && connection.isRemote) {
+  if (connection && connection.infra === "Deploy") {
     // Remote KV access
     const accessToken = await getEncryptedString([ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session]);
     if (!accessToken) {
