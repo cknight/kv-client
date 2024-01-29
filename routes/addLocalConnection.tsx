@@ -5,7 +5,6 @@ import { CONNECTIONS_KEY_PREFIX } from "../consts.ts";
 import { LocalConnectionRadioButton } from "../islands/connections/LocalConnectionRadio.tsx";
 import { KvConnection, KvInstance } from "../types.ts";
 import { peekAtLocalKvInstances } from "../utils/connections/autoDiscoverKv.ts";
-import { resetLocalConnectionList } from "../utils/connections/connections.ts";
 import { localKv } from "../utils/kv/db.ts";
 import { readableSize } from "../utils/utils.ts";
 import { CancelLocalConnectionButton } from "../islands/connections/CancelLocalConnectionButton.tsx";
@@ -45,12 +44,10 @@ export const handler: Handlers = {
           kvLocation: connectionLocation,
           environment: "local",
           id: ulid(),
-          isRemote: false,
+          infra: "local",
           size: fileInfo.size,
         };
         await localKv.set([CONNECTIONS_KEY_PREFIX, connection.id], connection);
-
-        await resetLocalConnectionList();
 
         //forward to connections page
         return new Response("", {
@@ -97,7 +94,7 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
           <p class="font-bold text-xl ml-2">Add local KV connection</p>
         </div>
         <div class="border border-1 border-[#666] bg-[#353535] rounded-md p-4 mt-3 mx-auto">
-          <form method="post">
+          <form method="post" f-client-nav={false}>
             {isError && (
               <h2 class="text-lg font-bold p-2 bg-red(400) text-center break-all">
                 {errorText || "Invalid connection"}

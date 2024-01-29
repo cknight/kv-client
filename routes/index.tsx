@@ -1,33 +1,11 @@
 /// <reference lib="deno.unstable" />
-import { Handlers, RouteContext } from "$fresh/server.ts";
+import { RouteContext } from "$fresh/server.ts";
 import { ConnectionCard } from "../islands/connections/ConnectionCard.tsx";
 import { RemoveLocalConnectionDialog } from "../islands/connections/RemoveLocalConnectionDialog.tsx";
-import { CONNECTIONS_KEY_PREFIX } from "../consts.ts";
 import { AddLocalConnectionButton } from "../islands/connections/AddLocalConnectionButton.tsx";
 import { ConnectButton } from "../islands/connections/ConnectButton.tsx";
-import { getConnections, resetLocalConnectionList } from "../utils/connections/connections.ts";
-import { localKv } from "../utils/kv/db.ts";
+import { getConnections } from "../utils/connections/connections.ts";
 import { signal } from "@preact/signals";
-
-export const handler: Handlers = {
-  async POST(req, ctx) {
-    const formData = await req.formData();
-    const action = formData.get("formAction")?.toString();
-    if (action === "removeLocalConnection") {
-      const connectionId = formData.get("removeLocalConnectionId")?.toString();
-      if (connectionId && typeof connectionId === "string") {
-        await localKv.delete([CONNECTIONS_KEY_PREFIX, connectionId]);
-        await resetLocalConnectionList();
-        console.debug("Removed local connection", connectionId);
-        return ctx.render();
-      }
-    }
-    return new Response("", {
-      status: 400,
-      headers: { Location: "/" },
-    });
-  },
-};
 
 export default async function Connections(_req: Request, ctx: RouteContext) {
   const { local, remote } = await getConnections(ctx.state.session as string);
@@ -39,7 +17,7 @@ export default async function Connections(_req: Request, ctx: RouteContext) {
         <div class="flex justify-center items-center mr-8">
           <p class="w-24 text-2xl font-bold">Local</p>
         </div>
-        <div id="localConnectionsList" class="flex flex-wrap">
+        <div id="localConnectionsList" class="flex flex-wrap w-full">
           {local.map((connection) => (
             <ConnectionCard
               name={connection.name}
@@ -59,7 +37,7 @@ export default async function Connections(_req: Request, ctx: RouteContext) {
       <div className="w-full border-b border-gray-400 p-3 mb-8"></div>
       <div id="remoteConnections" class="flex p-5">
         <div class="flex justify-center items-center mr-8">
-          <p class="w-24 text-2xl font-bold">Remote</p>
+          <p class="w-24 text-2xl font-bold">Deploy</p>
         </div>
         <div class="flex flex-wrap w-full">
           {remote.length > 0

@@ -15,6 +15,7 @@ import * as $api_copyKeys from "./routes/api/copyKeys.tsx";
 import * as $api_deleteKey from "./routes/api/deleteKey.tsx";
 import * as $api_deleteKeys from "./routes/api/deleteKeys.tsx";
 import * as $api_keyTypes from "./routes/api/keyTypes.tsx";
+import * as $api_removeConnection from "./routes/api/removeConnection.tsx";
 import * as $api_setEntry from "./routes/api/setEntry.tsx";
 import * as $api_updateKey from "./routes/api/updateKey.tsx";
 import * as $api_valueSize from "./routes/api/valueSize.tsx";
@@ -64,6 +65,7 @@ const manifest = {
     "./routes/api/deleteKey.tsx": $api_deleteKey,
     "./routes/api/deleteKeys.tsx": $api_deleteKeys,
     "./routes/api/keyTypes.tsx": $api_keyTypes,
+    "./routes/api/removeConnection.tsx": $api_removeConnection,
     "./routes/api/setEntry.tsx": $api_setEntry,
     "./routes/api/updateKey.tsx": $api_updateKey,
     "./routes/api/valueSize.tsx": $api_valueSize,

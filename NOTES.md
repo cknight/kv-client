@@ -18,12 +18,13 @@ TODO Phase 1:
 5. Documentation
 6. How to distribute
 7. Validation of inputs => auto enable/disable primary buttons
-8. Reload of DB sizes on connections page
+8. Reload of local DB sizes on connections page
 9. Implement "info" icon on connections page
 10. Enforce timeouts for ops
 11. Clean up every module (document, imports, formatting)
 12. Write more tests
 13. Validate logout covers everything
+14. Remove all console.logs
 
 Blocked:
 10. Partials for list page navigation (possibly blocked by https://github.com/denoland/fresh/issues/2174)
