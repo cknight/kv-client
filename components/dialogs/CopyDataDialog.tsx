@@ -235,13 +235,13 @@ export function CopyDataDialog(props: CopyDeleteMultiProps) {
               )}
           </div>
         </div>
+        <Toast
+          id="copyCompletedToast"
+          message={toastMsg.value}
+          show={showToastSignal}
+          type={toastType.value}
+        />
       </dialog>
-      <Toast
-        id="copyCompletedToast"
-        message={toastMsg.value}
-        show={showToastSignal}
-        type={toastType.value}
-      />
     </>
   );
 }
