@@ -8,6 +8,7 @@ import { peekAtLocalKvInstances } from "../utils/connections/autoDiscoverKv.ts";
 import { localKv } from "../utils/kv/db.ts";
 import { readableSize } from "../utils/utils.ts";
 import { CancelLocalConnectionButton } from "../islands/connections/CancelLocalConnectionButton.tsx";
+import { Help } from "../islands/Help.tsx";
 
 interface AllLocalConnectionProps {
   connectionName?: string;
@@ -37,6 +38,10 @@ export const handler: Handlers = {
       try {
         //validate file exists
         const fileInfo = await Deno.lstat(connectionLocation);
+
+        //validate is valid KV store
+        const maybeKv = await Deno.openKv(connectionLocation);
+        await Array.fromAsync(maybeKv.list({ prefix: [] }, { limit: 1 }));
 
         //add connection to KV
         const connection: KvConnection = {
@@ -96,7 +101,7 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
         <div class="border border-1 border-[#666] bg-[#353535] rounded-md p-4 mt-3 mx-auto">
           <form method="post" f-client-nav={false}>
             {isError && (
-              <h2 class="text-lg font-bold p-2 bg-red(400) text-center break-all">
+              <h2 class="text-lg font-bold p-2 text-red-500 text-center break-all">
                 {errorText || "Invalid connection"}
               </h2>
             )}
@@ -113,6 +118,11 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
                 value={connectionName}
                 class="input input-primary w-full p-2"
               />
+              <Help dialogId="nameHelp" dialogTitle="Name">
+                <p>
+                  Set a name for the connection. This will be displayed on the connections page.
+                </p>
+              </Help>
             </div>
             <div class="mt-5 flex flex-row items-center">
               <label
@@ -127,6 +137,14 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
                 value={connectionLocation}
                 class="input input-primary w-full p-2"
               />
+              <Help dialogId="locationHelp" dialogTitle="Location">
+                <div>
+                  Enter a full path to a local KV store. These are typically files with a{" "}
+                  <code>.sqlite3</code>{" "}
+                  extension. Alternatively, select an auto-discovered KV store below which will
+                  populate this field.
+                </div>
+              </Help>
             </div>
             <div class="flex gap-x-3 mt-3 justify-center">
               <CancelLocalConnectionButton />
@@ -146,10 +164,10 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
             Below are auto-discovered KV stores with a selection of sample data to help identify
             each KV store. Select one below or manually enter a location above.
           </p>
-                {localKVInstances.map((kv) => (
-          <div class="rounded-xl w-full overflow-auto mb-3">
-            <table class="table bg-[#353535]">
-              <tbody>
+          {localKVInstances.map((kv) => (
+            <div class="rounded-xl w-full overflow-auto mb-3">
+              <table class="table bg-[#353535]">
+                <tbody>
                   <tr class="p-2">
                     <td class="text-center w-20 ">
                       <LocalConnectionRadioButton id={kv.kvLocation} />
@@ -175,10 +193,10 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
                     </td>
                     <td class="w-20 text-center text-xl font-bold">{readableSize(kv.size, 0)}</td>
                   </tr>
-              </tbody>
-            </table>
-          </div>
-                ))}
+                </tbody>
+              </table>
+            </div>
+          ))}
         </div>
       </div>
     </div>
