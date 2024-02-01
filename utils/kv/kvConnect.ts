@@ -1,4 +1,4 @@
-import { CONNECTIONS_KEY_PREFIX, ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, env } from "../../consts.ts";
+import { CONNECTIONS_KEY_PREFIX, ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX, ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, env } from "../../consts.ts";
 import { KvConnection } from "../../types.ts";
 import { getUserState } from "../state/state.ts";
 import { ValidationError } from "../errors.ts";
@@ -10,7 +10,7 @@ export const mutex = new Mutex();
 
 export async function establishKvConnection(session: string, connectionId: string): Promise<void> {
   const userState = getUserState(session);
-
+  console.log("connectionId=====================", connectionId)
   if (!userState) {
     // No session found
     throw new ValidationError("Invalid session");
@@ -53,7 +53,27 @@ export async function establishKvConnection(session: string, connectionId: strin
     release();
 
     userState.connection = conn.value;
+  } else if (connection && connection.infra === "self-hosted") {
+    // Self-hosted KV access
+    const accessToken = await getEncryptedString([ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX, connection.id]);
+    if (!accessToken) {
+      throw new ValidationError("No access token available");
+    }
+    /**
+     * Prevent access token leakage in a multi-user setting by acquiring a mutex,
+     * establishing the connection, and then clearing the access token from the
+     * environment variable.  Access token is only required for the initial
+     * connection.
+     */
+    const release = await mutex.acquire();
+    Deno.env.set(env.DENO_KV_ACCESS_TOKEN, accessToken);
+    userState.kv = await Deno.openKv(connection.kvLocation);
+    Deno.env.delete(env.DENO_KV_ACCESS_TOKEN);
+    release();
+
+    userState.connection = conn.value;
   } else if (connection) {
+    console.log("Connection=====================", connection)
     // Local KV file
     const location = connection.kvLocation;
     try {

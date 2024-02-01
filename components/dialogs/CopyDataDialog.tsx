@@ -164,6 +164,8 @@ export function CopyDataDialog(props: CopyDeleteMultiProps) {
         return "Staging";
       case "local":
         return "Local";
+      case "self-hosted":
+        return "Self-hosted";
       default:
         return env;
     }
@@ -235,13 +237,13 @@ export function CopyDataDialog(props: CopyDeleteMultiProps) {
               )}
           </div>
         </div>
-        <Toast
-          id="copyCompletedToast"
-          message={toastMsg.value}
-          show={showToastSignal}
-          type={toastType.value}
-        />
       </dialog>
+      <Toast
+        id="copyCompletedToast"
+        message={toastMsg.value}
+        show={showToastSignal}
+        type={toastType.value}
+      />
     </>
   );
 }

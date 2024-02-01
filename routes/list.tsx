@@ -202,11 +202,12 @@ export default async function List(req: Request, props: RouteContext<ListData>) 
   const connectionName = connection?.name || "";
   const connectionLocation = connection?.kvLocation || "";
 
-  const { local, remote } = await getConnections(session);
+  const { local, remote, selfHosted } = await getConnections(session);
   const connections: { name: string; id: string; env: string }[] = [];
   local.forEach((c) => connections.push({ name: c.name, id: c.id, env: c.environment }));
   remote.forEach((c) => connections.push({ name: c.name, id: c.id, env: c.environment }));
-
+  selfHosted.forEach((c) => connections.push({ name: c.name, id: c.id, env: c.environment }));
+  
   return (
     <>
       <form

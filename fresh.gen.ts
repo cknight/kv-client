@@ -8,6 +8,7 @@ import * as $_layout from "./routes/_layout.tsx";
 import * as $_middleware from "./routes/_middleware.ts";
 import * as $accessToken from "./routes/accessToken.tsx";
 import * as $addLocalConnection from "./routes/addLocalConnection.tsx";
+import * as $addSelfHostedConnection from "./routes/addSelfHostedConnection.tsx";
 import * as $api_abortCopy from "./routes/api/abortCopy.tsx";
 import * as $api_abortDelete from "./routes/api/abortDelete.tsx";
 import * as $api_copyKey from "./routes/api/copyKey.tsx";
@@ -36,13 +37,14 @@ import * as $KvKeyInput from "./islands/KvKeyInput.tsx";
 import * as $KvValueEditor from "./islands/KvValueEditor.tsx";
 import * as $ListCriteriaBox from "./islands/ListCriteriaBox.tsx";
 import * as $ListResults from "./islands/ListResults.tsx";
+import * as $SelfHostedAccessTokenInput from "./islands/SelfHostedAccessTokenInput.tsx";
 import * as $SetEntryEditor from "./islands/SetEntryEditor.tsx";
 import * as $TabBar from "./islands/TabBar.tsx";
 import * as $TestToast from "./islands/TestToast.tsx";
 import * as $Toast from "./islands/Toast.tsx";
 import * as $avatarMenu_AvatarMenu from "./islands/avatarMenu/AvatarMenu.tsx";
 import * as $avatarMenu_UnknownAvatarMenu from "./islands/avatarMenu/UnknownAvatarMenu.tsx";
-import * as $connections_AddLocalConnectionButton from "./islands/connections/AddLocalConnectionButton.tsx";
+import * as $connections_AddConnectionButton from "./islands/connections/AddConnectionButton.tsx";
 import * as $connections_CancelLocalConnectionButton from "./islands/connections/CancelLocalConnectionButton.tsx";
 import * as $connections_ConnectButton from "./islands/connections/ConnectButton.tsx";
 import * as $connections_ConnectionCard from "./islands/connections/ConnectionCard.tsx";
@@ -58,6 +60,7 @@ const manifest = {
     "./routes/_middleware.ts": $_middleware,
     "./routes/accessToken.tsx": $accessToken,
     "./routes/addLocalConnection.tsx": $addLocalConnection,
+    "./routes/addSelfHostedConnection.tsx": $addSelfHostedConnection,
     "./routes/api/abortCopy.tsx": $api_abortCopy,
     "./routes/api/abortDelete.tsx": $api_abortDelete,
     "./routes/api/copyKey.tsx": $api_copyKey,
@@ -88,13 +91,14 @@ const manifest = {
     "./islands/KvValueEditor.tsx": $KvValueEditor,
     "./islands/ListCriteriaBox.tsx": $ListCriteriaBox,
     "./islands/ListResults.tsx": $ListResults,
+    "./islands/SelfHostedAccessTokenInput.tsx": $SelfHostedAccessTokenInput,
     "./islands/SetEntryEditor.tsx": $SetEntryEditor,
     "./islands/TabBar.tsx": $TabBar,
     "./islands/TestToast.tsx": $TestToast,
     "./islands/Toast.tsx": $Toast,
     "./islands/avatarMenu/AvatarMenu.tsx": $avatarMenu_AvatarMenu,
     "./islands/avatarMenu/UnknownAvatarMenu.tsx": $avatarMenu_UnknownAvatarMenu,
-    "./islands/connections/AddLocalConnectionButton.tsx": $connections_AddLocalConnectionButton,
+    "./islands/connections/AddConnectionButton.tsx": $connections_AddConnectionButton,
     "./islands/connections/CancelLocalConnectionButton.tsx":
       $connections_CancelLocalConnectionButton,
     "./islands/connections/ConnectButton.tsx": $connections_ConnectButton,

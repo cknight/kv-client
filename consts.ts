@@ -2,6 +2,7 @@
 export const CONNECTIONS_KEY_PREFIX = "connections";
 export const DEPLOY_USER_KEY_PREFIX = "deploy-user";
 export const ENCRYPTED_USER_ACCESS_TOKEN_PREFIX = "encrypted-user-access-token";
+export const ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX = "encrypted-self-hosted-access-token";
 export const DEPLOY_RATE_LIMITER_PREFIX = "deploy-rate-limiter";
 
 export const LINK = "text-[#0000ee] visited:text-violet-700 underline";

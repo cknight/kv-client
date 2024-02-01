@@ -53,8 +53,8 @@ export interface KvInstance {
   size: number;
 }
 
-export type Environment = "local" | "Deploy prod" | "Deploy preview" | "Deploy playground" | "other";
-export type Infra = "local" | "Deploy" | "unknown";
+export type Environment = "local" | "Deploy prod" | "Deploy preview" | "Deploy playground" | "other" | "self-hosted";
+export type Infra = "local" | "Deploy" | "self-hosted" | "unknown";
 
 export interface KvConnection {
   kvLocation: string;

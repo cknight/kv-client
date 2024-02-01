@@ -24,8 +24,14 @@ export async function hashKvKey(key: Deno.KvKey): Promise<string> {
   return await hash(DENO_CORE.serialize(key));
 }
 
-async function hash(bytes: Uint8Array): Promise<string> {
-  const hashBuffer = await crypto.subtle.digest("SHA-512", bytes);
+export async function shortHash(text: string): Promise<string> {
+  return await hash(new TextEncoder().encode(text), "SHA-1");
+}
+
+type CryptoAlgorithm = "SHA-1" | "SHA-256" | "SHA-384" | "SHA-512";
+
+async function hash(bytes: Uint8Array, algo: CryptoAlgorithm = 'SHA-512'): Promise<string> {
+  const hashBuffer = await crypto.subtle.digest(algo, bytes);
   const hashHex = encodeHex(new Uint8Array(hashBuffer));
   return hashHex;
 }

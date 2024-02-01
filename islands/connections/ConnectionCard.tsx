@@ -27,6 +27,8 @@ export function ConnectionCard(props: ConnectionCardProps) {
         return "bg-yellow-700";
       case "Deploy playground":
         return "bg-purple-700";
+      case "self-hosted":
+        return "bg-pink-700";
       default:
         return "bg-blue-700";
     }
@@ -42,6 +44,8 @@ export function ConnectionCard(props: ConnectionCardProps) {
         return "Preview";
       case "Deploy playground":
         return "Playground";
+      case "self-hosted":
+        return "Self-hosted";
       default:
         return "Other";
     }
@@ -74,16 +78,19 @@ export function ConnectionCard(props: ConnectionCardProps) {
         {props.organisation && <Chip name={"Org: " + props.organisation} bgColor="bg-blue-700" />}
       </div>
       <div id="actionRow" class="flex items-center justify-between mt-3">
-        {props.environment === "local"
+        {props.environment === "local" || props.environment === "self-hosted"
           ? (
             <div onClick={removeLocalConnection}>
               <XIcon title="Remove connection" />
             </div>
           )
           : <div></div>}
-        <div class="flex justify-center items-center">
-          <p class="text-xl">{readableSize(props.size)}</p>
-        </div>
+        {props.size != -1 &&
+          (
+            <div class="flex justify-center items-center">
+              <p class="text-xl">{readableSize(props.size)}</p>
+            </div>
+          )}
         <div class="flex">
           <InfoIcon title="View details" />
         </div>

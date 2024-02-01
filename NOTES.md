@@ -9,22 +9,25 @@ Security model
 EE = Enterprise edition
 =======================
 
-
 TODO Phase 1:
-1. TODO/FIXMEs
-2. Import/Export (maybe phase 2?)
-3. Test thoroughly
-4. Support self-hosted KV
-5. Documentation
-6. How to distribute
-7. Validation of inputs => auto enable/disable primary buttons
-8. Reload of local DB sizes on connections page
-9. Implement "info" icon on connections page
-10. Enforce timeouts for ops
-11. Clean up every module (document, imports, formatting)
-12. Write more tests
-13. Validate logout covers everything
-14. Remove all console.logs
+1. Import/Export (maybe phase 2?)
+2. Support self-hosted KV
+3. Validation of inputs => auto enable/disable primary buttons
+4. Implement "info" icon on connections page
+5. Enforce timeouts for ops
+6. Write more tests
+7. Validate logout covers everything
+8. Failure handling if token expires or is irretrievable
+9. Output console warning if KV_CLIENT_ENCRYPTION_KEY is not supplied
+10. Do we need userState.connection?  What's it for?
+
+TODO Release:
+1. Documentation
+2. Testing
+3. How to distribute
+4. Remove all console.logs
+5. Clean up every module (document, imports, formatting)
+6. TODO/FIXMEs
 
 Blocked:
 10. Partials for list page navigation (possibly blocked by https://github.com/denoland/fresh/issues/2174)
