@@ -1,11 +1,11 @@
-import { KvKeyInput } from "./KvKeyInput.tsx";
-import { Help } from "./Help.tsx";
-import { KeyHelp } from "../components/ListKeyHelp.tsx";
+import { KvKeyInput } from "../keyValue/KvKeyInput.tsx";
+import { Help } from "../Help.tsx";
+import { KeyHelp } from "../../components/ListKeyHelp.tsx";
 import { JSX } from "preact";
-import { clearListForm, submitListForm } from "../utils/ui/form.ts";
-import { Toast } from "./Toast.tsx";
+import { clearListForm, submitListForm } from "../../utils/ui/form.ts";
+import { Toast } from "../Toast.tsx";
 import { useSignal } from "@preact/signals";
-import { ToastType } from "../types.ts";
+import { ToastType } from "../../types.ts";
 
 interface ListDataProps {
   prefix: string;

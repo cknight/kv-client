@@ -1,11 +1,11 @@
 import { FreshContext, Handlers, RouteContext } from "$fresh/server.ts";
-import { GetCriteriaBox } from "../islands/GetCriteriaBox.tsx";
+import { GetCriteriaBox } from "../islands/get/GetCriteriaBox.tsx";
 import { KvUIEntry } from "../types.ts";
 import { getUserState } from "../utils/state/state.ts";
 import { getKv } from "../utils/kv/kvGet.ts";
 import { createKvUIEntry } from "../utils/utils.ts";
 import { Partial } from "$fresh/runtime.ts";
-import { GetResult } from "../islands/GetResult.tsx";
+import { GetResult } from "../islands/get/GetResult.tsx";
 import { getConnections } from "../utils/connections/connections.ts";
 import { submitGetForm } from "../utils/ui/form.ts";
 

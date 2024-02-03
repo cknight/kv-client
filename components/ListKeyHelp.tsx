@@ -1,5 +1,5 @@
 import { LINK } from "../consts.ts";
-import { KvKeyInput } from "../islands/KvKeyInput.tsx";
+import { KvKeyInput } from "../islands/keyValue/KvKeyInput.tsx";
 
 export function KeyHelp(props: { keyPart: string }) {
   return (

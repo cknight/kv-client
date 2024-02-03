@@ -1,7 +1,7 @@
 import { Handlers, RouteContext } from "$fresh/server.ts";
-import { ListCriteriaBox } from "../islands/ListCriteriaBox.tsx";
+import { ListCriteriaBox } from "../islands/list/ListCriteriaBox.tsx";
 import { KvConnection, KvUIEntry, PartialListResults, Stats } from "../types.ts";
-import { ListResults } from "../islands/ListResults.tsx";
+import { ListResults } from "../islands/list/ListResults.tsx";
 import { listKv } from "../utils/kv/kvList.ts";
 
 import { getUserState } from "../utils/state/state.ts";
@@ -207,7 +207,7 @@ export default async function List(req: Request, props: RouteContext<ListData>) 
   local.forEach((c) => connections.push({ name: c.name, id: c.id, env: c.environment }));
   remote.forEach((c) => connections.push({ name: c.name, id: c.id, env: c.environment }));
   selfHosted.forEach((c) => connections.push({ name: c.name, id: c.id, env: c.environment }));
-  
+
   return (
     <>
       <form

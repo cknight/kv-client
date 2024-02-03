@@ -10,16 +10,14 @@ EE = Enterprise edition
 =======================
 
 TODO Phase 1:
-1. Import/Export (maybe phase 2?)
-2. Support self-hosted KV
-3. Validation of inputs => auto enable/disable primary buttons
+1. Import
+2. Export
 4. Implement "info" icon on connections page
 5. Enforce timeouts for ops
 6. Write more tests
 7. Validate logout covers everything
 8. Failure handling if token expires or is irretrievable
 9. Output console warning if KV_CLIENT_ENCRYPTION_KEY is not supplied
-10. Do we need userState.connection?  What's it for?
 
 TODO Release:
 1. Documentation
@@ -30,18 +28,23 @@ TODO Release:
 6. TODO/FIXMEs
 
 Blocked:
-10. Partials for list page navigation (possibly blocked by https://github.com/denoland/fresh/issues/2174)
+1. Partials for list page navigation (possibly blocked by https://github.com/denoland/fresh/issues/2174)
+2. Issue with self-hosted connections and invalid URLs (https://github.com/denoland/deno/issues/22248)
 
 Phase 2:
 1. EE - Browse audit logs
 2. Optional OAuth2 authentication
 3. Connections filter
 4. Introduce configuration
+5. Mobile responsiveness
 
 
 Config
 * ability to connect to this KV instance, part of role based access
-* read only
+* restrictions on specific connections or environments:
+   - permit read, copy from, copy into, delete, set, 'all'
+   - allow connection
+   - deny connection
 * No global read, no global delete, no global copy/export
 * Log level
 * Cache time in ms

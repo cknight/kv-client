@@ -1,10 +1,10 @@
 import { Signal, useSignal, useSignalEffect } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import { JSX } from "preact/jsx-runtime";
-import { Help } from "./Help.tsx";
-import { SupportedValueTypes } from "../types.ts";
-import { KvValueJson } from "../routes/api/valueSize.tsx";
-import { debounce } from "../utils/ui/debounce.ts";
+import { Help } from "../Help.tsx";
+import { SupportedValueTypes } from "../../types.ts";
+import { KvValueJson } from "../../routes/api/valueSize.tsx";
+import { debounce } from "../../utils/ui/debounce.ts";
 
 interface KvValueEditorProps {
   kvValue: Signal<string>;

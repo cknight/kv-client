@@ -21,6 +21,7 @@ import * as $api_setEntry from "./routes/api/setEntry.tsx";
 import * as $api_updateKey from "./routes/api/updateKey.tsx";
 import * as $api_valueSize from "./routes/api/valueSize.tsx";
 import * as $get from "./routes/get.tsx";
+import * as $import from "./routes/import.tsx";
 import * as $index from "./routes/index.tsx";
 import * as $list from "./routes/list.tsx";
 import * as $logout from "./routes/logout.tsx";
@@ -29,14 +30,7 @@ import * as $test from "./routes/test.tsx";
 import * as $AccessTokenInput from "./islands/AccessTokenInput.tsx";
 import * as $DarkMode from "./islands/DarkMode.tsx";
 import * as $EntryEditor from "./islands/EntryEditor.tsx";
-import * as $GetCriteriaBox from "./islands/GetCriteriaBox.tsx";
-import * as $GetResult from "./islands/GetResult.tsx";
 import * as $Help from "./islands/Help.tsx";
-import * as $KvKeyEditor from "./islands/KvKeyEditor.tsx";
-import * as $KvKeyInput from "./islands/KvKeyInput.tsx";
-import * as $KvValueEditor from "./islands/KvValueEditor.tsx";
-import * as $ListCriteriaBox from "./islands/ListCriteriaBox.tsx";
-import * as $ListResults from "./islands/ListResults.tsx";
 import * as $SelfHostedAccessTokenInput from "./islands/SelfHostedAccessTokenInput.tsx";
 import * as $SetEntryEditor from "./islands/SetEntryEditor.tsx";
 import * as $TabBar from "./islands/TabBar.tsx";
@@ -50,6 +44,13 @@ import * as $connections_ConnectButton from "./islands/connections/ConnectButton
 import * as $connections_ConnectionCard from "./islands/connections/ConnectionCard.tsx";
 import * as $connections_LocalConnectionRadio from "./islands/connections/LocalConnectionRadio.tsx";
 import * as $connections_RemoveLocalConnectionDialog from "./islands/connections/RemoveLocalConnectionDialog.tsx";
+import * as $get_GetCriteriaBox from "./islands/get/GetCriteriaBox.tsx";
+import * as $get_GetResult from "./islands/get/GetResult.tsx";
+import * as $keyValue_KvKeyEditor from "./islands/keyValue/KvKeyEditor.tsx";
+import * as $keyValue_KvKeyInput from "./islands/keyValue/KvKeyInput.tsx";
+import * as $keyValue_KvValueEditor from "./islands/keyValue/KvValueEditor.tsx";
+import * as $list_ListCriteriaBox from "./islands/list/ListCriteriaBox.tsx";
+import * as $list_ListResults from "./islands/list/ListResults.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -73,6 +74,7 @@ const manifest = {
     "./routes/api/updateKey.tsx": $api_updateKey,
     "./routes/api/valueSize.tsx": $api_valueSize,
     "./routes/get.tsx": $get,
+    "./routes/import.tsx": $import,
     "./routes/index.tsx": $index,
     "./routes/list.tsx": $list,
     "./routes/logout.tsx": $logout,
@@ -83,14 +85,7 @@ const manifest = {
     "./islands/AccessTokenInput.tsx": $AccessTokenInput,
     "./islands/DarkMode.tsx": $DarkMode,
     "./islands/EntryEditor.tsx": $EntryEditor,
-    "./islands/GetCriteriaBox.tsx": $GetCriteriaBox,
-    "./islands/GetResult.tsx": $GetResult,
     "./islands/Help.tsx": $Help,
-    "./islands/KvKeyEditor.tsx": $KvKeyEditor,
-    "./islands/KvKeyInput.tsx": $KvKeyInput,
-    "./islands/KvValueEditor.tsx": $KvValueEditor,
-    "./islands/ListCriteriaBox.tsx": $ListCriteriaBox,
-    "./islands/ListResults.tsx": $ListResults,
     "./islands/SelfHostedAccessTokenInput.tsx": $SelfHostedAccessTokenInput,
     "./islands/SetEntryEditor.tsx": $SetEntryEditor,
     "./islands/TabBar.tsx": $TabBar,
@@ -106,6 +101,13 @@ const manifest = {
     "./islands/connections/LocalConnectionRadio.tsx": $connections_LocalConnectionRadio,
     "./islands/connections/RemoveLocalConnectionDialog.tsx":
       $connections_RemoveLocalConnectionDialog,
+    "./islands/get/GetCriteriaBox.tsx": $get_GetCriteriaBox,
+    "./islands/get/GetResult.tsx": $get_GetResult,
+    "./islands/keyValue/KvKeyEditor.tsx": $keyValue_KvKeyEditor,
+    "./islands/keyValue/KvKeyInput.tsx": $keyValue_KvKeyInput,
+    "./islands/keyValue/KvValueEditor.tsx": $keyValue_KvValueEditor,
+    "./islands/list/ListCriteriaBox.tsx": $list_ListCriteriaBox,
+    "./islands/list/ListResults.tsx": $list_ListResults,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;

@@ -1,11 +1,11 @@
 import { useSignal } from "@preact/signals";
-import { KvUIEntry, SupportedValueTypes, ToastType } from "../types.ts";
-import { KvValueEditor } from "./KvValueEditor.tsx";
+import { KvUIEntry, SupportedValueTypes, ToastType } from "../../types.ts";
+import { KvValueEditor } from "../keyValue/KvValueEditor.tsx";
 import { JSX } from "preact/jsx-runtime";
-import { Toast } from "./Toast.tsx";
-import { KvSetEntry } from "../routes/api/setEntry.tsx";
-import { DeleteKeyDialog } from "../components/dialogs/DeleteKeyDialog.tsx";
-import { CopyKeyDialog } from "../components/dialogs/CopyKeyDialog.tsx";
+import { Toast } from "../Toast.tsx";
+import { KvSetEntry } from "../../routes/api/setEntry.tsx";
+import { DeleteKeyDialog } from "../../components/dialogs/DeleteKeyDialog.tsx";
+import { CopyKeyDialog } from "../../components/dialogs/CopyKeyDialog.tsx";
 
 interface GetResultProps {
   connectionId: string;

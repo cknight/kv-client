@@ -1,6 +1,6 @@
 import { Fragment, JSX } from "preact";
-import { KvKeyEditor } from "./KvKeyEditor.tsx";
-import { KvValueEditor } from "./KvValueEditor.tsx";
+import { KvKeyEditor } from "./keyValue/KvKeyEditor.tsx";
+import { KvValueEditor } from "./keyValue/KvValueEditor.tsx";
 import { KvSetEntry } from "../routes/api/setEntry.tsx";
 import { SupportedValueTypes, ToastType } from "../types.ts";
 import { useSignal } from "@preact/signals";
