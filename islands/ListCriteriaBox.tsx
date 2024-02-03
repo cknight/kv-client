@@ -3,6 +3,9 @@ import { Help } from "./Help.tsx";
 import { KeyHelp } from "../components/ListKeyHelp.tsx";
 import { JSX } from "preact";
 import { clearListForm, submitListForm } from "../utils/ui/form.ts";
+import { Toast } from "./Toast.tsx";
+import { useSignal } from "@preact/signals";
+import { ToastType } from "../types.ts";
 
 interface ListDataProps {
   prefix: string;
@@ -22,6 +25,9 @@ export function ListCriteriaBox(data: ListDataProps) {
   const reverse = data.reverse;
   const validationError = data.validationError;
   const disableCache = data.disableCache;
+  const showToastSignal = useSignal(data.validationError ? true : false);
+  const toastMsg = useSignal(data.validationError || "");
+  const toastType = useSignal<ToastType>("error");
 
   function resetForm(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     //event.preventDefault(); //e.g. don't submit the form
@@ -47,7 +53,6 @@ export function ListCriteriaBox(data: ListDataProps) {
 
   return (
     <div class="border border-1 border-[#666] bg-[#353535] rounded-md p-4 mt-3">
-      {validationError && <div class="text-red-500 w-full">{validationError}</div>}
       <div class="flex w-full">
         <div class="w-2/3">
           <div class="w-full flex items-center">
@@ -188,6 +193,12 @@ export function ListCriteriaBox(data: ListDataProps) {
           List
         </button>
       </div>
+      <Toast
+        id="listCriteriaToast"
+        message={toastMsg.value}
+        show={showToastSignal}
+        type={toastType.value}
+      />
     </div>
   );
 }

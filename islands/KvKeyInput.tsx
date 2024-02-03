@@ -4,12 +4,13 @@ import { JSX } from "preact";
 
 export interface KvKeyInputProps extends JSX.HTMLAttributes<HTMLInputElement> {
   disableTypes?: boolean;
+  typesId?: string;
 }
 
 export function KvKeyInput(props: KvKeyInputProps) {
   const { onInput: parentOnInput, disableTypes = false, ...inputProps } = props;
   const types = useSignal("");
-  const typesId = useSignal(crypto.randomUUID());
+  const typesId = useSignal(props.typesId || crypto.randomUUID());
   let timeoutId = -1;
 
   useEffect(() => {

@@ -68,6 +68,7 @@ Deno.test("kvKeyParser - complex input", () => {
   assertEquals(parseKvKey(`"\\""`), ['\\"']);
   assertEquals(parseKvKey(`"abc,def\\",\\","`), ['abc,def\\",\\",']);
   assertEquals(parseKvKey(`"abcd,ef\\",ghi"`), ['abcd,ef\\",ghi']);
+  assertEquals(parseKvKey(`"Hello", "this,i"`), ["Hello", "this,i"]);
 });
 
 Deno.test("kvKeyParser - invalid inputs", () => {

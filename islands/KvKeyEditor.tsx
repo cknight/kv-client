@@ -8,6 +8,7 @@ import { BasicKeyHelp } from "../components/BasicKeyHelp.tsx";
 
 interface KvKeyEditorProps {
   kvKeyValue: Signal<string>;
+  typesId?: string;
   showDoNotOverwrite: boolean;
 }
 
@@ -43,6 +44,7 @@ export function KvKeyEditor(props: KvKeyEditorProps) {
             form="pageForm"
             type="text"
             value={props.kvKeyValue.value}
+            typesId={props.typesId}
             onInput={onKeyInput}
             name="kvKey"
             class="input input-bordered input-primary w-full p-2"

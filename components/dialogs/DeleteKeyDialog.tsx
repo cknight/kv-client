@@ -90,7 +90,6 @@ export function DeleteKeyDialog(props: CopyDeleteSingleProps) {
   }
 
   function connNameAndEnv() {
-    console.log("connections", connections);
     const conn = connections?.filter((c) => c.id === connectionId)[0];
     return conn ? conn.name + " (" + conn.env + ")" : "";
   }

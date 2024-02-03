@@ -3,7 +3,7 @@ import { ulid } from "$std/ulid/mod.ts";
 import { JSX } from "preact/jsx-runtime";
 import { CONNECTIONS_KEY_PREFIX, ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX, env } from "../consts.ts";
 import { LocalConnectionRadioButton } from "../islands/connections/LocalConnectionRadio.tsx";
-import { KvConnection, KvInstance } from "../types.ts";
+import { KvConnection, KvInstance, ToastType } from "../types.ts";
 import { peekAtLocalKvInstances } from "../utils/connections/autoDiscoverKv.ts";
 import { localKv } from "../utils/kv/db.ts";
 import { CancelLocalConnectionButton } from "../islands/connections/CancelLocalConnectionButton.tsx";
@@ -13,6 +13,10 @@ import { mutex } from "../utils/kv/kvConnect.ts";
 import { hashKvKey } from "../utils/utils.ts";
 import { storeEncryptedString } from "../utils/transform/encryption.ts";
 import { shortHash } from "../utils/utils.ts";
+import { URL_REG_EX } from "../utils/urlRegex.ts";
+import { useSignal } from "@preact/signals";
+import { Toast } from "../islands/Toast.tsx";
+import { getSelfHostedConnections } from "../utils/connections/connections.ts";
 
 interface AllLocalConnectionProps {
   connectionName?: string;
@@ -41,6 +45,12 @@ export const handler: Handlers = {
     } else if (!accessToken || typeof accessToken !== "string") {
       error = true;
       errorText = "Enter an access token";
+    } else if (!URL_REG_EX.test(connectionLocation)) {
+      error = true;
+      errorText = "Connection location must be a valid URL";
+    } else if ((await getSelfHostedConnections()).find((conn) => conn.name === connectionName)) {
+      error = true;
+      errorText = "A connection with this name already exists";
     } else {
       try {
         /**
@@ -55,6 +65,8 @@ export const handler: Handlers = {
         // test the connection opens successfully
         const tempKv = await Deno.openKv(connectionLocation);
         Deno.env.delete(env.DENO_KV_ACCESS_TOKEN);
+        // await tempKv.get(["a random key to test the connection"]);
+        console.log("hello world");
         tempKv.close();
         release();
 
@@ -83,12 +95,10 @@ export const handler: Handlers = {
         errorText = e.message.split(":")[0];
       }
     }
-    const localKVInstances = await peekAtLocalKvInstances();
 
     return await ctx.render({
       error,
       errorText,
-      kvInstances: localKVInstances,
       connectionName,
       connectionLocation,
     });
@@ -100,6 +110,9 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
   const errorText = props.data?.errorText;
   const connectionName = props.data?.connectionName || "";
   const connectionLocation = props.data?.connectionLocation || "";
+  const showToastSignal = useSignal(isError ? true : false);
+  const toastMsg = useSignal(errorText || "");
+  const toastType = useSignal<ToastType>("error");
 
   return (
     <div class="max-w-full">
@@ -109,11 +122,6 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
         </div>
         <div class="border border-1 border-[#666] bg-[#353535] rounded-md p-4 mt-3 mx-auto">
           <form method="post" f-client-nav={false}>
-            {isError && (
-              <h2 class="text-lg font-bold p-2 text-red-400 text-center break-all">
-                {errorText || "Invalid connection"}
-              </h2>
-            )}
             <div class="mt-3 flex flex-row items-center">
               <label
                 for="connectionName"
@@ -125,6 +133,7 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
                 id="connectionName"
                 name="connectionName"
                 value={connectionName}
+                required
                 class="input input-primary w-full p-2"
               />
               <Help dialogId="nameHelp" dialogTitle="Name">
@@ -145,6 +154,7 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
                 id="connectionLocation"
                 name="connectionLocation"
                 value={connectionLocation}
+                required
                 placeholder={"https://my-self-hosted-instance.com/db"}
                 class="input input-primary w-full p-2"
               />
@@ -171,6 +181,12 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
           </form>
         </div>
       </div>
+      <Toast
+        id="addLocalConnectionToast"
+        message={toastMsg.value}
+        show={showToastSignal}
+        type={toastType.value}
+      />
     </div>
   );
 }

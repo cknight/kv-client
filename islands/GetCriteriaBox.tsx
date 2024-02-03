@@ -5,30 +5,44 @@ import { Help } from "./Help.tsx";
 import { KvKeyInput } from "./KvKeyInput.tsx";
 import { KvKeyEditor } from "./KvKeyEditor.tsx";
 import { useSignal } from "@preact/signals";
+import { IS_BROWSER } from "$fresh/runtime.ts";
+import { useEffect } from "preact/hooks";
+import { ToastType } from "../types.ts";
+import { Toast } from "./Toast.tsx";
 
 interface GetDataProps {
   kvKey: string;
+  error?: string;
 }
 
 export function GetCriteriaBox(data: GetDataProps) {
   const kvKeySignal = useSignal(data.kvKey);
+  const showToastSignal = useSignal(data.error ? true : false);
+  const toastMsg = useSignal(data.error || "");
+  const toastType = useSignal<ToastType>("error");
+
+  useEffect(() => {
+    if (data.error) {
+      document.getElementById("getResults")!.style.display = "none";
+    }
+  });
 
   function resetForm(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault(); //e.g. don't submit the form
     clearGetForm();
-    document.getElementById('getResults')!.style.display='none';
+    document.getElementById("getResults")!.style.display = "none";
   }
 
   function submitForm(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault(); //e.g. don't submit the form
-    document.body.style.cursor = "wait"; // Set the cursor to 'wait'
+    document.body.style.cursor = "wait";
 
     submitGetForm();
   }
 
   return (
     <div class="border border-1 border-[#666] bg-[#353535] rounded-md p-4 mt-3">
-      <KvKeyEditor showDoNotOverwrite={false} kvKeyValue={kvKeySignal} />
+      <KvKeyEditor showDoNotOverwrite={false} kvKeyValue={kvKeySignal} typesId="getTypes" />
       <div class="flex w-full justify-center gap-x-4 mt-4">
         <button
           type="button"
@@ -47,6 +61,12 @@ export function GetCriteriaBox(data: GetDataProps) {
           Get
         </button>
       </div>
+      <Toast
+        id="getCriteriaToast"
+        message={toastMsg.value}
+        show={showToastSignal}
+        type={toastType.value}
+      />
     </div>
   );
 }

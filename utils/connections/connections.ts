@@ -38,7 +38,7 @@ export async function getConnections(session: string): Promise<Connections> {
   return { local: localConnections, selfHosted: selfHostedConnections, remote };
 }
 
-async function getLocalConnections(): Promise<KvConnection[]> {
+export async function getLocalConnections(): Promise<KvConnection[]> {
   const start = Date.now();
   const connections: KvConnection[] = [];
   const connectionList = localKv.list<KvConnection>({ prefix: [CONNECTIONS_KEY_PREFIX] });
@@ -58,7 +58,7 @@ async function getLocalConnections(): Promise<KvConnection[]> {
   return connections;
 }
 
-async function getSelfHostedConnections(): Promise<KvConnection[]> {
+export async function getSelfHostedConnections(): Promise<KvConnection[]> {
   const start = Date.now();
   const connections: KvConnection[] = [];
   const connectionList = localKv.list<KvConnection>({ prefix: [CONNECTIONS_KEY_PREFIX] });

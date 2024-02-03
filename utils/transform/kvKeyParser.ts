@@ -1,7 +1,7 @@
 import { UINT8_REGEX } from "../../consts.ts";
 import { ValidationError } from "../errors.ts";
 
-const LOG_ENABLED = false;
+const LOG_ENABLED = true;
 
 export function parseKvKey(input: string): Deno.KvKey {
   if (input === "") return [];
@@ -13,41 +13,43 @@ export function parseKvKey(input: string): Deno.KvKey {
   let inUint8Array = false;
 
   const parts = input.trim().split(",");
+  LOG_ENABLED && console.log("Parts:", parts);
   parts.forEach((part) => {
     LOG_ENABLED && console.log("Processing part:", part);
 
     if (part.length === 0 && !inString) {
       throw new ValidationError("Invalid key format: " + input);
     }
-    if (isStringChar(part[0]) || inString) {
+    const workingString = inString? part : part.trimStart();
+    if (isStringChar(workingString[0]) || inString) {
       // start of new string or middle of previous string
       if (endBlockChar === "" && !inString) {
         // start of new string
-        if (part[part.length - 1] === part[0] && part[part.length - 2] !== `\\`) {
+        if (workingString[workingString.length - 1] === workingString[0] && workingString[workingString.length - 2] !== `\\`) {
           // simple complete string
-          LOG_ENABLED && console.log("End of string, processing:", part);
-          processPart(part, key);
+          LOG_ENABLED && console.log("End of string, processing:", workingString);
+          processPart(workingString, key);
           inString = false;
         } else {
           // start of complex string
-          endBlockChar = part[0];
-          partialKey.push(part);
+          endBlockChar = workingString[0];
+          partialKey.push(workingString);
           inString = true;
         }
       } else {
         partialKey.push(",");
         // middle of previous string
-        if (part[part.length - 1] === endBlockChar && part[part.length - 2] !== `\\`) {
+        if (workingString[workingString.length - 1] === endBlockChar && workingString[workingString.length - 2] !== `\\`) {
           // end of complex string
           endBlockChar = "";
-          partialKey.push(part);
+          partialKey.push(workingString);
           LOG_ENABLED && console.log("End of string, processing:", partialKey.join(""));
           processPart(partialKey.join(""), key);
           partialKey = [];
           inString = false;
         } else {
           // middle of complex string
-          partialKey.push(part);
+          partialKey.push(workingString);
         }
       }
     } else {

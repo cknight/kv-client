@@ -3,13 +3,17 @@ import { ulid } from "$std/ulid/mod.ts";
 import { JSX } from "preact/jsx-runtime";
 import { CONNECTIONS_KEY_PREFIX } from "../consts.ts";
 import { LocalConnectionRadioButton } from "../islands/connections/LocalConnectionRadio.tsx";
-import { KvConnection, KvInstance } from "../types.ts";
+import { KvConnection, KvInstance, ToastType } from "../types.ts";
 import { peekAtLocalKvInstances } from "../utils/connections/autoDiscoverKv.ts";
 import { localKv } from "../utils/kv/db.ts";
 import { readableSize } from "../utils/utils.ts";
 import { CancelLocalConnectionButton } from "../islands/connections/CancelLocalConnectionButton.tsx";
 import { Help } from "../islands/Help.tsx";
 import { shortHash } from "../utils/utils.ts";
+import { Toast } from "../islands/Toast.tsx";
+import { useSignal } from "@preact/signals";
+import { useEffect } from "preact/hooks";
+import { getLocalConnections } from "../utils/connections/connections.ts";
 
 interface AllLocalConnectionProps {
   connectionName?: string;
@@ -35,6 +39,9 @@ export const handler: Handlers = {
     } else if (!connectionLocation || typeof connectionLocation !== "string") {
       error = true;
       errorText = "Enter a connection location";
+    } else if ((await getLocalConnections()).find((conn) => conn.name === connectionName)) {
+      error = true;
+      errorText = "A connection with this name already exists";
     } else {
       try {
         //validate file exists
@@ -83,15 +90,11 @@ export const handler: Handlers = {
 
 export default function AddLocalConnection(props: PageProps<AllLocalConnectionProps>) {
   const localKVInstances = props.data?.kvInstances;
-  const isError = props.data?.error;
-  const errorText = props.data?.errorText;
   const connectionName = props.data?.connectionName || "";
   const connectionLocation = props.data?.connectionLocation || "";
-
-  function cancel(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
-    event.preventDefault();
-    window.location.href = "/";
-  }
+  const showToastSignal = useSignal(props.data.error ? true : false);
+  const toastMsg = useSignal(props.data.errorText || "");
+  const toastType = useSignal<ToastType>("error");
 
   return (
     <div class="max-w-full">
@@ -101,11 +104,13 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
         </div>
         <div class="border border-1 border-[#666] bg-[#353535] rounded-md p-4 mt-3 mx-auto">
           <form method="post" f-client-nav={false}>
-            {isError && (
+            {
+              /* {isError && (
               <h2 class="text-lg font-bold p-2 text-red-500 text-center break-all">
                 {errorText || "Invalid connection"}
               </h2>
-            )}
+            )} */
+            }
             <div class="mt-3 flex flex-row items-center">
               <label
                 for="connectionName"
@@ -117,6 +122,7 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
                 id="connectionName"
                 name="connectionName"
                 value={connectionName}
+                required
                 class="input input-primary w-full p-2"
               />
               <Help dialogId="nameHelp" dialogTitle="Name">
@@ -137,6 +143,7 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
                 id="connectionLocation"
                 name="connectionLocation"
                 value={connectionLocation}
+                required
                 class="input input-primary w-full p-2"
               />
               <Help dialogId="locationHelp" dialogTitle="Location">
@@ -201,6 +208,12 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
           ))}
         </div>
       </div>
+      <Toast
+        id="addLocalConnectionToast"
+        message={toastMsg.value}
+        show={showToastSignal}
+        type={toastType.value}
+      />
     </div>
   );
 }

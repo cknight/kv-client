@@ -12,7 +12,7 @@ import { submitGetForm } from "../utils/ui/form.ts";
 export interface GetData {
   key: string;
   result?: KvUIEntry;
-  isPost: boolean;
+  error?: string;
 }
 
 export const handler: Handlers = {
@@ -20,16 +20,24 @@ export const handler: Handlers = {
     const form = await req.formData();
     const key = form.get("kvKey")?.toString() || "";
 
-    const kvUiEntry = await getData(key, req, ctx);
-    return await ctx.render({ key, result: kvUiEntry, isPost: true });
+    try {
+      const kvUiEntry = await getData(key, req, ctx);
+      return await ctx.render({ key, result: kvUiEntry });
+    } catch (e) {
+      return await ctx.render({ key, error: e.message });
+    }
   },
   async GET(req, ctx) {
     const urlKvKey = new URL(req.url).searchParams.get("kvKey");
     if (urlKvKey) {
-      const kvUiEntry = await getData(urlKvKey, req, ctx);
-      return await ctx.render({ key: urlKvKey, result: kvUiEntry, isPost: false });
+      try {
+        const kvUiEntry = await getData(urlKvKey, req, ctx);
+        return await ctx.render({ key: urlKvKey, result: kvUiEntry });
+      } catch (e) {
+        return await ctx.render({ key: urlKvKey, error: e.message });
+      }
     }
-    return await ctx.render({ key: "", isPost: false });
+    return await ctx.render({ key: "" });
   },
 };
 
@@ -48,28 +56,24 @@ async function getData(
   }
 
   let resultUIEntry: KvUIEntry | undefined;
-  try {
-    const cId = connectionId || connection?.id || "";
-    const result = await getKv({ session, connectionId: cId, key: kvKey });
-    if (result.versionstamp !== null) {
-      resultUIEntry = await createKvUIEntry(result);
-    }
-  } catch (e) {
-    console.error(e);
+  const cId = connectionId || connection?.id || "";
+  const result = await getKv({ session, connectionId: cId, key: kvKey });
+  if (result.versionstamp !== null) {
+    resultUIEntry = await createKvUIEntry(result);
   }
+
   return resultUIEntry;
 }
 
 export default async function Get(req: Request, props: RouteContext<GetData>) {
   const sp = props.url.searchParams;
   const kvKey = props.data?.key || sp.get("kvKey") || "";
+  const error = props.data?.error || "";
   const connectionId = sp.get("connectionId") || "";
-  const isPost = props.data?.isPost || false;
 
   const session = props.state.session as string;
   const state = getUserState(session);
   const connection = state!.connection;
-  const connectionName = connection?.name || "";
   const connectionLocation = connection?.kvLocation || "";
 
   const { local, remote, selfHosted } = await getConnections(session);
@@ -77,7 +81,7 @@ export default async function Get(req: Request, props: RouteContext<GetData>) {
   local.forEach((c) => connections.push({ name: c.name, id: c.id, env: c.environment }));
   remote.forEach((c) => connections.push({ name: c.name, id: c.id, env: c.environment }));
   selfHosted.forEach((c) => connections.push({ name: c.name, id: c.id, env: c.environment }));
-  
+
   return (
     <>
       <form
@@ -87,7 +91,7 @@ export default async function Get(req: Request, props: RouteContext<GetData>) {
         class="m-8 mt-0 "
       >
         <Partial name="get">
-          <GetCriteriaBox kvKey={kvKey} />
+          <GetCriteriaBox kvKey={kvKey} error={error}/>
           <GetResult
             connectionId={connectionId}
             kvKey={kvKey}

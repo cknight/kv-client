@@ -10,7 +10,6 @@ export const mutex = new Mutex();
 
 export async function establishKvConnection(session: string, connectionId: string): Promise<void> {
   const userState = getUserState(session);
-  console.log("connectionId=====================", connectionId)
   if (!userState) {
     // No session found
     throw new ValidationError("Invalid session");
@@ -73,7 +72,6 @@ export async function establishKvConnection(session: string, connectionId: strin
 
     userState.connection = conn.value;
   } else if (connection) {
-    console.log("Connection=====================", connection)
     // Local KV file
     const location = connection.kvLocation;
     try {
