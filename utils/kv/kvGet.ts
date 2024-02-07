@@ -1,5 +1,4 @@
-import { parse } from "$std/path/parse.ts";
-import { GetAuditLog, KvGetOptions, OpStats } from "../../types.ts";
+import { GetAuditLog, KvGetOptions } from "../../types.ts";
 import { executorId } from "../connections/denoDeploy/deployUser.ts";
 import { ValidationError } from "../errors.ts";
 import { getUserState } from "../state/state.ts";

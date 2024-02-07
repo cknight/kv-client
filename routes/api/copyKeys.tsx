@@ -7,8 +7,9 @@ import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";
 import { setAll, SetResult } from "../../utils/kv/kvSet.ts";
 import { getUserState } from "../../utils/state/state.ts";
 import { entriesToOperateOn, KeyOperationData } from "../../utils/ui/buildResultsPage.ts";
-import { connectToDestKv } from "../../utils/connections/connections.ts";
 import { CacheInvalidationError } from "../../utils/errors.ts";
+import { connectToSecondaryKv } from "../../utils/kv/kvConnect.ts";
+import { asPercentString } from "../../utils/ui/display.ts";
 
 export interface CopyKeysData {
   sourceConnectionId: string;
@@ -68,8 +69,7 @@ export const handler: Handlers = {
 
       if (copyResult.aborted) {
         const percComplete = kc / result.copyEntries;
-        const percCompleteString = `${Math.round(percComplete * 100)}%`;
-        body = `Copy aborted at ${percCompleteString} complete. ${kc} key${
+        body = `Copy aborted at ${asPercentString(percComplete)} complete. ${kc} key${
           kc > 1 ? "s" : ""
         } copied`;
         status = 499;
@@ -88,7 +88,7 @@ export const handler: Handlers = {
         status,
       });
     } catch (e) {
-      console.log("Failed to copy keys", e.message)
+      console.log("Failed to copy keys", e.message);
       const errorMessage = e instanceof CacheInvalidationError ? e.message : "Failed to copy keys";
       return new Response(errorMessage, {
         status: 500,
@@ -125,7 +125,7 @@ async function copyKeys(data: CopyKeysData, session: string): Promise<CopyOpResu
   //Compute which keys to copy
   const copyEntries = await entriesToOperateOn(keyOperationData, session);
 
-  const destKv = await connectToDestKv(session, destConnectionId);
+  const destKv = await connectToSecondaryKv(session, destConnectionId);
 
   //TODO - implement SSE progress updates.  Client can register progress id through POST body,
   //      and then GET progress updates through a separate endpoint.

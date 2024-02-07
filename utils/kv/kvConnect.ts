@@ -1,4 +1,9 @@
-import { CONNECTIONS_KEY_PREFIX, ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX, ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, env } from "../../consts.ts";
+import {
+  CONNECTIONS_KEY_PREFIX,
+  ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX,
+  ENCRYPTED_USER_ACCESS_TOKEN_PREFIX,
+  env,
+} from "../../consts.ts";
 import { KvConnection } from "../../types.ts";
 import { getUserState } from "../state/state.ts";
 import { ValidationError } from "../errors.ts";
@@ -39,37 +44,18 @@ export async function establishKvConnection(session: string, connectionId: strin
       throw new ValidationError("No access token available");
     }
 
-    /**
-     * Prevent access token leakage in a multi-user setting by acquiring a mutex,
-     * establishing the connection, and then clearing the access token from the
-     * environment variable.  Access token is only required for the initial
-     * connection.
-     */
-    const release = await mutex.acquire();
-    Deno.env.set(env.DENO_KV_ACCESS_TOKEN, accessToken);
-    userState.kv = await Deno.openKv(connection.kvLocation);
-    Deno.env.delete(env.DENO_KV_ACCESS_TOKEN);
-    release();
-
+    userState.kv = await openKvWithToken(connection.kvLocation, accessToken);
     userState.connection = conn.value;
   } else if (connection && connection.infra === "self-hosted") {
     // Self-hosted KV access
-    const accessToken = await getEncryptedString([ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX, connection.id]);
+    const accessToken = await getEncryptedString([
+      ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX,
+      connection.id,
+    ]);
     if (!accessToken) {
       throw new ValidationError("No access token available");
     }
-    /**
-     * Prevent access token leakage in a multi-user setting by acquiring a mutex,
-     * establishing the connection, and then clearing the access token from the
-     * environment variable.  Access token is only required for the initial
-     * connection.
-     */
-    const release = await mutex.acquire();
-    Deno.env.set(env.DENO_KV_ACCESS_TOKEN, accessToken);
-    userState.kv = await Deno.openKv(connection.kvLocation);
-    Deno.env.delete(env.DENO_KV_ACCESS_TOKEN);
-    release();
-
+    userState.kv = await openKvWithToken(connection.kvLocation, accessToken);
     userState.connection = conn.value;
   } else if (connection) {
     // Local KV file
@@ -88,4 +74,72 @@ export async function establishKvConnection(session: string, connectionId: strin
   }
 
   console.debug(`Established KV connection to '${connection.name} (${connection.environment})'`);
+}
+
+/**
+ * Establish a secondary KV connection.  This is used for copying data between KV instances.
+ *
+ * @param session
+ * @param connectionId
+ * @returns Deno.Kv connection (untested)
+ */
+export async function connectToSecondaryKv(
+  session: string,
+  connectionId: string,
+): Promise<Deno.Kv> {
+  const conn = await localKv.get<KvConnection>([
+    CONNECTIONS_KEY_PREFIX,
+    connectionId,
+  ]);
+  const connection: KvConnection | null = conn.value;
+
+  if (!connection) {
+    console.error(`Connection ${connectionId} does not exist in connections in KV`);
+    throw new Error(`Connection ${connectionId} does not exist`);
+  }
+
+  const location = connection.kvLocation;
+  if (connection.infra === "Deploy") {
+    const accessToken = await getEncryptedString([ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session]);
+    const kv = await openKvWithToken(location, accessToken);
+    return kv;
+  } else if (connection.infra === "self-hosted") {
+    const accessToken = await getEncryptedString([
+      ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX,
+      connection.id,
+    ]);
+
+    const kv = await openKvWithToken(location, accessToken);
+    return kv;
+  } else {
+    // Local KV file
+    try {
+      // Check if the file exists (and if it does we assume it is a valid KV file)
+      await Deno.lstat(location);
+    } catch (_e) {
+      console.error(`Connection ${location} does not exist`);
+      throw new Error(`Connection ${location} does not exist`);
+    }
+    return await Deno.openKv(location);
+  }
+}
+
+/**
+ * Prevent access token leakage in a multi-user setting by acquiring a mutex,
+ * establishing the connection, and then clearing the access token from the
+ * environment variable.  Access token is only required for the initial
+ * connection.
+ */
+export async function openKvWithToken(location: string, token: string | null): Promise<Deno.Kv> {
+  if (!token) {
+    console.error("No access token available");
+    throw new Error("No access token available");
+  }
+
+  const release = await mutex.acquire();
+  Deno.env.set(env.DENO_KV_ACCESS_TOKEN, token);
+  const kv = await Deno.openKv(location);
+  Deno.env.delete(env.DENO_KV_ACCESS_TOKEN);
+  release();
+  return kv;
 }

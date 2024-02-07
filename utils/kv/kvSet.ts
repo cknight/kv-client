@@ -1,7 +1,6 @@
+import { shouldAbort } from "../state/state.ts";
 import { approximateSize } from "../utils.ts";
 import { writeUnitsConsumed } from "./kvUnitsConsumed.ts";
-
-export const abortSet = new Set<string>();
 
 export interface SetResult {
   failedKeys: Deno.KvKey[];
@@ -51,7 +50,7 @@ export async function setAll(
   let lastSuccessfulVersionstamp: string | undefined = undefined;
 
   for (const entry of entries) {
-    if (abortSet.has(abortId)) {
+    if (shouldAbort(abortId)) {
       return {
         failedKeys,
         aborted: true,
@@ -109,7 +108,7 @@ export async function setAll(
   }
 
   // These are the remaining keys in the final transaction which have not been committed yet
-  if (count > 0 && !abortSet.has(abortId)) {
+  if (count > 0) {
     try {
       const result = await atomic.commit();
       if (!result.ok) {
@@ -159,7 +158,7 @@ async function retrySetIndividually(
   let lastSuccessfulVersionstamp: string | undefined = undefined;
 
   for (const entry of entries) {
-    if (abortSet.has(abortId)) {
+    if (shouldAbort(abortId)) {
       return {
         failedKeys,
         aborted: true,

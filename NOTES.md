@@ -18,6 +18,11 @@ TODO Phase 1:
 7. Validate logout covers everything
 8. Failure handling if token expires or is irretrievable
 9. Output console warning if KV_CLIENT_ENCRYPTION_KEY is not supplied
+10. Copy (from list) to file
+11. Abortable list
+12. API backed list
+13. Offer format as JSON button in entry popup for strings
+14. Rework unit consumed to be bytes consumed.  Work out units consumed in UI, but store raw bytes in DB.
 
 TODO Release:
 1. Documentation
@@ -37,10 +42,12 @@ Phase 2:
 3. Connections filter
 4. Introduce configuration
 5. Mobile responsiveness
+6. Tracking/Analytics
 
 
 Config
 * ability to connect to this KV instance, part of role based access
+* allow connection id to be marked as production
 * restrictions on specific connections or environments:
    - permit read, copy from, copy into, delete, set, 'all'
    - allow connection

@@ -4,6 +4,20 @@ import { CacheManager } from "./cache.ts";
 
 const states: Map<string, State> = new Map();
 
+const abortSet = new Set<string>();
+
+export function abort(id: string): void {
+  abortSet.add(id);
+}
+
+export function shouldAbort(id: string): boolean {
+  if (abortSet.has(id)) {
+    abortSet.delete(id);
+    return true;
+  }
+  return false;
+}
+
 export function getUserState(sessionOrCtx: string | PageProps): State {
   let sessionId = "";
   if (typeof sessionOrCtx === "string") {

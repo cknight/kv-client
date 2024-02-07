@@ -1,10 +1,10 @@
-import { CONNECTIONS_KEY_PREFIX, ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX, ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, env } from "../../consts.ts";
+import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
 import { KvConnection } from "../../types.ts";
 import { deployKvEnvironment, DeployUser } from "./denoDeploy/deployUser.ts";
 import { localKv } from "../kv/db.ts";
-import { mutex } from "../kv/kvConnect.ts";
-import { getEncryptedString } from "../transform/encryption.ts";
+import { establishKvConnection } from "../kv/kvConnect.ts";
 import { getDeployUserData } from "./denoDeploy/deployUser.ts";
+import { getUserState } from "../state/state.ts";
 
 export interface Connections {
   local: KvConnection[];
@@ -64,82 +64,27 @@ export async function getSelfHostedConnections(): Promise<KvConnection[]> {
   const connectionList = localKv.list<KvConnection>({ prefix: [CONNECTIONS_KEY_PREFIX] });
   for await (const connection of connectionList) {
     if (connection.value.infra === "self-hosted") {
-        connections.push(connection.value);
+      connections.push(connection.value);
     }
   }
   console.debug(`Loaded ${connections.length} self-hosted connections in ${Date.now() - start}ms`);
   return connections;
 }
 
-/**
- * Establish a secondary KV connection.  This is used for copying data between KV instances.
- *
- * @param session
- * @param destConnectionId
- * @returns Deno.Kv connection (untested)
- */
-export async function connectToDestKv(session: string, destConnectionId: string): Promise<Deno.Kv> {
-  const conn = await localKv.get<KvConnection>([
-    CONNECTIONS_KEY_PREFIX,
-    destConnectionId,
-  ]);
-  const connection: KvConnection | null = conn.value;
-
-  if (!connection) {
-    console.error(`Connection ${destConnectionId} does not exist in connections in KV`);
-    throw new Error(`Connection ${destConnectionId} does not exist`);
+export async function getPrimaryKvConnection(
+  session: string,
+  connectionId: string,
+): Promise<Deno.Kv> {
+  const state = getUserState(session);
+  let kv = state.kv;
+  if (!kv) {
+    await establishKvConnection(session, connectionId);
+    kv = state.kv!;
   }
+  return kv;
+}
 
-  const location = connection.kvLocation;
-  if (connection.infra === "Deploy") {
-    const accessToken = await getEncryptedString([ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session]);
-    if (!accessToken) {
-      console.error("No access token available");
-      throw new Error("No access token available");
-    }
-
-    /**
-     * Prevent access token leakage in a multi-user setting by acquiring a mutex,
-     * establishing the connection, and then clearing the access token from the
-     * environment variable.  Access token is only required for the initial
-     * connection.
-     */
-    const release = await mutex.acquire();
-    Deno.env.set(env.DENO_KV_ACCESS_TOKEN, accessToken);
-    const kv = await Deno.openKv(location);
-    Deno.env.delete(env.DENO_KV_ACCESS_TOKEN);
-    release();
-
-    return kv;
-  } else if (connection.infra === "self-hosted") {
-    const accessToken = await getEncryptedString([ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX, connection.id]);
-    if (!accessToken) {
-      console.error("No access token available");
-      throw new Error("No access token available");
-    }
-
-    /**
-     * Prevent access token leakage in a multi-user setting by acquiring a mutex,
-     * establishing the connection, and then clearing the access token from the
-     * environment variable.  Access token is only required for the initial
-     * connection.
-     */
-    const release = await mutex.acquire();
-    Deno.env.set(env.DENO_KV_ACCESS_TOKEN, accessToken);
-    const kv = await Deno.openKv(location);
-    Deno.env.delete(env.DENO_KV_ACCESS_TOKEN);
-    release();
-
-    return kv;
-  } else {
-    // Local KV file
-    try {
-      // Check if the file exists (and if it does we assume it is a valid KV file)
-      await Deno.lstat(location);
-    } catch (_e) {
-      console.error(`Connection ${location} does not exist`);
-      throw new Error(`Connection ${location} does not exist`);
-    }
-    return await Deno.openKv(location);
-  }
+export async function getKvConnectionDetails(connectionId: string): Promise<KvConnection | null> {
+  const conn = await localKv.get<KvConnection>([CONNECTIONS_KEY_PREFIX, connectionId]);
+  return conn.value;
 }

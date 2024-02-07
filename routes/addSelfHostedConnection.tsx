@@ -9,7 +9,7 @@ import { localKv } from "../utils/kv/db.ts";
 import { CancelLocalConnectionButton } from "../islands/connections/CancelLocalConnectionButton.tsx";
 import { Help } from "../islands/Help.tsx";
 import { SelfHostedAccessTokenInput } from "../islands/SelfHostedAccessTokenInput.tsx";
-import { mutex } from "../utils/kv/kvConnect.ts";
+import { mutex, openKvWithToken } from "../utils/kv/kvConnect.ts";
 import { hashKvKey } from "../utils/utils.ts";
 import { storeEncryptedString } from "../utils/transform/encryption.ts";
 import { shortHash } from "../utils/utils.ts";
@@ -17,6 +17,7 @@ import { URL_REG_EX } from "../utils/urlRegex.ts";
 import { useSignal } from "@preact/signals";
 import { Toast } from "../islands/Toast.tsx";
 import { getSelfHostedConnections } from "../utils/connections/connections.ts";
+import { connectToSecondaryKv } from "../utils/kv/kvConnect.ts";
 
 interface AllLocalConnectionProps {
   connectionName?: string;
@@ -53,24 +54,12 @@ export const handler: Handlers = {
       errorText = "A connection with this name already exists";
     } else {
       try {
-        /**
-         * Prevent access token leakage in a multi-user setting by acquiring a mutex,
-         * establishing the connection, and then clearing the access token from the
-         * environment variable.  Access token is only required for the initial
-         * connection.
-         */
-        const release = await mutex.acquire();
-        Deno.env.set(env.DENO_KV_ACCESS_TOKEN, accessToken);
-        console.log("Connecting to self-hosted KV instance", connectionLocation);
-        // test the connection opens successfully
-        const tempKv = await Deno.openKv(connectionLocation);
-        Deno.env.delete(env.DENO_KV_ACCESS_TOKEN);
-        // await tempKv.get(["a random key to test the connection"]);
-        console.log("hello world");
-        tempKv.close();
-        release();
-
+        // Check connection opens. (NOTE: If the URL is invalid, any operation will hang indefinitely)
+        // See https://github.com/denoland/deno/issues/22248
         const hashedLocation = await shortHash(connectionLocation);
+        storeEncryptedString([ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX, hashedLocation], accessToken);
+        const tempKv = await connectToSecondaryKv(ctx.state.session as string, hashedLocation);
+        tempKv.close();
 
         //add connection to KV
         const connection: KvConnection = {
@@ -82,7 +71,6 @@ export const handler: Handlers = {
           size: -1,
         };
         await localKv.set([CONNECTIONS_KEY_PREFIX, connection.id], connection);
-        storeEncryptedString([ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX, connection.id], accessToken);
 
         //forward to connections page
         return new Response("", {

@@ -1,3 +1,4 @@
+import { shouldAbort } from "../state/state.ts";
 import { approximateSize } from "../utils.ts";
 import { writeUnitsConsumed } from "./kvUnitsConsumed.ts";
 
@@ -13,8 +14,6 @@ const MAX_TRANSACTION_KEY_SIZE = 1024 * 80; //bytes (80kb)
 // key size (plus a buffer of one additional key size to account for imprecision in the
 // size calculation).
 const SAFE_MAX_ATOMIC_KEY_SIZE = MAX_TRANSACTION_KEY_SIZE - MAX_KV_KEY_SIZE - 1024; // 1-3kb buffer
-
-export const abortSet = new Set<string>();
 
 export interface DeleteResult {
   failedKeys: Deno.KvKey[];
@@ -43,9 +42,10 @@ export async function deleteAll(
   let totalWriteUnits = 0;
   let keysInAction = [];
   const failedKeys: Deno.KvKey[] = [];
+  let aborting = false;
 
   for (const key of keysToDelete) {
-    if (abortSet.has(abortId)) {
+    if (shouldAbort(abortId)) {
       return {
         failedKeys,
         aborted: true,
@@ -89,7 +89,7 @@ export async function deleteAll(
   }
 
   // These are the remaining keys in the final transaction which have not been committed yet
-  if (count > 0 && !abortSet.has(abortId)) {
+  if (count > 0) {
     try {
       await atomic.commit();
       deletedKeyCount += count;
@@ -131,7 +131,7 @@ async function retryDeleteIndividually(
   let totalWriteUnits = 0;
 
   for (const key of keys) {
-    if (abortSet.has(abortId)) {
+    if (shouldAbort(abortId)) {
       return {
         failedKeys,
         aborted: true,

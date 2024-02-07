@@ -113,7 +113,7 @@ export function CopyDataDialog(props: CopyDeleteMultiProps) {
   function abortCopy(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault(); //e.g. don't submit the form
 
-    fetch("/api/abortCopy", {
+    fetch("/api/abort", {
       method: "POST",
       headers: {
         "Content-Type": "text/plain",

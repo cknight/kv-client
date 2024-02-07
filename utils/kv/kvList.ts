@@ -1,7 +1,7 @@
 import { KvListOptions, ListAuditLog, OpStats, PartialListResults, State } from "../../types.ts";
 import { establishKvConnection } from "./kvConnect.ts";
 import { parseKvKey } from "../transform/kvKeyParser.ts";
-import { getUserState } from "../state/state.ts";
+import { getUserState, shouldAbort } from "../state/state.ts";
 import { ValidationError } from "../errors.ts";
 import { computeSize } from "./kvUnitsConsumed.ts";
 import { readUnitsConsumed } from "./kvUnitsConsumed.ts";
@@ -13,7 +13,18 @@ export async function listKv(
   listOptions: KvListOptions,
 ): Promise<PartialListResults> {
   const startTime = Date.now();
-  const { session, connectionId, prefix, start, end, limit, reverse, disableCache } = listOptions;
+  const {
+    session,
+    connectionId,
+    prefix,
+    start,
+    end,
+    limit,
+    reverse,
+    disableCache,
+    disableAudit,
+    abortId,
+  } = listOptions;
   const state = getUserState(session);
   const cachedListResults = !disableCache &&
     state.cache.get({ connectionId, prefix, start, end, reverse });
@@ -47,6 +58,7 @@ export async function listKv(
         results: cachedData,
         cursor: cachedListResults.cursor,
         opStats: cacheStats,
+        aborted: false,
       };
     } else if (cachedData.length === maxEntries) {
       // We don't have all data, but we do have exactly the data requested, so return it
@@ -55,6 +67,7 @@ export async function listKv(
         results: cachedData,
         cursor: cachedListResults.cursor,
         opStats: cacheStats,
+        aborted: false,
       };
     } else {
       // We don't have all the data, so fetch more using the cursor
@@ -87,13 +100,17 @@ export async function listKv(
 
   const queryOnlyTimeStart = Date.now();
   let result = await listIterator.next();
-  while (!result.done) {
+  let aborted = false;
+  while (!result.done && !aborted) {
     newCursor = listIterator.cursor;
     const entry = result.value;
     newResults.push(entry);
     operationSize += computeSize(entry.key, entry.value);
 
     if (++count === maxEntries) {
+      break;
+    } else if (abortId && shouldAbort(abortId)) {
+      aborted = true;
       break;
     } else if (count % 100000 === 0) {
       console.debug("Retrieved", count, "results");
@@ -134,21 +151,24 @@ export async function listKv(
 
   const readUnits = readUnitsConsumed(operationSize);
 
-  const audit: ListAuditLog = {
-    auditType: "list",
-    executorId: await executorId(session),
-    prefixKey: prefix,
-    startKey: start,
-    endKey: end,
-    limit,
-    reverse,
-    results: newResults.length,
-    readUnitsConsumed: readUnits,
-    connection: auditConnectionName(state.connection!),
-    infra: state.connection!.infra,
-    rtms: queryOnlyTime,
-  };
-  await auditAction(audit);
+  if (!disableAudit) {
+    const audit: ListAuditLog = {
+      auditType: "list",
+      executorId: await executorId(session),
+      prefixKey: prefix,
+      startKey: start,
+      endKey: end,
+      limit,
+      reverse,
+      results: newResults.length,
+      readUnitsConsumed: readUnits,
+      connection: auditConnectionName(state.connection!),
+      infra: state.connection!.infra,
+      rtms: queryOnlyTime,
+      aborted,
+    };
+    await auditAction(audit);
+  }
 
   const finalResults = cachedResults.concat(newResults);
   console.debug(
@@ -170,7 +190,7 @@ export async function listKv(
     kvResults: newResults.length,
     rtms: queryOnlyTime,
   };
-  return { results: finalResults, cursor: newCursor, opStats };
+  return { results: finalResults, cursor: newCursor, opStats, aborted };
 }
 
 function createListSelector(

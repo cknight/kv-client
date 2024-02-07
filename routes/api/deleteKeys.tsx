@@ -6,6 +6,7 @@ import { establishKvConnection } from "../../utils/kv/kvConnect.ts";
 import { deleteAll, DeleteResult } from "../../utils/kv/kvDelete.ts";
 import { getUserState } from "../../utils/state/state.ts";
 import { entriesToOperateOn } from "../../utils/ui/buildResultsPage.ts";
+import { asPercentString } from "../../utils/ui/display.ts";
 
 export interface DeleteKeysData {
   connectionId: string;
@@ -57,8 +58,7 @@ export const handler: Handlers = {
 
       if (deleteResult.aborted) {
         const percComplete = dc / result.deleteEntries;
-        const percCompleteString = `${Math.round(percComplete * 100)}%`;
-        body = `Delete aborted at ${percCompleteString} complete. ${dc} key${
+        body = `Delete aborted at ${asPercentString(percComplete)} complete. ${dc} key${
           dc > 1 ? "s" : ""
         } deleted`;
         status = 499;

@@ -115,7 +115,7 @@ export function DeleteDataDialog(props: CopyDeleteMultiProps) {
   function abortDelete(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault(); //e.g. don't submit the form
 
-    fetch("/api/abortDelete", {
+    fetch("/api/abort", {
       method: "POST",
       headers: {
         "Content-Type": "text/plain",

@@ -7,13 +7,13 @@ import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";
 import { setAll, SetResult } from "../../utils/kv/kvSet.ts";
 import { getUserState } from "../../utils/state/state.ts";
 import { getKv } from "../../utils/kv/kvGet.ts";
-import { connectToDestKv } from "../../utils/connections/connections.ts";
+import { connectToSecondaryKv } from "../../utils/kv/kvConnect.ts";
 
 export interface CopyKeyData {
   sourceConnectionId: string;
   destConnectionId: string;
   keyToCopy: string;
-} 
+}
 
 interface CopyOpResult {
   duration: number;
@@ -89,14 +89,14 @@ async function copyKey(data: CopyKeyData, session: string): Promise<CopyOpResult
   const getKvOptions: KvGetOptions = {
     session: session,
     connectionId: sourceConnectionId,
-    key: keyToCopy
+    key: keyToCopy,
   };
   const copyEntry = await getKv(getKvOptions);
   if (copyEntry.versionstamp === null) {
     throw new Error(`Key [${keyToCopy}] does not exist`);
   }
 
-  const destKv = await connectToDestKv(session, destConnectionId);
+  const destKv = await connectToSecondaryKv(session, destConnectionId);
 
   const startCopyTime = Date.now();
   const copyResult = await setAll([copyEntry], destKv, "no abort");

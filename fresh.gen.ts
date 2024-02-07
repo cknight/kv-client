@@ -9,12 +9,12 @@ import * as $_middleware from "./routes/_middleware.ts";
 import * as $accessToken from "./routes/accessToken.tsx";
 import * as $addLocalConnection from "./routes/addLocalConnection.tsx";
 import * as $addSelfHostedConnection from "./routes/addSelfHostedConnection.tsx";
-import * as $api_abortCopy from "./routes/api/abortCopy.tsx";
-import * as $api_abortDelete from "./routes/api/abortDelete.tsx";
+import * as $api_abort from "./routes/api/abort.tsx";
 import * as $api_copyKey from "./routes/api/copyKey.tsx";
 import * as $api_copyKeys from "./routes/api/copyKeys.tsx";
 import * as $api_deleteKey from "./routes/api/deleteKey.tsx";
 import * as $api_deleteKeys from "./routes/api/deleteKeys.tsx";
+import * as $api_import from "./routes/api/import.tsx";
 import * as $api_keyTypes from "./routes/api/keyTypes.tsx";
 import * as $api_removeConnection from "./routes/api/removeConnection.tsx";
 import * as $api_setEntry from "./routes/api/setEntry.tsx";
@@ -46,6 +46,7 @@ import * as $connections_LocalConnectionRadio from "./islands/connections/LocalC
 import * as $connections_RemoveLocalConnectionDialog from "./islands/connections/RemoveLocalConnectionDialog.tsx";
 import * as $get_GetCriteriaBox from "./islands/get/GetCriteriaBox.tsx";
 import * as $get_GetResult from "./islands/get/GetResult.tsx";
+import * as $import_importCriteria from "./islands/import/importCriteria.tsx";
 import * as $keyValue_KvKeyEditor from "./islands/keyValue/KvKeyEditor.tsx";
 import * as $keyValue_KvKeyInput from "./islands/keyValue/KvKeyInput.tsx";
 import * as $keyValue_KvValueEditor from "./islands/keyValue/KvValueEditor.tsx";
@@ -62,12 +63,12 @@ const manifest = {
     "./routes/accessToken.tsx": $accessToken,
     "./routes/addLocalConnection.tsx": $addLocalConnection,
     "./routes/addSelfHostedConnection.tsx": $addSelfHostedConnection,
-    "./routes/api/abortCopy.tsx": $api_abortCopy,
-    "./routes/api/abortDelete.tsx": $api_abortDelete,
+    "./routes/api/abort.tsx": $api_abort,
     "./routes/api/copyKey.tsx": $api_copyKey,
     "./routes/api/copyKeys.tsx": $api_copyKeys,
     "./routes/api/deleteKey.tsx": $api_deleteKey,
     "./routes/api/deleteKeys.tsx": $api_deleteKeys,
+    "./routes/api/import.tsx": $api_import,
     "./routes/api/keyTypes.tsx": $api_keyTypes,
     "./routes/api/removeConnection.tsx": $api_removeConnection,
     "./routes/api/setEntry.tsx": $api_setEntry,
@@ -103,6 +104,7 @@ const manifest = {
       $connections_RemoveLocalConnectionDialog,
     "./islands/get/GetCriteriaBox.tsx": $get_GetCriteriaBox,
     "./islands/get/GetResult.tsx": $get_GetResult,
+    "./islands/import/importCriteria.tsx": $import_importCriteria,
     "./islands/keyValue/KvKeyEditor.tsx": $keyValue_KvKeyEditor,
     "./islands/keyValue/KvKeyInput.tsx": $keyValue_KvKeyInput,
     "./islands/keyValue/KvValueEditor.tsx": $keyValue_KvValueEditor,

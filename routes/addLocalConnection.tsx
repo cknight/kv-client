@@ -149,7 +149,7 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
               <Help dialogId="locationHelp" dialogTitle="Location">
                 <div>
                   Enter a full path to a local KV store. These are typically files with a{" "}
-                  <code>.sqlite3</code>{" "}
+                  <code>.sqlite</code>{" "}
                   extension. Alternatively, select an auto-discovered KV store below which will
                   populate this field.
                 </div>

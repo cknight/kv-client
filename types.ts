@@ -36,6 +36,7 @@ export interface PartialListResults {
   results: Deno.KvEntry<unknown>[];
   cursor: string | false;
   opStats: OpStats;
+  aborted: boolean;
 }
 
 export interface KvUIEntry {
@@ -54,7 +55,7 @@ export interface KvInstance {
 }
 
 export type Environment = "local" | "Deploy prod" | "Deploy preview" | "Deploy playground" | "other" | "self-hosted";
-export type Infra = "local" | "Deploy" | "self-hosted" | "unknown";
+export type Infra = "local" | "Deploy" | "self-hosted" | "unknown" | "file";
 
 export interface KvConnection {
   kvLocation: string;
@@ -75,6 +76,8 @@ export interface KvListOptions {
   limit: string;
   reverse: boolean;
   disableCache: boolean;
+  disableAudit?: boolean;
+  abortId?: string;
 }
 
 export interface KvGetOptions {
@@ -84,7 +87,7 @@ export interface KvGetOptions {
 }
 
 
-export type AuditLog<T extends "list" | "delete" | "copy" | "update" | "set" | "get"> = {
+export type AuditLog<T extends "list" | "delete" | "copy" | "update" | "set" | "get" | "import"> = {
   auditType: T;
   executorId: string;
   connection: string;
@@ -99,6 +102,7 @@ export type ListAuditLog = AuditLog<"list"> & {
   limit: string;
   reverse: boolean;
   results: number;
+  aborted: boolean;
   readUnitsConsumed: number;
 };
 
@@ -141,13 +145,24 @@ export type GetAuditLog = AuditLog<"get"> & {
   readUnitsConsumed: number;
 };
 
+export type ImportAuditLog = AuditLog<"import"> & {
+  importSource: string;
+  importInfra: Infra;
+  keysImported: number;
+  keysFailed: number;
+  aborted: boolean;
+  writeUnitsConsumed: number;
+  readUnitsConsumed: number;
+};
+
 export type AuditRecord =
   | ListAuditLog
   | DeleteAuditLog
   | CopyAuditLog
   | UpdateAuditLog
   | SetAuditLog
-  | GetAuditLog;
+  | GetAuditLog
+  | ImportAuditLog;
 
 export type UnitsConsumed = {
   operations: number;
