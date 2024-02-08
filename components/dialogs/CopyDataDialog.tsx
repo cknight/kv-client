@@ -153,7 +153,7 @@ export function CopyDataDialog(props: CopyDeleteMultiProps) {
   function checkIfProd() {
     const dest = document.getElementById("dest")! as HTMLSelectElement;
     const conn = connections?.filter((c) => c.id === dest.value)[0];
-    isProd.value = conn?.env === "prod";
+    isProd.value = conn?.env === "Deploy prod";
   }
 
   function prettyEnv(env: string) {

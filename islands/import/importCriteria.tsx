@@ -158,7 +158,7 @@ export function ImportCriteria(props: ImportCriteriaProps) {
             <option value="file">File</option>
             <option value="connection">Existing Connection</option>
           </select>
-          <p class="ml-3">into {connectionName}</p>
+          <p class="ml-3">into <code>{connectionName}</code></p>
         </div>
         {importFrom.value === "file" && (
           <div class="mt-4 flex flex-row items-center">

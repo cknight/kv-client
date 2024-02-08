@@ -136,7 +136,7 @@ export function DeleteDataDialog(props: CopyDeleteMultiProps) {
 
   function isProd() {
     const env = connections?.filter((c) => c.id === connectionId)[0]?.env;
-    return env === "prod";
+    return env === "Deploy prod";
   }
 
   return (
