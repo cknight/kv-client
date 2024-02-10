@@ -9,11 +9,6 @@ export const handler: Handlers = {
     console.debug("Request to abort operation received");
     abort(abortId);
 
-    // Clean up after 10 minutes just in case
-    setTimeout(() => {
-      shouldAbort(abortId);
-    }, 1000 * 60 * 10);
-
     return new Response("", {
       status: 200,
     });

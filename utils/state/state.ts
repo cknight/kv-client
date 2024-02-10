@@ -8,6 +8,11 @@ const abortSet = new Set<string>();
 
 export function abort(id: string): void {
   abortSet.add(id);
+
+  // Clean up after 10 minutes just in case
+  setTimeout(() => {
+    abortSet.delete(id);
+  }, 1000 * 60 * 10);
 }
 
 export function shouldAbort(id: string): boolean {
