@@ -42,6 +42,7 @@ Phase 2:
 6. Tracking/Analytics
 7. Key tree
 8. Copy from get/list to file
+9. Enforce confirmation of delete all? (type "delete all data" or some such)
 
 
 Config

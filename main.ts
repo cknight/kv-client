@@ -18,6 +18,12 @@ if (log_level !== "DEBUG") {
   console.debug = () => {};
 }
 
+const isRunningInDeploy = Deno.env.get("DENO_REGION");
+if (isRunningInDeploy) {
+  console.error("This application is not suitable for running in Deno Deploy");
+  throw new Error("This application is not suitable for running in Deno Deploy");
+}
+
 registerQueueListener();
 
 await start(manifest, config);
