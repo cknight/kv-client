@@ -1,6 +1,6 @@
 import { Handlers, RouteContext } from "$fresh/server.ts";
 import { ListCriteriaBox } from "../islands/list/ListCriteriaBox.tsx";
-import { KvConnection, KvUIEntry, PartialListResults, Stats } from "../types.ts";
+import { Environment, KvConnection, KvUIEntry, PartialListResults, Stats } from "../types.ts";
 import { ListResults } from "../islands/list/ListResults.tsx";
 import { listKv } from "../utils/kv/kvList.ts";
 
@@ -80,7 +80,7 @@ export const handler: Handlers = {
       const session = ctx.state.session as string;
       const state = getUserState(session);
       const connection = state!.connection;
-  
+
       const listInputData: ListInputData = {
         prefix: sp.get("prefix") || "",
         start: sp.get("start") || "",
@@ -93,16 +93,16 @@ export const handler: Handlers = {
         disableCache: sp.get("disableCache") === "true",
         connectionId: sp.get("connectionId") || "",
       };
-  
+
       if (!connection && !listInputData.connectionId) {
         return new Response("", {
           status: 303,
           headers: { Location: "/" },
         });
       }
-  
+
       const searchData = await getResults(listInputData, session, connection);
-  
+
       return await ctx.render(searchData);
     }
     return await ctx.render({} as ListData);
@@ -203,7 +203,7 @@ export default async function List(req: Request, props: RouteContext<ListData>) 
   const connectionLocation = connection?.kvLocation || "";
 
   const { local, remote, selfHosted } = await getConnections(session);
-  const connections: { name: string; id: string; env: string }[] = [];
+  const connections: { name: string; id: string; env: Environment }[] = [];
   local.forEach((c) => connections.push({ name: c.name, id: c.id, env: c.environment }));
   remote.forEach((c) => connections.push({ name: c.name, id: c.id, env: c.environment }));
   selfHosted.forEach((c) => connections.push({ name: c.name, id: c.id, env: c.environment }));
@@ -213,39 +213,39 @@ export default async function List(req: Request, props: RouteContext<ListData>) 
       <form
         id="pageForm"
         method="post"
-        f-partial="/list"
+f-partial="/list"
         class="m-8 mt-0 "
       >
-        <Partial name="list">
-          <ListCriteriaBox
-            prefix={prefix}
-            start={start}
-            end={end}
-            limit={limit}
-            validationError={validationError}
-            reverse={reverse}
-            disableCache={disableCache}
-          />
-          <ListResults
-            results={results}
-            resultsCount={fullResultsCount}
-            show={show}
-            from={from}
-            filter={filter}
-            filtered={filtered}
-            listComplete={searchComplete}
-            stats={props.data?.stats}
-            session={props.state.session as string}
-            prefix={prefix}
-            start={start}
-            end={end}
-            reverse={reverse}
-            connections={connections}
-            connectionId={connectionId}
-            connectionName={connectionName}
-            connectionLocation={connectionLocation}
-          />
-        </Partial>
+<Partial name="list">
+        <ListCriteriaBox
+          prefix={prefix}
+          start={start}
+          end={end}
+          limit={limit}
+          validationError={validationError}
+          reverse={reverse}
+          disableCache={disableCache}
+        />
+        <ListResults
+          results={results}
+          resultsCount={fullResultsCount}
+          show={show}
+          from={from}
+          filter={filter}
+          filtered={filtered}
+          listComplete={searchComplete}
+          stats={props.data?.stats}
+          session={props.state.session as string}
+          prefix={prefix}
+          start={start}
+          end={end}
+          reverse={reverse}
+          connections={connections}
+          connectionId={connectionId}
+          connectionName={connectionName}
+          connectionLocation={connectionLocation}
+        />
+</Partial>
       </form>
     </>
   );

@@ -1,7 +1,7 @@
 import { useSignal } from "@preact/signals";
 import { IS_BROWSER } from "$fresh/runtime.ts";
 import { Help } from "../Help.tsx";
-import { KvUIEntry, Stats, ToastType } from "../../types.ts";
+import { Environment, KvUIEntry, Stats, ToastType } from "../../types.ts";
 import { StatsBar } from "../../components/StatsBar.tsx";
 import { submitListForm } from "../../utils/ui/form.ts";
 import { JSX } from "preact";
@@ -28,7 +28,7 @@ interface ListResultsProps {
   start: string;
   end: string;
   reverse: boolean;
-  connections: { name: string; id: string; env: string }[];
+  connections: { name: string; id: string; env: Environment }[];
   connectionName: string;
   connectionId: string;
   connectionLocation: string;
@@ -311,7 +311,7 @@ export function ListResults(props: ListResultsProps) {
                   <button
                     class="btn btn-primary btn-sm"
                     onClick={firstPage}
-                    f-partial="/list"
+f-partial="/list"
                     disabled={props.from === 1}
                   >
                     <DoubleLeftIcon />
@@ -319,7 +319,7 @@ export function ListResults(props: ListResultsProps) {
                   <button
                     class="btn btn-primary btn-sm"
                     onClick={(e) => page(false, e)}
-                    f-partial="/list"
+f-partial="/list"
                     disabled={props.from === 1}
                   >
                     <SingleLeftIcon />
@@ -327,7 +327,7 @@ export function ListResults(props: ListResultsProps) {
                   <button
                     class="btn btn-primary btn-sm"
                     onClick={(e) => page(true, e)}
-                    f-partial="/list"
+f-partial="/list"
                     disabled={props.from + props.show > resultsCount}
                   >
                     <SingleRightIcon />

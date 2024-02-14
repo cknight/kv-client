@@ -18,8 +18,9 @@ TODO Phase 1:
 11. Abortable list - Requires REST based list
 13. Offer format as JSON button in entry popup for strings
 14. Rework unit consumed to be bytes consumed.  Work out units consumed in UI, but store raw bytes in DB.
-15. Detect and error out if running in Deploy
 18. See Delete/Copy-Data/Key dialogs and isProd.  Change env from string to infra.
+19. Dangerous bug where 'delete from' and 'copy from' didn't match connection :( (local dev issue?  Partial issue?  Source connectionId from URL?)
+20. Accessibility
 
 TODO Release:
 1. Documentation

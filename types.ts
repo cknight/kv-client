@@ -192,7 +192,7 @@ export type Stats = {
 
 export type CopyDeleteMultiProps = {
   keysSelected: string[];
-  connections?: { name: string; id: string; env: string }[];
+  connections?: { name: string; id: string; env: Environment }[];
   connectionLocation: string;
   connectionId: string;
   prefix: string;
@@ -207,7 +207,7 @@ export type CopyDeleteMultiProps = {
 
 export type CopyDeleteSingleProps = {
   kvKey: string;
-  connections?: { name: string; id: string; env: string }[];
+  connections?: { name: string; id: string; env: Environment }[];
   connectionLocation: string;
   connectionId: string;
 };

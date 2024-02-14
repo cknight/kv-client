@@ -121,6 +121,8 @@ export function CopyKeyDialog(props: CopyDeleteSingleProps) {
         return "Staging";
       case "local":
         return "Local";
+      case "self-hosted":
+        return "Self-hosted";
       default:
         return env;
     }

@@ -1,5 +1,5 @@
 import { useSignal } from "@preact/signals";
-import { KvUIEntry, SupportedValueTypes, ToastType } from "../../types.ts";
+import { Environment, KvUIEntry, SupportedValueTypes, ToastType } from "../../types.ts";
 import { KvValueEditor } from "../keyValue/KvValueEditor.tsx";
 import { JSX } from "preact/jsx-runtime";
 import { Toast } from "../Toast.tsx";
@@ -9,7 +9,7 @@ import { CopyKeyDialog } from "../../components/dialogs/CopyKeyDialog.tsx";
 
 interface GetResultProps {
   connectionId: string;
-  connections: { name: string; id: string; env: string }[];
+  connections: { name: string; id: string; env: Environment }[];
   connectionLocation: string;
   kvKey: string;
   result?: KvUIEntry;

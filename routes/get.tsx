@@ -1,6 +1,6 @@
 import { FreshContext, Handlers, RouteContext } from "$fresh/server.ts";
 import { GetCriteriaBox } from "../islands/get/GetCriteriaBox.tsx";
-import { KvUIEntry } from "../types.ts";
+import { Environment, KvUIEntry } from "../types.ts";
 import { getUserState } from "../utils/state/state.ts";
 import { getKv } from "../utils/kv/kvGet.ts";
 import { createKvUIEntry } from "../utils/utils.ts";
@@ -77,7 +77,7 @@ export default async function Get(req: Request, props: RouteContext<GetData>) {
   const connectionLocation = connection?.kvLocation || "";
 
   const { local, remote, selfHosted } = await getConnections(session);
-  const connections: { name: string; id: string; env: string }[] = [];
+  const connections: { name: string; id: string; env: Environment }[] = [];
   local.forEach((c) => connections.push({ name: c.name, id: c.id, env: c.environment }));
   remote.forEach((c) => connections.push({ name: c.name, id: c.id, env: c.environment }));
   selfHosted.forEach((c) => connections.push({ name: c.name, id: c.id, env: c.environment }));
