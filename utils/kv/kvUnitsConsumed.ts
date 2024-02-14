@@ -52,7 +52,7 @@ export async function unitsConsumedToday(): Promise<UnitsConsumed> {
     totalRemoteAuditsToday++;
     if (auditLog.auditType === "delete") {
       writeUnits += auditLog.writeUnitsConsumed;
-      //N.b. 1000 keys deleted may take place across multiple transactions, 
+      //N.b. 1000 keys deleted may take place across multiple transactions,
       //     but we only record a single operation for this
       operations++;
     } else if (auditLog.auditType === "list") {
@@ -60,7 +60,7 @@ export async function unitsConsumedToday(): Promise<UnitsConsumed> {
       operations++;
     } else if (auditLog.auditType === "copy") {
       writeUnits += auditLog.writeUnitsConsumed;
-      //N.b. 1000 keys copied may take place across multiple transactions, 
+      //N.b. 1000 keys copied may take place across multiple transactions,
       //     but we only record a single operation for this
       operations++;
     }

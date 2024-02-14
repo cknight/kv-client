@@ -5,24 +5,19 @@ Security model
 - Should values be logged? (yes, but offer ability to disable)
 - Should access to KV Client audit records be restricted? (yes, available only to admin roles)
 
-=======================
-EE = Enterprise edition
-=======================
+# ======================= EE = Enterprise edition
 
-TODO Phase 1:
-4. Implement "info" icon on connections page
-6. Write (lots) more tests
-7. Validate logout covers everything
-8. Failure handling if token expires or is irretrievable
-9. Output console warning if KV_CLIENT_ENCRYPTION_KEY is not supplied
-11. Abortable list - Requires REST based list
-13. Offer format as JSON button in entry popup for strings
-14. Rework unit consumed to be bytes consumed.  Work out units consumed in UI, but store raw bytes in DB.
-18. See Delete/Copy-Data/Key dialogs and isProd.  Change env from string to infra.
-19. Dangerous bug where 'delete from' and 'copy from' didn't match connection :( (local dev issue?  Partial issue?  Source connectionId from URL?)
-20. Accessibility
+TODO Phase 1: 4. Implement "info" icon on connections page 6. Write (lots) more tests 7. Validate
+logout covers everything 8. Failure handling if token expires or is irretrievable 9. Output console
+warning if KV_CLIENT_ENCRYPTION_KEY is not supplied 11. Abortable list - Requires REST based list
+13. Offer format as JSON button in entry popup for strings 14. Rework unit consumed to be bytes
+consumed. Work out units consumed in UI, but store raw bytes in DB. 18. See Delete/Copy-Data/Key
+dialogs and isProd. Change env from string to infra. 19. Dangerous bug where 'delete from' and 'copy
+from' didn't match connection :( (local dev issue? Partial issue? Source connectionId from URL?) 20.
+Accessibility
 
 TODO Release:
+
 1. Documentation
 2. Testing
 3. How to distribute
@@ -31,10 +26,14 @@ TODO Release:
 6. TODO/FIXMEs
 
 Blocked:
-1. Partials for list page navigation (possibly blocked by https://github.com/denoland/fresh/issues/2174)
-2. Issue with self-hosted connections and invalid URLs (https://github.com/denoland/deno/issues/22248)
+
+1. Partials for list page navigation (possibly blocked by
+   https://github.com/denoland/fresh/issues/2174)
+2. Issue with self-hosted connections and invalid URLs
+   (https://github.com/denoland/deno/issues/22248)
 
 Phase 2:
+
 1. EE - Browse audit logs
 2. Optional OAuth2 authentication
 3. Connections filter
@@ -45,25 +44,28 @@ Phase 2:
 8. Copy from get/list to file
 9. Enforce confirmation of delete all? (type "delete all data" or some such)
 
-
 Config
-* ability to connect to this KV instance, part of role based access
-* allow connection id to be marked as production
-* restrictions on specific connections or environments:
-   - permit read, copy from, copy into, delete, set, 'all'
-   - allow connection
-   - deny connection
-* No global read, no global delete, no global copy/export
-* Log level
-* Cache time in ms
-* Record audit records - yes/no
-* Allow values in audit records - yes/no
-* EE - maximum execution time?  Or maybe maximum entries size?
-* EE - maximum memory usage?
-* EE - maximum budget for Deploy access read/write?
-* EE - require auth?
-* EE - role based access definitions (read/write/delete/update/copy/export/import, project allowlist, project denylist)
+
+- ability to connect to this KV instance, part of role based access
+- allow connection id to be marked as production
+- restrictions on specific connections or environments:
+  - permit read, copy from, copy into, delete, set, 'all'
+  - allow connection
+  - deny connection
+- No global read, no global delete, no global copy/export
+- Log level
+- Cache time in ms
+- Record audit records - yes/no
+- Allow values in audit records - yes/no
+- EE - maximum execution time? Or maybe maximum entries size?
+- EE - maximum memory usage?
+- EE - maximum budget for Deploy access read/write?
+- EE - require auth?
+- EE - role based access definitions (read/write/delete/update/copy/export/import, project
+  allowlist, project denylist)
 
 EE - Role based access - Enterprise capability
-* Need admin role somehow? Store credentials in KV with short expiry, output to console on startup if no admin user.  Need recovery option
-* Need UI screen to allocate roles to user
+
+- Need admin role somehow? Store credentials in KV with short expiry, output to console on startup
+  if no admin user. Need recovery option
+- Need UI screen to allocate roles to user

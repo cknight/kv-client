@@ -91,7 +91,7 @@ export default async function Get(req: Request, props: RouteContext<GetData>) {
         class="m-8 mt-0 "
       >
         <Partial name="get">
-          <GetCriteriaBox kvKey={kvKey} error={error}/>
+          <GetCriteriaBox kvKey={kvKey} error={error} />
           <GetResult
             connectionId={connectionId}
             kvKey={kvKey}

@@ -21,9 +21,11 @@ export function ImportCriteria(props: ImportCriteriaProps) {
       "Deploy prod";
   const isImporting = useSignal(false);
   const importFrom = useSignal("");
-  const connection =
-    props.connections.remote.concat(props.connections.local, props.connections.selfHosted)
-      .find((conn) => conn.id === props.connectionId);
+  const connection = props.connections.remote.concat(
+    props.connections.local,
+    props.connections.selfHosted,
+  )
+    .find((conn) => conn.id === props.connectionId);
   const connectionName = `${connection?.name} (${connection?.environment})`;
   const abortId = useSignal(crypto.randomUUID());
 
@@ -159,7 +161,9 @@ export function ImportCriteria(props: ImportCriteriaProps) {
             <option value="file">File (KV SQLite)</option>
             <option value="connection">Existing Connection</option>
           </select>
-          <p class="ml-3">into <code>{connectionName}</code></p>
+          <p class="ml-3">
+            into <code>{connectionName}</code>
+          </p>
         </div>
         {importFrom.value === "file" && (
           <div class="mt-4 flex flex-row items-center">
@@ -194,7 +198,9 @@ export function ImportCriteria(props: ImportCriteriaProps) {
         )}
         {isProd && (
           <Caution>
-            <p class="text-yellow-500 ml-2 break-all">Caution: Data will be written to a production environment</p>
+            <p class="text-yellow-500 ml-2 break-all">
+              Caution: Data will be written to a production environment
+            </p>
           </Caution>
         )}
         <input type="hidden" value={abortId.value} name="abortId" />

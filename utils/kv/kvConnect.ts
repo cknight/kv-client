@@ -13,7 +13,10 @@ import { getEncryptedString } from "../transform/encryption.ts";
 
 export const mutex = new Mutex();
 
-export async function establishKvConnection(session: string, connectionId: string): Promise<Deno.Kv> {
+export async function establishKvConnection(
+  session: string,
+  connectionId: string,
+): Promise<Deno.Kv> {
   const userState = getUserState(session);
   if (!userState) {
     // No session found

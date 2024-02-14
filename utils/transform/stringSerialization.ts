@@ -37,7 +37,7 @@ function replacer(_key: unknown, value: unknown) {
   } else if (typeof value === "undefined") {
     /**
      * 'undefined' does not serialize/deserialize properly.
-     * 
+     *
      * JSON.parse() is unable to add a property set to undefined.  Instead a property
      * set to undefined in the reviver function will not be added to the object.  This is
      * unfortunate because it means that the property will be lost when the object is

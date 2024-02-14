@@ -219,7 +219,9 @@ export function CopyDataDialog(props: CopyDeleteMultiProps) {
           <p>Warning: Any existing keys will be overwritten</p>
           {isProd.value && (
             <Caution>
-              <p class="text-yellow-500 ml-2">Caution: Copy destination is a production environment</p>
+              <p class="text-yellow-500 ml-2">
+                Caution: Copy destination is a production environment
+              </p>
             </Caution>
           )}
           <div class="flex gap-x-3 mt-5 justify-center">

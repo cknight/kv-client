@@ -20,12 +20,15 @@ export function parseKvKey(input: string): Deno.KvKey {
     if (part.length === 0 && !inString) {
       throw new ValidationError("Invalid key format: " + input);
     }
-    const workingString = inString? part : part.trimStart();
+    const workingString = inString ? part : part.trimStart();
     if (isStringChar(workingString[0]) || inString) {
       // start of new string or middle of previous string
       if (endBlockChar === "" && !inString) {
         // start of new string
-        if (workingString[workingString.length - 1] === workingString[0] && workingString[workingString.length - 2] !== `\\`) {
+        if (
+          workingString[workingString.length - 1] === workingString[0] &&
+          workingString[workingString.length - 2] !== `\\`
+        ) {
           // simple complete string
           LOG_ENABLED && console.log("End of string, processing:", workingString);
           processPart(workingString, key);
@@ -39,7 +42,10 @@ export function parseKvKey(input: string): Deno.KvKey {
       } else {
         partialKey.push(",");
         // middle of previous string
-        if (workingString[workingString.length - 1] === endBlockChar && workingString[workingString.length - 2] !== `\\`) {
+        if (
+          workingString[workingString.length - 1] === endBlockChar &&
+          workingString[workingString.length - 2] !== `\\`
+        ) {
           // end of complex string
           endBlockChar = "";
           partialKey.push(workingString);

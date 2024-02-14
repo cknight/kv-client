@@ -1,7 +1,7 @@
-export function WarningTriangleIcon(props: {type: "warning" | "error"}) {
+export function WarningTriangleIcon(props: { type: "warning" | "error" }) {
   return (
     <svg
-      class={"h-6 w-6 " + (props.type === "warning" ? "text-yellow-500" : "text-red-500") }
+      class={"h-6 w-6 " + (props.type === "warning" ? "text-yellow-500" : "text-red-500")}
       width="24"
       height="24"
       viewBox="0 0 24 24"

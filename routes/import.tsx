@@ -13,7 +13,7 @@ interface ImportProps {
 export const handler: Handlers = {
   async POST(req, ctx) {
     const form = await req.formData();
-    const inputFileFormEntry: FormDataEntryValue |  null = form.get("importFile");
+    const inputFileFormEntry: FormDataEntryValue | null = form.get("importFile");
     const connectionId = new URL(req.url).searchParams.get("connectionId") || "";
     if (inputFileFormEntry && inputFileFormEntry instanceof File) {
       console.debug("  writing import file to disk");
@@ -35,7 +35,6 @@ export const handler: Handlers = {
         const state = getUserState(session);
         await setAll(entries, state.kv!, connectionId);
         console.debug("  all entries written to KV");
-
       } catch (e) {
         console.log(e);
         return ctx.render({ error: e.message });
@@ -62,7 +61,11 @@ export default async function Import(req: Request, props: RouteContext<ImportPro
         class="m-8 mt-0 "
       >
         <Partial name="import">
-          <ImportCriteria error={props.data?.error} connections={connections} connectionId={connectionId}/>
+          <ImportCriteria
+            error={props.data?.error}
+            connections={connections}
+            connectionId={connectionId}
+          />
         </Partial>
       </form>
     </>

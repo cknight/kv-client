@@ -21,7 +21,7 @@ export default async function Export(req: Request, props: RouteContext) {
         class="m-8 mt-0 "
       >
         <Partial name="export">
-          <ExportCriteria connections={connections} connectionId={connectionId}/>
+          <ExportCriteria connections={connections} connectionId={connectionId} />
         </Partial>
       </form>
     </>

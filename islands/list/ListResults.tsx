@@ -311,7 +311,7 @@ export function ListResults(props: ListResultsProps) {
                   <button
                     class="btn btn-primary btn-sm"
                     onClick={firstPage}
-f-partial="/list"
+                    f-partial="/list"
                     disabled={props.from === 1}
                   >
                     <DoubleLeftIcon />
@@ -319,7 +319,7 @@ f-partial="/list"
                   <button
                     class="btn btn-primary btn-sm"
                     onClick={(e) => page(false, e)}
-f-partial="/list"
+                    f-partial="/list"
                     disabled={props.from === 1}
                   >
                     <SingleLeftIcon />
@@ -327,7 +327,7 @@ f-partial="/list"
                   <button
                     class="btn btn-primary btn-sm"
                     onClick={(e) => page(true, e)}
-f-partial="/list"
+                    f-partial="/list"
                     disabled={props.from + props.show > resultsCount}
                   >
                     <SingleRightIcon />

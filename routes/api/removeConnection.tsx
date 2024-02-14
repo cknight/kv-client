@@ -28,7 +28,7 @@ export const handler: Handlers = {
     } catch (_e) {
       console.error("Failed to remove connection", _e);
       return new Response("Failed to remove connection", {
-        status: 500,  
+        status: 500,
       });
     }
   },

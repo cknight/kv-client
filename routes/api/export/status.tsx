@@ -17,4 +17,4 @@ export const handler: Handlers = {
 
     return Response.json(status);
   },
-}
+};

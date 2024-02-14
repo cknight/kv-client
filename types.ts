@@ -52,7 +52,13 @@ export interface KvInstance {
   size: number;
 }
 
-export type Environment = "local" | "Deploy prod" | "Deploy preview" | "Deploy playground" | "other" | "self-hosted";
+export type Environment =
+  | "local"
+  | "Deploy prod"
+  | "Deploy preview"
+  | "Deploy playground"
+  | "other"
+  | "self-hosted";
 export type Infra = "local" | "Deploy" | "self-hosted" | "unknown" | "file";
 
 export interface KvConnection {
@@ -83,7 +89,6 @@ export interface KvGetOptions {
   connectionId: string;
   key: string;
 }
-
 
 type ExportTypes = "list" | "delete" | "copy" | "update" | "set" | "get" | "import" | "export";
 export type AuditLog<T extends ExportTypes> = {
@@ -158,7 +163,7 @@ export type ExportAuditLog = AuditLog<"export"> & {
   keysExported: number;
   aborted: boolean;
   bytesRead: number;
-}
+};
 
 export type AuditRecord =
   | ListAuditLog
@@ -229,16 +234,16 @@ export type SupportedValueTypes =
   | "Set"
   | "Uint8Array";
 
-  export type ExportStatus = {
-    status: "initiating" | "in progress" | "complete" | "aborted" | "failed";
-    keysProcessed: number;
-    bytesProcessed: number;
-  }
+export type ExportStatus = {
+  status: "initiating" | "in progress" | "complete" | "aborted" | "failed";
+  keysProcessed: number;
+  bytesProcessed: number;
+};
 
-  export type QueueDeleteExportFile = {
-    channel: "DeleteMessage";
-    message: {
-      exportId: string;
-      tempDirPath: string;
-    }
+export type QueueDeleteExportFile = {
+  channel: "DeleteMessage";
+  message: {
+    exportId: string;
+    tempDirPath: string;
   };
+};

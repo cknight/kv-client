@@ -175,12 +175,18 @@ export function CopyKeyDialog(props: CopyDeleteSingleProps) {
           <p>Warning: Any existing keys will be overwritten</p>
           {isProd.value && (
             <Caution>
-              <p class="text-yellow-500 break-all ml-2">Caution: Copy destination is a production environment</p>
+              <p class="text-yellow-500 break-all ml-2">
+                Caution: Copy destination is a production environment
+              </p>
             </Caution>
           )}
           <div class="flex gap-x-3 mt-5 justify-center">
-            <button class="btn btn-secondary" disabled={isCopying} onClick={cancelDialog}>Cancel</button>
-            <button class="btn btn-primary" disabled={isCopying} onClick={copyConfirmed}>Copy</button>
+            <button class="btn btn-secondary" disabled={isCopying} onClick={cancelDialog}>
+              Cancel
+            </button>
+            <button class="btn btn-primary" disabled={isCopying} onClick={copyConfirmed}>
+              Copy
+            </button>
           </div>
         </div>
       </dialog>

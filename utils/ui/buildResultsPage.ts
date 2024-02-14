@@ -44,7 +44,9 @@ export async function entriesToOperateOn(
     console.error(
       "Cache data not found, unable to complete operation.  Aborting.",
     );
-    throw new CacheInvalidationError("Cache data not found.  This can happen if the data has been changed through this UI.  Please reload the data and try again.");
+    throw new CacheInvalidationError(
+      "Cache data not found.  This can happen if the data has been changed through this UI.  Please reload the data and try again.",
+    );
   }
 
   /**

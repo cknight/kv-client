@@ -30,7 +30,7 @@ export async function shortHash(text: string): Promise<string> {
 
 type CryptoAlgorithm = "SHA-1" | "SHA-256" | "SHA-384" | "SHA-512";
 
-async function hash(bytes: Uint8Array, algo: CryptoAlgorithm = 'SHA-512'): Promise<string> {
+async function hash(bytes: Uint8Array, algo: CryptoAlgorithm = "SHA-512"): Promise<string> {
   const hashBuffer = await crypto.subtle.digest(algo, bytes);
   const hashHex = encodeHex(new Uint8Array(hashBuffer));
   return hashHex;

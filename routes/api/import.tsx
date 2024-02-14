@@ -79,9 +79,12 @@ export const handler: Handlers = {
           if (setResult.aborted) {
             status = 499;
             const percComplete = asPercentString(setResult.setKeyCount / entries.length);
-            body = `Import aborted.  ${setResult.setKeyCount} out of ${entries.length} keys imported (${percComplete} complete).`;
+            body =
+              `Import aborted.  ${setResult.setKeyCount} out of ${entries.length} keys imported (${percComplete} complete).`;
           } else {
-            body = setResult.setKeyCount > 0 ? `All ${setResult.setKeyCount} keys successfully imported` : "No keys imported";
+            body = setResult.setKeyCount > 0
+              ? `All ${setResult.setKeyCount} keys successfully imported`
+              : "No keys imported";
           }
         } catch (e) {
           console.log(e);
@@ -108,7 +111,7 @@ export const handler: Handlers = {
         const listResults = await listKv(listOptions);
 
         console.debug("  data retrieved from secondary KV connection (import source)");
-        
+
         const conn = await getKvConnectionDetails(connectionId);
         const sourceConn = await getKvConnectionDetails(importSource);
 
@@ -155,13 +158,18 @@ export const handler: Handlers = {
             readUnitsConsumed: listResults.opStats.unitsConsumed,
           };
           await auditAction(auditRecord);
-          
+
           if (setResult.aborted) {
             status = 499;
-            const percComplete = asPercentString(setResult.setKeyCount / listResults.results.length);
-            body = `Import aborted.  ${setResult.setKeyCount} out of ${listResults.results.length} keys imported (${percComplete} complete).`;
+            const percComplete = asPercentString(
+              setResult.setKeyCount / listResults.results.length,
+            );
+            body =
+              `Import aborted.  ${setResult.setKeyCount} out of ${listResults.results.length} keys imported (${percComplete} complete).`;
           } else {
-            body = setResult.setKeyCount > 0 ? `All ${setResult.setKeyCount} keys successfully imported` : "No keys imported";
+            body = setResult.setKeyCount > 0
+              ? `All ${setResult.setKeyCount} keys successfully imported`
+              : "No keys imported";
           }
         }
       }

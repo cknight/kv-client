@@ -4,7 +4,7 @@ import { localKv } from "../../../utils/kv/db.ts";
 import { getExportStatus } from "../../../utils/state/state.ts";
 
 /**
- * This is the final step of the export journey.  By this point, all keys will have been read from the 
+ * This is the final step of the export journey.  By this point, all keys will have been read from the
  * KV connection and populated in the temporary file.  We now need to stream this file to the user.
  * The file will be cleaned up in 24 hours via a KV queue message.
  */
@@ -14,7 +14,7 @@ export const handler: Handlers = {
     const session = ctx.state.session as string;
 
     if (!exportId) {
-      return new Response("No export id provided", { status: 400});
+      return new Response("No export id provided", { status: 400 });
     }
 
     const status = getExportStatus(exportId);
@@ -22,15 +22,15 @@ export const handler: Handlers = {
       return new Response("No export found for id " + exportId, { status: 400 });
     }
     if (status.status !== "complete") {
-      return new Response("Export still in progress", {status: 400});
+      return new Response("Export still in progress", { status: 400 });
     }
 
     const exportFilePath = (await localKv.get<string>([EXPORT_PATH, session, exportId])).value;
     if (!exportFilePath) {
-      return new Response("No export file found", {status: 400});
+      return new Response("No export file found", { status: 400 });
     }
-    
-    const exportFile = await Deno.open(exportFilePath, {read: true, write: false});
+
+    const exportFile = await Deno.open(exportFilePath, { read: true, write: false });
     return new Response(exportFile.readable);
   },
-}
+};

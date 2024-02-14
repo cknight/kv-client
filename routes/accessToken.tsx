@@ -37,9 +37,9 @@ export const handler: Handlers = {
           accessToken,
         );
         await persistConnectionData(deployUser);
-  
+
         console.debug(`Fetched deploy user data in ${Date.now() - start}ms`);
-  
+
         return new Response("", {
           status: 303,
           headers: { Location: "/" },
@@ -65,7 +65,12 @@ export default function AccessToken(data: PageProps<boolean>) {
               Invalid access token.
             </h2>
           )}
-          <form class="space-y-4 md:space-y-6" action="/accessToken" f-client-nav={false} method="post">
+          <form
+            class="space-y-4 md:space-y-6"
+            action="/accessToken"
+            f-client-nav={false}
+            method="post"
+          >
             <div>
               <AccessTokenInput />
             </div>

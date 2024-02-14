@@ -106,7 +106,9 @@ export async function buildRemoteData(accessToken: string, session: string): Pro
     });
   });
 
-  await localKv.set([DEPLOY_RATE_LIMITER_PREFIX, session], Date.now(), { expireIn: _24_HOURS_IN_MS });
+  await localKv.set([DEPLOY_RATE_LIMITER_PREFIX, session], Date.now(), {
+    expireIn: _24_HOURS_IN_MS,
+  });
 
   return deployUser;
 }
@@ -140,12 +142,12 @@ export async function getDeployUserData(
 
   if (deployUser === null && refreshIfNeeded) {
     const accessToken = await getEncryptedString([ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session]);
-    
+
     if (accessToken) {
       try {
         const newDeployUser = await buildRemoteData(accessToken, session);
         if (newDeployUser) {
-          console.debug('Successfully loaded new Deploy user data');
+          console.debug("Successfully loaded new Deploy user data");
           await localKv.set([DEPLOY_USER_KEY_PREFIX, session], newDeployUser, {
             expireIn: _24_HOURS_IN_MS,
           });

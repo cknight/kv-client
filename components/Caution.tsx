@@ -1,11 +1,11 @@
 import { WarningTriangleIcon } from "./svg/WarningTriangle.tsx";
 import { ComponentChildren } from "preact";
 
-export function Caution(props: {children: ComponentChildren;}) {
+export function Caution(props: { children: ComponentChildren }) {
   return (
     <div class="border-2 border-yellow-500 rounded  p-4 flex flex-row mt-4">
-    <WarningTriangleIcon type="warning"/>
-    {props.children}
-  </div>
+      <WarningTriangleIcon type="warning" />
+      {props.children}
+    </div>
   );
 }
