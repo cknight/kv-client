@@ -11,19 +11,14 @@ EE = Enterprise edition
 
 TODO Phase 1:
 4. Implement "info" icon on connections page
-5. Enforce timeouts for ops
-6. Write more tests
+6. Write (lots) more tests
 7. Validate logout covers everything
 8. Failure handling if token expires or is irretrievable
 9. Output console warning if KV_CLIENT_ENCRYPTION_KEY is not supplied
-10. Copy (from list) to file
-11. Abortable list
-12. API backed list
+11. Abortable list - Requires REST based list
 13. Offer format as JSON button in entry popup for strings
 14. Rework unit consumed to be bytes consumed.  Work out units consumed in UI, but store raw bytes in DB.
 15. Detect and error out if running in Deploy
-16. Do we really need size?  It's expensive to compute over lots of keys :(
-17. Add session token to export process to prevent hijacking
 18. See Delete/Copy-Data/Key dialogs and isProd.  Change env from string to infra.
 
 TODO Release:
@@ -46,6 +41,7 @@ Phase 2:
 5. Mobile responsiveness
 6. Tracking/Analytics
 7. Key tree
+8. Copy from get/list to file
 
 
 Config

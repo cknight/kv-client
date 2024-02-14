@@ -11,6 +11,7 @@ import { getExportStatus } from "../../../utils/state/state.ts";
 export const handler: Handlers = {
   async GET(req, ctx) {
     const exportId = new URL(req.url).searchParams.get("exportId");
+    const session = ctx.state.session as string;
 
     if (!exportId) {
       return new Response("No export id provided", { status: 400});
@@ -24,7 +25,7 @@ export const handler: Handlers = {
       return new Response("Export still in progress", {status: 400});
     }
 
-    const exportFilePath = (await localKv.get<string>([EXPORT_PATH, exportId])).value;
+    const exportFilePath = (await localKv.get<string>([EXPORT_PATH, session, exportId])).value;
     if (!exportFilePath) {
       return new Response("No export file found", {status: 400});
     }

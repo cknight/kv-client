@@ -56,11 +56,11 @@ async function initiateExport(session: string, connectionId: string, exportId: s
     tempDir = await Deno.makeTempDir({ prefix: "kv_client_export_" });
     tempDbPath = join(tempDir, "export.db");
     tempKv = await Deno.openKv(tempDbPath);
-    localKv.set([EXPORT_PATH, exportId], tempDbPath, { expireIn: _24_HOURS_IN_MS });
+    localKv.set([EXPORT_PATH, session, exportId], tempDbPath, { expireIn: _24_HOURS_IN_MS });
 
     let kvEntries: Deno.KvEntry<unknown>[] = [];
-    // Since reading an entire KV store cannot be done in a consistent manner, we might as well
-    // use eventual consistency for higher performance
+    // Since reading an entire KV store cannot be done in a consistent manner if more than 500 keys, 
+    // we might as well use eventual consistency for higher performance
     const listIterator = kv.list({ prefix: [] }, { batchSize: 500, consistency: "eventual" });
     for await (const entry of listIterator) {
       if (shouldAbort(exportId)) {
