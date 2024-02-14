@@ -3,8 +3,7 @@ import { effect, useSignal } from "@preact/signals";
 import { DeleteKeysData } from "../../routes/api/deleteKeys.tsx";
 import { CopyDeleteMultiProps, ToastType } from "../../types.ts";
 import { Toast } from "../../islands/Toast.tsx";
-import { WarningTriangleIcon } from "../svg/WarningTriangle.tsx";
-import { useEffect } from "preact/hooks";
+import { Caution } from "../Caution.tsx";
 
 export function DeleteDataDialog(props: CopyDeleteMultiProps) {
   const {
@@ -189,13 +188,9 @@ export function DeleteDataDialog(props: CopyDeleteMultiProps) {
           </div>
           <p class="my-4">Check the above details carefully. This action cannot be undone.</p>
           {isProd() && (
-            <div class="my-4 flex flex-row">
-              <WarningTriangleIcon />
-              <span class="text-red-500 font-semibold pl-1 pr-2 underline decoration-red-500">
-                Caution:
-              </span>
-              <p class="text-red-500">This is a production environment</p>
-            </div>
+            <Caution>
+              <p class="text-yellow-500 ml-2">Caution: This is a production environment</p>
+            </Caution>
           )}
           <div class="flex gap-x-3 mt-5 justify-center">
             {isDeleting.value

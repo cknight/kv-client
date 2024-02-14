@@ -4,6 +4,7 @@ import { JSX } from "preact/jsx-runtime";
 import { ToastType } from "../../types.ts";
 import { WarningTriangleIcon } from "../../components/svg/WarningTriangle.tsx";
 import { Connections } from "../../utils/connections/connections.ts";
+import { Caution } from "../../components/Caution.tsx";
 
 interface ImportCriteriaProps {
   error?: string;
@@ -41,10 +42,10 @@ export function ImportCriteria(props: ImportCriteriaProps) {
       body: abortId.value,
     }).then((_resp) => {
       console.log("Aborting import");
+      showToast("Export aborted", "warn");
     }).catch((e) => {
       console.error("Failure with abort request", e);
-      toastMsg.value = "An unexpected error occurred: Unable to abort request";
-      showToastSignal.value = true;
+      showToast("An unexpected error occurred: Unable to abort request", "error");
     });
   }
 
@@ -155,7 +156,7 @@ export function ImportCriteria(props: ImportCriteriaProps) {
             onChange={importFromChange}
           >
             <option value="" disabled selected>Please select</option>
-            <option value="file">File</option>
+            <option value="file">File (KV SQLite)</option>
             <option value="connection">Existing Connection</option>
           </select>
           <p class="ml-3">into <code>{connectionName}</code></p>
@@ -192,13 +193,9 @@ export function ImportCriteria(props: ImportCriteriaProps) {
           </div>
         )}
         {isProd && (
-          <div class="my-4 flex flex-row">
-            <WarningTriangleIcon />
-            <span class="text-red-500 font-semibold pl-1 pr-2 underline decoration-red-500">
-              Caution:
-            </span>
-            <p class="text-red-500 break-all">Data will be written to a production environment</p>
-          </div>
+          <Caution>
+            <p class="text-yellow-500 ml-2 break-all">Caution: Data will be written to a production environment</p>
+          </Caution>
         )}
         <input type="hidden" value={abortId.value} name="abortId" />
         <input type="hidden" value={props.connectionId} name="connectionId" />

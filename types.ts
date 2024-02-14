@@ -1,5 +1,3 @@
-import { DeployUser } from "./utils/connections/denoDeploy/deployUser.ts";
-
 export interface I_CacheManager {
   get(parms: CacheKey): CachedList | undefined;
   add(parms: ListResults): void;
@@ -87,7 +85,8 @@ export interface KvGetOptions {
 }
 
 
-export type AuditLog<T extends "list" | "delete" | "copy" | "update" | "set" | "get" | "import"> = {
+type ExportTypes = "list" | "delete" | "copy" | "update" | "set" | "get" | "import" | "export";
+export type AuditLog<T extends ExportTypes> = {
   auditType: T;
   executorId: string;
   connection: string;
@@ -155,6 +154,12 @@ export type ImportAuditLog = AuditLog<"import"> & {
   readUnitsConsumed: number;
 };
 
+export type ExportAuditLog = AuditLog<"export"> & {
+  keysExported: number;
+  aborted: boolean;
+  bytesRead: number;
+}
+
 export type AuditRecord =
   | ListAuditLog
   | DeleteAuditLog
@@ -162,7 +167,8 @@ export type AuditRecord =
   | UpdateAuditLog
   | SetAuditLog
   | GetAuditLog
-  | ImportAuditLog;
+  | ImportAuditLog
+  | ExportAuditLog;
 
 export type UnitsConsumed = {
   operations: number;
@@ -222,3 +228,17 @@ export type SupportedValueTypes =
   | "RegExp"
   | "Set"
   | "Uint8Array";
+
+  export type ExportStatus = {
+    status: "initiating" | "in progress" | "complete" | "aborted" | "failed";
+    keysProcessed: number;
+    bytesProcessed: number;
+  }
+
+  export type QueueDeleteExportFile = {
+    channel: "DeleteMessage";
+    message: {
+      exportId: string;
+      tempDirPath: string;
+    }
+  };

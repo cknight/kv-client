@@ -2,8 +2,8 @@ import { JSX } from "preact";
 import { effect, useSignal } from "@preact/signals";
 import { CopyDeleteSingleProps, ToastType } from "../../types.ts";
 import { Toast } from "../../islands/Toast.tsx";
-import { WarningTriangleIcon } from "../svg/WarningTriangle.tsx";
 import { CopyKeyData } from "../../routes/api/copyKey.tsx";
+import { Caution } from "../Caution.tsx";
 
 export function CopyKeyDialog(props: CopyDeleteSingleProps) {
   const {
@@ -110,7 +110,7 @@ export function CopyKeyDialog(props: CopyDeleteSingleProps) {
   function checkIfProd() {
     const dest = document.getElementById("dest")! as HTMLSelectElement;
     const conn = connections?.filter((c) => c.id === dest.value)[0];
-    isProd.value = conn?.env === "prod";
+    isProd.value = conn?.env === "Deploy prod";
   }
 
   function prettyEnv(env: string) {
@@ -172,13 +172,9 @@ export function CopyKeyDialog(props: CopyDeleteSingleProps) {
           </div>
           <p>Warning: Any existing keys will be overwritten</p>
           {isProd.value && (
-            <div class="my-4 flex flex-row">
-              <WarningTriangleIcon />
-              <span class="text-red-500 font-semibold pl-1 pr-2 underline decoration-red-500">
-                Caution:
-              </span>
-              <p class="text-red-500 break-all">Copy destination is a production environment</p>
-            </div>
+            <Caution>
+              <p class="text-yellow-500 break-all ml-2">Caution: Copy destination is a production environment</p>
+            </Caution>
           )}
           <div class="flex gap-x-3 mt-5 justify-center">
             <button class="btn btn-secondary" disabled={isCopying} onClick={cancelDialog}>Cancel</button>

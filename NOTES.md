@@ -10,8 +10,6 @@ EE = Enterprise edition
 =======================
 
 TODO Phase 1:
-1. Import
-2. Export
 4. Implement "info" icon on connections page
 5. Enforce timeouts for ops
 6. Write more tests
@@ -23,6 +21,10 @@ TODO Phase 1:
 12. API backed list
 13. Offer format as JSON button in entry popup for strings
 14. Rework unit consumed to be bytes consumed.  Work out units consumed in UI, but store raw bytes in DB.
+15. Detect and error out if running in Deploy
+16. Do we really need size?  It's expensive to compute over lots of keys :(
+17. Add session token to export process to prevent hijacking
+18. See Delete/Copy-Data/Key dialogs and isProd.  Change env from string to infra.
 
 TODO Release:
 1. Documentation
@@ -43,6 +45,7 @@ Phase 2:
 4. Introduce configuration
 5. Mobile responsiveness
 6. Tracking/Analytics
+7. Key tree
 
 
 Config

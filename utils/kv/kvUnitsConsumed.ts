@@ -64,6 +64,7 @@ export async function unitsConsumedToday(): Promise<UnitsConsumed> {
       //     but we only record a single operation for this
       operations++;
     }
+    //FIXME: add other audit types
   }
   const result = { operations, read: readUnits, write: writeUnits };
   console.debug(

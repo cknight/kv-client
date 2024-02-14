@@ -13,7 +13,7 @@ import { getEncryptedString } from "../transform/encryption.ts";
 
 export const mutex = new Mutex();
 
-export async function establishKvConnection(session: string, connectionId: string): Promise<void> {
+export async function establishKvConnection(session: string, connectionId: string): Promise<Deno.Kv> {
   const userState = getUserState(session);
   if (!userState) {
     // No session found
@@ -21,7 +21,7 @@ export async function establishKvConnection(session: string, connectionId: strin
   } else if (userState.connection?.id === connectionId && userState.kv) {
     // Already connected to the requested connection
     console.debug(`Reusing connection to '${userState.connection?.name}'`);
-    return;
+    return userState.kv;
   } else if (userState.connection?.id !== connectionId && userState.kv) {
     // Connected to a different connection, so close it first
     console.debug(`Closing connection to '${userState.connection?.name}'`);
@@ -74,6 +74,7 @@ export async function establishKvConnection(session: string, connectionId: strin
   }
 
   console.debug(`Established KV connection to '${connection.name} (${connection.environment})'`);
+  return userState.kv;
 }
 
 /**

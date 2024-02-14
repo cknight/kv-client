@@ -3,7 +3,7 @@ import { effect, useSignal } from "@preact/signals";
 import { CopyDeleteMultiProps, ToastType } from "../../types.ts";
 import { CopyKeysData } from "../../routes/api/copyKeys.tsx";
 import { Toast } from "../../islands/Toast.tsx";
-import { WarningTriangleIcon } from "../svg/WarningTriangle.tsx";
+import { Caution } from "../Caution.tsx";
 
 export function CopyDataDialog(props: CopyDeleteMultiProps) {
   const {
@@ -218,13 +218,9 @@ export function CopyDataDialog(props: CopyDeleteMultiProps) {
           </div>
           <p>Warning: Any existing keys will be overwritten</p>
           {isProd.value && (
-            <div class="my-4 flex flex-row">
-              <WarningTriangleIcon />
-              <span class="text-red-500 font-semibold pl-1 pr-2 underline decoration-red-500">
-                Caution:
-              </span>
-              <p class="text-red-500 break-all">Copy destination is a production environment</p>
-            </div>
+            <Caution>
+              <p class="text-yellow-500 ml-2">Caution: Copy destination is a production environment</p>
+            </Caution>
           )}
           <div class="flex gap-x-3 mt-5 justify-center">
             {isCopying.value

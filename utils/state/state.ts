@@ -1,10 +1,11 @@
 import { PageProps } from "$fresh/server.ts";
-import { State } from "../../types.ts";
+import { ExportStatus, State } from "../../types.ts";
 import { CacheManager } from "./cache.ts";
 
 const states: Map<string, State> = new Map();
-
 const abortSet = new Set<string>();
+const exportStatus = new Map<string, ExportStatus>();
+const _10_MINUTES = 1000 * 60 * 10;
 
 export function abort(id: string): void {
   abortSet.add(id);
@@ -12,7 +13,7 @@ export function abort(id: string): void {
   // Clean up after 10 minutes just in case
   setTimeout(() => {
     abortSet.delete(id);
-  }, 1000 * 60 * 10);
+  }, _10_MINUTES);
 }
 
 export function shouldAbort(id: string): boolean {
@@ -21,6 +22,21 @@ export function shouldAbort(id: string): boolean {
     return true;
   }
   return false;
+}
+
+export function updateExportStatus(id: string, status: ExportStatus): void {
+  console.debug("Updating export status", id, status);
+  exportStatus.set(id, status);
+
+  if (status.status !== "in progress" && status.status !== "initiating") {
+    setTimeout(() => {
+      exportStatus.delete(id);
+    }, _10_MINUTES);
+  }
+}
+
+export function getExportStatus(id: string): ExportStatus | undefined {
+  return exportStatus.get(id);
 }
 
 export function getUserState(sessionOrCtx: string | PageProps): State {

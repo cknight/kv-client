@@ -4,6 +4,8 @@ export const DEPLOY_USER_KEY_PREFIX = "deploy-user";
 export const ENCRYPTED_USER_ACCESS_TOKEN_PREFIX = "encrypted-user-access-token";
 export const ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX = "encrypted-self-hosted-access-token";
 export const DEPLOY_RATE_LIMITER_PREFIX = "deploy-rate-limiter";
+export const EXPORT_PATH = "export_path";
+export const QUEUE_MSG_UNDELIVERED = "undelivered";
 
 export const LINK = "text-[#0000ee] visited:text-violet-700 underline";
 
