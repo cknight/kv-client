@@ -25,6 +25,9 @@ export async function listKv(
     disableAudit,
     abortId,
   } = listOptions;
+
+  await establishKvConnection(session, connectionId);
+
   const state = getUserState(session);
   const cachedListResults = !disableCache &&
     state.cache.get({ connectionId, prefix, start, end, reverse });
@@ -81,7 +84,6 @@ export async function listKv(
   const startKey = parseKvKey(start);
   const endKey = parseKvKey(end);
 
-  await establishKvConnection(session, connectionId);
   validateInputs(state, prefix, start, end);
 
   const selector = createListSelector(startKey, endKey, prefixKey);

@@ -3,7 +3,7 @@ import { DeleteAuditLog } from "../../types.ts";
 import { executorId } from "../../utils/connections/denoDeploy/deployUser.ts";
 import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";
 import { establishKvConnection } from "../../utils/kv/kvConnect.ts";
-import { deleteAll, DeleteResult } from "../../utils/kv/kvDelete.ts";
+import { DeleteResult, deleteAll } from "../../utils/kv/kvDelete.ts";
 import { getUserState } from "../../utils/state/state.ts";
 import { entriesToOperateOn } from "../../utils/ui/buildResultsPage.ts";
 import { asPercentString } from "../../utils/ui/display.ts";

@@ -10,7 +10,6 @@ import { getUserState } from "../../utils/state/state.ts";
 import { buildKvValue } from "../../utils/transform/kvValueParser.ts";
 import { json5Stringify } from "../../utils/transform/stringSerialization.ts";
 import { asMaxLengthString } from "../../utils/utils.ts";
-import { getPrimaryKvConnection } from "../../utils/connections/connections.ts";
 
 export interface KvSetEntry {
   key: string;
@@ -37,7 +36,7 @@ export const handler: Handlers = {
 
       const session = ctx.state.session as string;
       const state = getUserState(session);
-      const kv = await getPrimaryKvConnection(session, connectionId);
+      const kv = await establishKvConnection(session, connectionId);
 
       if (doNotOverwrite) {
         const existingEntry = await kv.get(kvKey);

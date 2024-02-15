@@ -1,6 +1,6 @@
 import { Handlers, RouteContext } from "$fresh/server.ts";
 import { ListCriteriaBox } from "../islands/list/ListCriteriaBox.tsx";
-import { Environment, KvConnection, KvUIEntry, PartialListResults, Stats } from "../types.ts";
+import { Environment, KvUIEntry, PartialListResults, Stats } from "../types.ts";
 import { ListResults } from "../islands/list/ListResults.tsx";
 import { listKv } from "../utils/kv/kvList.ts";
 
@@ -8,7 +8,7 @@ import { getUserState } from "../utils/state/state.ts";
 import { unitsConsumedToday } from "../utils/kv/kvUnitsConsumed.ts";
 import { createKvUIEntry } from "../utils/utils.ts";
 import { buildResultsPage } from "../utils/ui/buildResultsPage.ts";
-import { getConnections } from "../utils/connections/connections.ts";
+import { getConnections, getKvConnectionDetails } from "../utils/connections/connections.ts";
 import { Partial } from "$fresh/runtime.ts";
 
 export interface ListData {
@@ -47,9 +47,6 @@ export const handler: Handlers = {
     const form = await req.formData();
 
     const session = ctx.state.session as string;
-    const state = getUserState(session);
-    const connection = state!.connection;
-
     const listInputData: ListInputData = {
       prefix: form.get("prefix")?.toString() || "",
       start: form.get("start")?.toString() || "",
@@ -63,14 +60,14 @@ export const handler: Handlers = {
       connectionId: new URL(req.url).searchParams.get("connectionId") || "",
     };
 
-    if (!connection && !listInputData.connectionId) {
+    if (!listInputData.connectionId) {
       return new Response("", {
         status: 303,
         headers: { Location: "/" },
       });
     }
 
-    const searchData = await getResults(listInputData, session, connection);
+    const searchData = await getResults(listInputData, session);
 
     return await ctx.render(searchData);
   },
@@ -78,9 +75,6 @@ export const handler: Handlers = {
     const sp = new URL(req.url).searchParams;
     if (sp.has("prefix")) {
       const session = ctx.state.session as string;
-      const state = getUserState(session);
-      const connection = state!.connection;
-
       const listInputData: ListInputData = {
         prefix: sp.get("prefix") || "",
         start: sp.get("start") || "",
@@ -94,14 +88,14 @@ export const handler: Handlers = {
         connectionId: sp.get("connectionId") || "",
       };
 
-      if (!connection && !listInputData.connectionId) {
+      if (!listInputData.connectionId) {
         return new Response("", {
           status: 303,
           headers: { Location: "/" },
         });
       }
 
-      const searchData = await getResults(listInputData, session, connection);
+      const searchData = await getResults(listInputData, session);
 
       return await ctx.render(searchData);
     }
@@ -121,17 +115,15 @@ async function getStats(session: string, partialResults: PartialListResults): Pr
 async function getResults(
   listInputData: ListInputData,
   session: string,
-  connection: KvConnection | null,
 ): Promise<ListData> {
   let failReason;
   let results: Deno.KvEntry<unknown>[] = [];
   let listComplete = false;
   let stats: Stats | undefined;
   try {
-    const cId = listInputData.connectionId || connection?.id || "";
     const searchOptions = {
       session,
-      connectionId: cId,
+      connectionId: listInputData.connectionId,
       prefix: listInputData.prefix,
       start: listInputData.start,
       end: listInputData.end,
@@ -196,9 +188,17 @@ export default async function List(req: Request, props: RouteContext<ListData>) 
   const filtered = props.data?.filtered || false;
 
   const session = props.state.session as string;
-  const state = getUserState(session);
-  const connection = state!.connection;
-  const connectionId = connection?.id || "";
+
+  const connectionId = sp.get("connectionId");
+  if (!connectionId) {
+    console.error("No connection id found");
+    return new Response("", {
+      status: 400,
+      headers: { Location: "/" },
+    });
+  }
+
+  const connection = await getKvConnectionDetails(connectionId);
   const connectionName = connection?.name || "";
   const connectionLocation = connection?.kvLocation || "";
 

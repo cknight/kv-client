@@ -81,12 +81,8 @@ async function updateKey(data: UpdateKeyData, session: string): Promise<UpdateOp
     );
   }
 
-  const state = getUserState(session);
-  let kv = state.kv;
-  if (!kv) {
-    await establishKvConnection(session, state.connection!.id);
-  }
-  kv = state.kv!;
+  const kv = await establishKvConnection(session, connectionId);
+
   const entry: Deno.KvEntry<unknown> = {
     key: matchedEntry[0].key,
     value: kvValue,
@@ -100,6 +96,7 @@ async function updateKey(data: UpdateKeyData, session: string): Promise<UpdateOp
 
   const overallDuration = Date.now() - startTime;
 
+  const state = getUserState(session);
   const updateAudit: UpdateAuditLog = {
     auditType: "update",
     executorId: await executorId(session),

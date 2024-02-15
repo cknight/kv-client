@@ -6,8 +6,7 @@ import { getKv } from "../utils/kv/kvGet.ts";
 import { createKvUIEntry } from "../utils/utils.ts";
 import { Partial } from "$fresh/runtime.ts";
 import { GetResult } from "../islands/get/GetResult.tsx";
-import { getConnections } from "../utils/connections/connections.ts";
-import { submitGetForm } from "../utils/ui/form.ts";
+import { getConnections, getKvConnectionDetails } from "../utils/connections/connections.ts";
 
 export interface GetData {
   key: string;
@@ -47,17 +46,14 @@ async function getData(
   ctx: FreshContext<Record<string, unknown>>,
 ): Promise<KvUIEntry | undefined> {
   const session = ctx.state.session as string;
-  const state = getUserState(session);
-  const connection = state!.connection;
   const connectionId = new URL(req.url).searchParams.get("connectionId") || "";
-
-  if (!connection && !connectionId) {
+  
+  if (!connectionId) {
     throw new Error("No connection found");
   }
-
+  
   let resultUIEntry: KvUIEntry | undefined;
-  const cId = connectionId || connection?.id || "";
-  const result = await getKv({ session, connectionId: cId, key: kvKey });
+  const result = await getKv({ session, connectionId, key: kvKey });
   if (result.versionstamp !== null) {
     resultUIEntry = await createKvUIEntry(result);
   }
@@ -72,8 +68,7 @@ export default async function Get(req: Request, props: RouteContext<GetData>) {
   const connectionId = sp.get("connectionId") || "";
 
   const session = props.state.session as string;
-  const state = getUserState(session);
-  const connection = state!.connection;
+  const connection = await getKvConnectionDetails(connectionId);
   const connectionLocation = connection?.kvLocation || "";
 
   const { local, remote, selfHosted } = await getConnections(session);

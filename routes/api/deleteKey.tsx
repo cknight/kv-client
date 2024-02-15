@@ -69,13 +69,12 @@ async function deleteKey(data: DeleteKeyData, session: string): Promise<DeleteOp
   const { connectionId, keyToDelete } = data;
   const startTime = Date.now();
   const kvKey = parseKvKey(keyToDelete);
-  const state = getUserState(session);
 
-  await establishKvConnection(session, connectionId);
+  const kv = await establishKvConnection(session, connectionId);
 
   //Delete the key
   const startDeleteTime = Date.now();
-  const deleteResult = await deleteAll([kvKey], state.kv!, "no-abort");
+  const deleteResult = await deleteAll([kvKey], kv, "no-abort");
   console.log("  Time to delete key", Date.now() - startDeleteTime, "ms");
 
   const overallDuration = Date.now() - startTime;

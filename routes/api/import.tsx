@@ -2,16 +2,14 @@ import { Handlers } from "$fresh/server.ts";
 import { join } from "$std/path/join.ts";
 import { setAll } from "../../utils/kv/kvSet.ts";
 import { getUserState } from "../../utils/state/state.ts";
-import { getPrimaryKvConnection } from "../../utils/connections/connections.ts";
 import { ImportAuditLog, KvListOptions } from "../../types.ts";
 import { listKv } from "../../utils/kv/kvList.ts";
 import { executorId } from "../../utils/connections/denoDeploy/deployUser.ts";
 import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";
 import { getKvConnectionDetails } from "../../utils/connections/connections.ts";
-import { entriesToOperateOn } from "../../utils/ui/buildResultsPage.ts";
 import { computeSize, readUnitsConsumed } from "../../utils/kv/kvUnitsConsumed.ts";
-import { readableSize } from "../../utils/utils.ts";
 import { asPercentString } from "../../utils/ui/display.ts";
+import { establishKvConnection } from "../../utils/kv/kvConnect.ts";
 
 export const handler: Handlers = {
   async POST(req, ctx) {
@@ -134,11 +132,8 @@ export const handler: Handlers = {
           status = 499;
           body = "Import aborted.  No keys were imported.";
         } else {
-          // The list operation has a side effect of setting the import source as the primary KV connection
-          // Set the state's KV connection to null and re-establish the correct primary connection
-          state.kv?.close();
-          state.kv = null;
-          const kv = await getPrimaryKvConnection(session, connectionId);
+          // Now get a KV connection to the primary/destination kv store
+          const kv = await establishKvConnection(session, connectionId);
 
           const setResult = await setAll(listResults.results, kv, abortId!);
           console.debug("  all entries imported to primary KV connection");

@@ -1,6 +1,5 @@
 import { GetAuditLog, KvGetOptions } from "../../types.ts";
 import { executorId } from "../connections/denoDeploy/deployUser.ts";
-import { ValidationError } from "../errors.ts";
 import { getUserState } from "../state/state.ts";
 import { parseKvKey } from "../transform/kvKeyParser.ts";
 import { auditAction } from "./kvAudit.ts";
@@ -11,19 +10,13 @@ export async function getKv(getOptions: KvGetOptions): Promise<Deno.KvEntryMaybe
   const { session, connectionId, key } = getOptions;
   const state = getUserState(session);
 
-  await establishKvConnection(session, connectionId);
-
-  if (!state.kv) {
-    throw new ValidationError(
-      "Please connect to a KV instance first",
-    );
-  }
+  const kv = await establishKvConnection(session, connectionId);
 
   const kvKey = parseKvKey(key);
   console.debug(`kv.get([${key}]) for connection ${connectionId}`);
 
   const start = Date.now();
-  const entry = await state.kv!.get(kvKey);
+  const entry = await kv!.get(kvKey);
   const queryTime = Date.now() - start;
 
   let size = 0;

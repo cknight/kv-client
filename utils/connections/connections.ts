@@ -71,19 +71,6 @@ export async function getSelfHostedConnections(): Promise<KvConnection[]> {
   return connections;
 }
 
-export async function getPrimaryKvConnection(
-  session: string,
-  connectionId: string,
-): Promise<Deno.Kv> {
-  const state = getUserState(session);
-  let kv = state.kv;
-  if (!kv) {
-    await establishKvConnection(session, connectionId);
-    kv = state.kv!;
-  }
-  return kv;
-}
-
 export async function getKvConnectionDetails(connectionId: string): Promise<KvConnection | null> {
   const conn = await localKv.get<KvConnection>([CONNECTIONS_KEY_PREFIX, connectionId]);
   return conn.value;

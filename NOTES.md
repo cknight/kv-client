@@ -7,14 +7,18 @@ Security model
 
 # ======================= EE = Enterprise edition
 
-TODO Phase 1: 4. Implement "info" icon on connections page 6. Write (lots) more tests 7. Validate
-logout covers everything 8. Failure handling if token expires or is irretrievable 9. Output console
-warning if KV_CLIENT_ENCRYPTION_KEY is not supplied 11. Abortable list - Requires REST based list
-13. Offer format as JSON button in entry popup for strings 14. Rework unit consumed to be bytes
-consumed. Work out units consumed in UI, but store raw bytes in DB. 18. See Delete/Copy-Data/Key
-dialogs and isProd. Change env from string to infra. 19. Dangerous bug where 'delete from' and 'copy
-from' didn't match connection :( (local dev issue? Partial issue? Source connectionId from URL?) 20.
-Accessibility
+TODO Phase 1: 
+1. Implement "info" icon on connections page 
+2. Write (lots) more tests 
+3. Validate logout covers everything 
+4. Failure handling if token expires or is irretrievable 
+5. Output console warning if KV_CLIENT_ENCRYPTION_KEY is not supplied 
+6. Abortable list - Requires REST based list
+7. Offer format as JSON button in entry popup for strings 
+8. Rework unit consumed to be bytes consumed. Work out units consumed in UI, but store raw bytes in DB. 
+9. See Delete/Copy-Data/Key dialogs and isProd. Change env from string to infra. 
+11. Accessibility
+13. Consistency warning on non-file import and copy
 
 TODO Release:
 
