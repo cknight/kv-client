@@ -147,7 +147,9 @@ export function DeleteKeyDialog(props: CopyDeleteSingleProps) {
               </tr>
             </table>
           </div>
-          <p class="my-4">Check the above details carefully. This action cannot be undone.</p>
+          <Caution>
+            <p class="text-yellow-500 ml-2">Check details carefully. This action cannot be undone.</p>
+          </Caution>
           {isProd() && (
             <Caution>
               <p class="text-yellow-500 ml-2">Caution: This is a production environment</p>

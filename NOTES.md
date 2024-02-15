@@ -16,9 +16,10 @@ TODO Phase 1:
 6. Abortable list - Requires REST based list
 7. Offer format as JSON button in entry popup for strings 
 8. Rework unit consumed to be bytes consumed. Work out units consumed in UI, but store raw bytes in DB. 
-9. See Delete/Copy-Data/Key dialogs and isProd. Change env from string to infra. 
-11. Accessibility
-13. Consistency warning on non-file import and copy
+9. Accessibility
+10. Consistency warning on non-file import and copy
+11. Get shows truncated value (see weather warning data)
+12. Review help content
 
 TODO Release:
 
@@ -26,7 +27,7 @@ TODO Release:
 2. Testing
 3. How to distribute
 4. Remove all console.logs
-5. Clean up every module (document, imports, formatting)
+5. Clean up every module (document, imports, formatting) 
 6. TODO/FIXMEs
 
 Blocked:

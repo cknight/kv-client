@@ -4,6 +4,7 @@ import { CopyDeleteMultiProps, ToastType } from "../../types.ts";
 import { CopyKeysData } from "../../routes/api/copyKeys.tsx";
 import { Toast } from "../../islands/Toast.tsx";
 import { Caution } from "../Caution.tsx";
+import { LINK } from "../../consts.ts";
 
 export function CopyDataDialog(props: CopyDeleteMultiProps) {
   const {
@@ -216,7 +217,27 @@ export function CopyDataDialog(props: CopyDeleteMultiProps) {
               </tr>
             </table>
           </div>
-          <p>Warning: Any existing keys will be overwritten</p>
+          <Caution>
+            <div class="flex flex-col">
+              <p class="text-yellow-500 ml-2">Caution:</p>
+              <ul class="text-yellow-500 list-disc">
+                <li>Any existing keys will be overwritten</li>
+                {results() > 12 && (
+                  // 12 keys is the theoretical maximum to guarantee consistency
+                  // 12 keys at 2kb/key, 64kb/value = 792kb, max transaction size is 800kb
+                  <li>
+                    Consistency may not be guaranteed (<a
+                      href="TODO"
+                      target="_blank"
+                      class="link text-blue-400"
+                    >
+                      more info
+                    </a>)
+                  </li>
+                )}
+              </ul>
+            </div>
+          </Caution>
           {isProd.value && (
             <Caution>
               <p class="text-yellow-500 ml-2">

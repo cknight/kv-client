@@ -138,6 +138,10 @@ export function DeleteDataDialog(props: CopyDeleteMultiProps) {
     return env === "Deploy prod";
   }
 
+  function keyCountToDelete(): number {
+    return keysSelected.length === 0 ? resultsCount : keysSelected.length;
+  }
+
   return (
     <>
       <dialog
@@ -169,7 +173,7 @@ export function DeleteDataDialog(props: CopyDeleteMultiProps) {
                     type="text"
                     disabled={true}
                     value={connectionLocation}
-                    class="textarea textarea-bordered text-area-sm w-full h-48"
+                    class="textarea textarea-bordered text-area-sm w-full h-32"
                   />
                 </td>
               </tr>
@@ -179,14 +183,34 @@ export function DeleteDataDialog(props: CopyDeleteMultiProps) {
                   <input
                     type="text"
                     disabled={true}
-                    value={keysSelected.length === 0 ? resultsCount : keysSelected.length}
+                    value={keyCountToDelete()}
                     class="input input-bordered w-full"
                   />
                 </td>
               </tr>
             </table>
           </div>
-          <p class="my-4">Check the above details carefully. This action cannot be undone.</p>
+          <Caution>
+            <div class="flex flex-col">
+              <p class="text-yellow-500 ml-2">Caution:</p>
+              <ul class="text-yellow-500 list-disc">
+                <li>Check details carefully. This action cannot be undone.</li>
+                {keyCountToDelete() > 40 && (
+                  // 40 keys is the theoretical maximum to guarantee consistency
+                  // 40 keys at 2kb/key = 80kb, which is the maximum allowed in a single transaction
+                  <li>
+                    Consistency may not be guaranteed (<a
+                      href="TODO"
+                      target="_blank"
+                      class="link text-blue-400"
+                    >
+                      more info
+                    </a>)
+                  </li>
+                )}
+              </ul>
+            </div>
+          </Caution>
           {isProd() && (
             <Caution>
               <p class="text-yellow-500 ml-2">Caution: This is a production environment</p>

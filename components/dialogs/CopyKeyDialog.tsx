@@ -172,7 +172,10 @@ export function CopyKeyDialog(props: CopyDeleteSingleProps) {
               </tr>
             </table>
           </div>
-          <p>Warning: Any existing keys will be overwritten</p>
+          <Caution>
+
+          <p class="text-yellow-500 ml-2">Any existing key will be overwritten</p>
+          </Caution>
           {isProd.value && (
             <Caution>
               <p class="text-yellow-500 break-all ml-2">

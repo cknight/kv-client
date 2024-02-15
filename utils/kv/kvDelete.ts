@@ -42,7 +42,6 @@ export async function deleteAll(
   let totalWriteUnits = 0;
   let keysInAction = [];
   const failedKeys: Deno.KvKey[] = [];
-  let aborting = false;
 
   for (const key of keysToDelete) {
     if (shouldAbort(abortId)) {

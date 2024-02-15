@@ -131,9 +131,8 @@ export function ListCriteriaBox(data: ListDataProps) {
             </select>
             <Help dialogId="limitHelp" dialogTitle="Limit">
               <p>
-                Set the maximum amount of KV entries to retrieve with this list operation. It is
-                important to note that the subsequent actions of filtering or paging results is done
-                within the context of the rows returned within this limit.
+                This is the maximum amount of KV entries to retrieve with this list operation. Paging
+                and filtering are preformed against the rows retrieved within this limit.
               </p>
             </Help>
           </div>
