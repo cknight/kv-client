@@ -180,21 +180,40 @@ export function ImportCriteria(props: ImportCriteriaProps) {
           </div>
         )}
         {importFrom.value === "connection" && (
-          <div class="mt-4">
-            <label for="connection" class="mr-4">
-              Source
-            </label>
-            <select id="connection" name="importSource" class="select select-primary" required>
-              <option value="" disabled selected>Please select</option>
-              {Array.from(connList.keys()).map((env) => (
-                <optgroup label={env}>
-                  {connList.get(env)!.map((connection) => (
-                    <option value={connection.id}>{connection.name}</option>
-                  ))}
-                </optgroup>
-              ))}
-            </select>
-          </div>
+          <>
+            <div class="mt-4">
+              <label for="connection" class="mr-4">
+                Source
+              </label>
+              <select id="connection" name="importSource" class="select select-primary" required>
+                <option value="" disabled selected>Please select</option>
+                {Array.from(connList.keys()).map((env) => (
+                  <optgroup label={env}>
+                    {connList.get(env)!.map((connection) => (
+                      <option value={connection.id}>{connection.name}</option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </div>
+            <Caution>
+              <div class="flex flex-col">
+                <p class="text-yellow-500 ml-2">Caution:</p>
+                <ul class="text-yellow-500 list-disc">
+                  <li>Any existing keys will be overwritten</li>
+                  <li>
+                    Consistency may not be guaranteed (<a
+                      href="TODO"
+                      target="_blank"
+                      class="link text-blue-400"
+                    >
+                      more info
+                    </a>)
+                  </li>
+                </ul>
+              </div>
+            </Caution>
+          </>
         )}
         {isProd && (
           <Caution>
