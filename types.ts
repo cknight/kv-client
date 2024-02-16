@@ -42,7 +42,7 @@ export interface KvUIEntry {
   value: string;
   versionstamp: string;
   valueType: string;
-  fullValue?: string;
+  fullValue: string;
   keyHash: string;
 }
 
