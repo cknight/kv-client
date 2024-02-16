@@ -8,16 +8,15 @@ Security model
 # ======================= EE = Enterprise edition
 
 TODO Phase 1: 
-1. Implement "info" icon on connections page 
 2. Write (lots) more tests 
 3. Validate logout covers everything 
 4. Failure handling if token expires or is irretrievable 
-5. Output console warning if KV_CLIENT_ENCRYPTION_KEY is not supplied 
 6. Abortable list - Requires REST based list
 7. Offer format as JSON button in entry popup for strings 
 8. Rework unit consumed to be bytes consumed. Work out units consumed in UI, but store raw bytes in DB. 
 9. Accessibility
 12. Review help content
+13. Sort out user menus
 
 TODO Release:
 
