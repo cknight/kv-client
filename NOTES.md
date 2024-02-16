@@ -17,8 +17,6 @@ TODO Phase 1:
 7. Offer format as JSON button in entry popup for strings 
 8. Rework unit consumed to be bytes consumed. Work out units consumed in UI, but store raw bytes in DB. 
 9. Accessibility
-10. Consistency warning on non-file import and copy
-11. Get shows truncated value (see weather warning data)
 12. Review help content
 
 TODO Release:

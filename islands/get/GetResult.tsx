@@ -16,7 +16,7 @@ interface GetResultProps {
 }
 
 export function GetResult(props: GetResultProps) {
-  const fullViewValue = useSignal(props.result ? props.result.value : "");
+  const fullViewValue = useSignal(props.result ? props.result.fullValue : "");
   const fullViewValueType = useSignal(props.result ? props.result.valueType : "");
   const readOnly = useSignal(true);
   const inEditMode = useSignal(false);
