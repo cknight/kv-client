@@ -1,4 +1,4 @@
-import { Signal, useSignal, useSignalEffect } from "@preact/signals";
+import { effect, Signal, useSignal, useSignalEffect } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import { JSX } from "preact/jsx-runtime";
 import { Help } from "../Help.tsx";
@@ -18,6 +18,22 @@ export function KvValueEditor(props: KvValueEditorProps) {
   const disabledTypeTemplates = useSignal<string[]>([]);
   const isSimpleType = useSignal(false);
   const valueSize = useSignal("0");
+  const isPreviewingFormattedJSON = useSignal(false);
+  const previousReadOnly = useSignal(props.readOnly.value);
+
+  const shorthandAvailableTypes = new Map([
+    ["bigint", "example: 123456789"],
+    ["boolean", "example: true"],
+    ["null", "example: null"],
+    ["number", "example: 132"],
+    ["string", "example: This is a string"],
+    ["Date", "example: 2023-11-21T22:02:07.710Z"],
+    ["KvU64", "example: 12343234236132"],
+    ["RegExp", "example: /^[0-9]\d*$/"],
+    ["Uint8Array", "example: [231,6,123]"],
+  ]);
+
+  setEditorValue();
 
   function initAce() {
     //@ts-ignore - ace is a global export from ace.js
@@ -75,35 +91,25 @@ export function KvValueEditor(props: KvValueEditorProps) {
   }
 
   useEffect(() => {
+    // Lazy load the ace editor
     const script = document.createElement("script");
     script.src = "/ace.min.js";
     script.defer = true;
     script.onload = () => initAce();
 
-    // const beautifyScript = document.createElement("script");
-    // script.src = "/ext-beautify.min.js";
-    // script.defer = true;
-
     document.body.appendChild(script);
-    // document.body.appendChild(beautifyScript);
 
     return () => {
       document.body.removeChild(script);
-      // document.body.removeChild(beautifyScript);
     };
   }, []);
 
   useSignalEffect(() => {
     if (editor.value === null) return;
 
-    editor.value.setValue(props.kvValue.value);
-    updateEditorMode(props.kvValueType.value);
-    editor.value.selection.moveCursorTo(0, 0);
-  });
-
-  useSignalEffect(() => {
-    if (editor.value === null) return;
-
+    setEditorValue();
+    
+    //Update editor based on read only state
     editor.value.setReadOnly(props.readOnly.value);
     const editorDiv = document.getElementById("editor")!;
     editorDiv.classList.toggle("border-[#666]", props.readOnly.value);
@@ -111,19 +117,36 @@ export function KvValueEditor(props: KvValueEditorProps) {
     editorDiv.querySelectorAll("div, textarea").forEach((node) =>
       node.classList.toggle("cursor-not-allowed", props.readOnly.value)
     );
+
+    //If previewing formatted JSON, potentially reset the editor value
+    if (previousReadOnly.value && !props.readOnly.value) {
+      isPreviewingFormattedJSON.value = false;
+      updateEditorMode(props.kvValueType.value);
+      editor.value.setValue(props.kvValue.value);
+      editor.value.selection.moveCursorTo(0, 0);
+    }
+
+    previousReadOnly.value = props.readOnly.value;
   });
 
-  const shorthandAvailableTypes = new Map([
-    ["bigint", "example: 123456789"],
-    ["boolean", "example: true"],
-    ["null", "example: null"],
-    ["number", "example: 132"],
-    ["string", "example: This is a string"],
-    ["Date", "example: 2023-11-21T22:02:07.710Z"],
-    ["KvU64", "example: 12343234236132"],
-    ["RegExp", "example: /^[0-9]\d*$/"],
-    ["Uint8Array", "example: [231,6,123]"],
-  ]);
+  /**
+   * Set the editor value if the kvValue has changed (taking into account it may be preview-formatted JSON)
+   * This function is state/signal dependent. Don't set the value if the editor isn't yet initialized or if 
+   * the editor is not in read only mode (this function is triggered on any signal change).
+   */
+  function setEditorValue() {
+    if (editor.value === null || !props.readOnly.value) return;
+
+    if (
+      editor.value.getValue() === "" ||
+      (!isPreviewingFormattedJSON.value && editor.value.getValue() !== props.kvValue.value) ||
+      (isPreviewingFormattedJSON.value && editor.value.getValue() !== JSON.stringify(JSON.parse(props.kvValue.value), null, 2))
+    ) {
+      editor.value.setValue(props.kvValue.value);
+      updateEditorMode(props.kvValueType.value);
+      editor.value.selection.moveCursorTo(0, 0);
+    }
+  }
 
   function updateTypeChosen() {
     const value = (document.getElementById("valueType") as HTMLSelectElement).value;
@@ -134,7 +157,14 @@ export function KvValueEditor(props: KvValueEditorProps) {
   function updateEditorMode(value: string) {
     isSimpleType.value = shorthandAvailableTypes.get(value) !== undefined;
 
-    if (value === "JSON") {
+    let isParsableJSON = false;
+    try {
+      JSON.parse(props.kvValue.value);
+      isParsableJSON = true;
+    } catch (_e) {
+      // not valid JSON
+    }
+    if (value === "JSON" || (value === "string" && isParsableJSON)) {
       editor.value.session.setMode("ace/mode/json");
     } else if (isSimpleType.value) {
       editor.value.session.setMode("ace/mode/text");
@@ -176,6 +206,23 @@ export function KvValueEditor(props: KvValueEditorProps) {
   }
   const debouncedUpdateValueSize = debounce(updateValueSize, 300);
 
+  function showPreviewAsFormattedJSON() {
+    try {
+      return props.readOnly.value && props.kvValueType.value === "string" &&
+        props.kvValue.value !== JSON.stringify(JSON.parse(props.kvValue.value), null, 2);
+    } catch (_e) {
+      // not valid JSON
+      return false;
+    }
+  }
+
+  function previewAsFormattedJSON(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
+    event.preventDefault();
+    editor.value.setValue(JSON.stringify(JSON.parse(props.kvValue.value), null, 2));
+    editor.value.selection.moveCursorTo(0, 0);
+    isPreviewingFormattedJSON.value = true;
+  }
+
   return (
     <div class="flex flex-col w-full mt-4">
       <h1 class="text-2xl font-bold">
@@ -210,6 +257,13 @@ export function KvValueEditor(props: KvValueEditorProps) {
               <option value="Uint8Array">Uint8Array</option>
             </select>
           </div>
+          {showPreviewAsFormattedJSON() && (
+            <div class="flex items-end ml-6">
+              <button class="btn btn-sm btn-primary" onClick={previewAsFormattedJSON}>
+                Preview as formatted JSON
+              </button>
+            </div>
+          )}
           {props.kvValueType.value !== "" &&
             props.kvValueType.value !== "JSON" &&
             !isSimpleType.value &&

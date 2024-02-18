@@ -32,7 +32,7 @@ export function GetResult(props: GetResultProps) {
   function cancelEdit() {
     inEditMode.value = false;
     readOnly.value = true;
-    fullViewValue.value = props.result ? props.result.value : "";
+    fullViewValue.value = props.result ? props.result.fullValue : "";
     fullViewValueType.value = props.result ? props.result.valueType : "";
   }
 
@@ -71,6 +71,8 @@ export function GetResult(props: GetResultProps) {
           console.log("Entry successfully set");
           inEditMode.value = false;
           readOnly.value = true;
+          props.result = undefined;
+          props.kvKey = "";
         } else {
           // unexpected error
           showToast(text, "error");
