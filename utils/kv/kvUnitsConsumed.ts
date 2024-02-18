@@ -45,26 +45,16 @@ export async function unitsConsumedToday(): Promise<UnitsConsumed> {
     totalAuditsToday++;
     const auditLog = audit.value;
 
-    if (auditLog.infra !== "Deploy") {
-      continue;
+    if (auditLog.infra === "Deploy") {
+      totalRemoteAuditsToday++;
+      operations++;
+      if ("readUnitsConsumed" in auditLog) {
+        readUnits += auditLog.readUnitsConsumed;
+      }
+      if ("writeUnitsConsumed" in auditLog) {
+        writeUnits += auditLog.writeUnitsConsumed;
+      }
     }
-
-    totalRemoteAuditsToday++;
-    if (auditLog.auditType === "delete") {
-      writeUnits += auditLog.writeUnitsConsumed;
-      //N.b. 1000 keys deleted may take place across multiple transactions,
-      //     but we only record a single operation for this
-      operations++;
-    } else if (auditLog.auditType === "list") {
-      readUnits += auditLog.readUnitsConsumed;
-      operations++;
-    } else if (auditLog.auditType === "copy") {
-      writeUnits += auditLog.writeUnitsConsumed;
-      //N.b. 1000 keys copied may take place across multiple transactions,
-      //     but we only record a single operation for this
-      operations++;
-    }
-    //FIXME: add other audit types
   }
   const result = { operations, read: readUnits, write: writeUnits };
   console.debug(

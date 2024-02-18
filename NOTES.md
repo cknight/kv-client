@@ -8,15 +8,14 @@ Security model
 # ======================= EE = Enterprise edition
 
 TODO Phase 1: 
-2. Write (lots) more tests 
-3. Validate logout covers everything 
-4. Failure handling if token expires or is irretrievable 
-6. Abortable list - Requires REST based list
-7. Offer format as JSON button in entry popup for strings 
-8. Rework unit consumed to be bytes consumed. Work out units consumed in UI, but store raw bytes in DB. 
-9. Accessibility
-12. Review help content
-13. Sort out user menus
+1. Write (lots) more tests 
+2. Validate logout covers everything 
+3. Failure handling if token expires or is irretrievable 
+4. Abortable list - Requires REST based list
+5. Rework unit consumed to be bytes consumed. Work out units consumed in UI, but store raw bytes in DB. 
+6. Accessibility
+7. Review help content
+8. Sort out user menus
 
 TODO Release:
 

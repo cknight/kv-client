@@ -10,6 +10,7 @@ import { executorId } from "../../../utils/connections/denoDeploy/deployUser.ts"
 import { getKvConnectionDetails } from "../../../utils/connections/connections.ts";
 import { localKv } from "../../../utils/kv/db.ts";
 import { EXPORT_PATH, QUEUE_MSG_UNDELIVERED } from "../../../consts.ts";
+import { computeSize, readUnitsConsumed } from "../../../utils/kv/kvUnitsConsumed.ts";
 
 const _24_HOURS_IN_MS = 24 * 60 * 60 * 1000;
 
@@ -51,6 +52,7 @@ async function initiateExport(session: string, connectionId: string, exportId: s
   let tempKv: Deno.Kv | undefined;
   let keysProcessed = 0;
   let bytesProcessed = 0;
+  let totalEntrySizes = 0;
 
   try {
     tempDir = await Deno.makeTempDir({ prefix: "kv_client_export_" });
@@ -69,6 +71,7 @@ async function initiateExport(session: string, connectionId: string, exportId: s
       }
 
       kvEntries.push(entry);
+      totalEntrySizes += computeSize(entry.key, entry.value);
       // 1000 is the max number of keys that can be set at once.  This is a KV constraint.
       if (kvEntries.length === 1000) {
         await setEntriesInDbFile(kvEntries, tempKv, tempDir);
@@ -103,6 +106,7 @@ async function initiateExport(session: string, connectionId: string, exportId: s
       keysExported: keysProcessed,
       aborted: false,
       bytesRead: bytesProcessed,
+      readUnitsConsumed: readUnitsConsumed(totalEntrySizes),
     };
     await auditAction(auditRecord);
   } catch (e) {
@@ -121,6 +125,7 @@ async function initiateExport(session: string, connectionId: string, exportId: s
       keysExported: keysProcessed,
       aborted: (e instanceof UnableToCompleteError) ? e.isAborted : false,
       bytesRead: bytesProcessed,
+      readUnitsConsumed: readUnitsConsumed(totalEntrySizes),
     };
     await auditAction(auditRecord);
     return;

@@ -163,6 +163,7 @@ export type ExportAuditLog = AuditLog<"export"> & {
   keysExported: number;
   aborted: boolean;
   bytesRead: number;
+  readUnitsConsumed: number;
 };
 
 export type AuditRecord =

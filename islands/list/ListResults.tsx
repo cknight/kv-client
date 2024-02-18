@@ -1,18 +1,17 @@
 import { useSignal } from "@preact/signals";
-import { IS_BROWSER } from "$fresh/runtime.ts";
-import { Help } from "../Help.tsx";
-import { Environment, KvUIEntry, Stats, ToastType } from "../../types.ts";
-import { StatsBar } from "../../components/StatsBar.tsx";
-import { submitListForm } from "../../utils/ui/form.ts";
 import { JSX } from "preact";
-import { DeleteDataDialog } from "../../components/dialogs/DeleteDataDialog.tsx";
+import { StatsBar } from "../../components/StatsBar.tsx";
 import { CopyDataDialog } from "../../components/dialogs/CopyDataDialog.tsx";
-import { Toast } from "../Toast.tsx";
-import { DoubleRightIcon } from "../../components/svg/DoubleRight.tsx";
-import { SingleRightIcon } from "../../components/svg/SingleRight.tsx";
-import { SingleLeftIcon } from "../../components/svg/SingleLeft.tsx";
+import { DeleteDataDialog } from "../../components/dialogs/DeleteDataDialog.tsx";
 import { DoubleLeftIcon } from "../../components/svg/DoubleLeft.tsx";
+import { DoubleRightIcon } from "../../components/svg/DoubleRight.tsx";
+import { SingleLeftIcon } from "../../components/svg/SingleLeft.tsx";
+import { SingleRightIcon } from "../../components/svg/SingleRight.tsx";
+import { Environment, KvUIEntry, Stats, ToastType } from "../../types.ts";
+import { submitListForm } from "../../utils/ui/form.ts";
 import { EntryEditor } from "../EntryEditor.tsx";
+import { Help } from "../Help.tsx";
+import { Toast } from "../Toast.tsx";
 
 interface ListResultsProps {
   results: KvUIEntry[] | undefined;
