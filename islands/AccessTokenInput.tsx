@@ -28,7 +28,8 @@ export function AccessTokenInput() {
         />
         <button
           type="button"
-          class="absolute inset-y-0 right-0 px-3 py-2.5 focus:outline-none"
+          class="absolute inset-y-0 right-0 px-3 py-2.5"
+          aria-label="Toggle password visibility"
           onClick={togglePassword}
         >
           {showPassword.value ? <NoEyeIcon /> : <EyeIcon />}

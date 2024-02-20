@@ -87,6 +87,7 @@ export default function AccessToken(data: PageProps<boolean>) {
               <a
                 href="https://dash.deno.com/account#access-tokens"
                 class="font-medium text-primary-600 underline ml-2"
+                aria-label="Create an access token on https://dash.deno.com"
                 target="_blank"
               >
                 Create one

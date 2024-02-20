@@ -249,6 +249,7 @@ export function ListResults(props: ListResultsProps) {
                         id="selectAll"
                         type="checkbox"
                         onChange={handleSelectAll}
+                        aria-label="Select all rows"
                         name="selectAll"
                         class="checkbox checkbox-xs checkbox-primary w-4 h-4"
                       />
@@ -266,6 +267,7 @@ export function ListResults(props: ListResultsProps) {
                           <input
                             type="checkbox"
                             name={result.keyHash}
+                            aria-label="Select row"
                             onChange={handleSelectRow}
                             class="checkbox checkbox-xs checkbox-primary w-4 h-4"
                           />
@@ -291,6 +293,7 @@ export function ListResults(props: ListResultsProps) {
                     id="show"
                     form="pageForm"
                     name="show"
+                    aria-label="Number of entries to show"
                     onChange={onShowChange}
                     class="select select-primary select-sm mx-2"
                   >
@@ -311,6 +314,7 @@ export function ListResults(props: ListResultsProps) {
                     class="btn btn-primary btn-sm"
                     onClick={firstPage}
                     f-partial="/list"
+                    aria-label="First page"
                     disabled={props.from === 1}
                   >
                     <DoubleLeftIcon />
@@ -319,6 +323,7 @@ export function ListResults(props: ListResultsProps) {
                     class="btn btn-primary btn-sm"
                     onClick={(e) => page(false, e)}
                     f-partial="/list"
+                    aria-label="Previous page"
                     disabled={props.from === 1}
                   >
                     <SingleLeftIcon />
@@ -327,6 +332,7 @@ export function ListResults(props: ListResultsProps) {
                     class="btn btn-primary btn-sm"
                     onClick={(e) => page(true, e)}
                     f-partial="/list"
+                    aria-label="Next page"
                     disabled={props.from + props.show > resultsCount}
                   >
                     <SingleRightIcon />
@@ -334,6 +340,8 @@ export function ListResults(props: ListResultsProps) {
                   <button
                     class="btn btn-primary btn-sm"
                     onClick={lastPage}
+                    f-partial="/list"
+                    aria-label="Last page"
                     disabled={props.from + props.show > resultsCount}
                   >
                     <DoubleRightIcon />

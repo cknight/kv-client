@@ -41,6 +41,7 @@ export function KvValueEditor(props: KvValueEditorProps) {
     editor.value.setOptions({
       printMargin: false,
       readOnly: false,
+      enableKeyboardAccessibility: true,
     });
     editor.value.setTheme("ace/theme/merbivore");
     editor.value.setOption("placeholder", "Placeholder text");
@@ -49,7 +50,7 @@ export function KvValueEditor(props: KvValueEditorProps) {
     editor.value.setReadOnly(props.readOnly.value);
     editor.value.setOption("minLines", 10);
     editor.value.setOption("maxLines", 100);
-
+    editor.value.textInput.getElement().setAttribute("aria-label", "KV Value");
     //@ts-ignore - For browser console testing
     globalThis.editor = editor.value;
   }
@@ -444,6 +445,7 @@ export function KvValueEditor(props: KvValueEditorProps) {
           class={"mt-4 w-full flex flex-col items-center pr-8 " +
             (props.kvValueType.value === "" ? "hidden" : "")}
         >
+
           <div
             id="editor"
             class={"text-sm h-[500px] rounded focus:outline-none focus:ring-1 focus:ring-blue-400 font-mono w-full p-3 border"}

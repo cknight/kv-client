@@ -1,7 +1,8 @@
 import { UINT8_REGEX } from "../../consts.ts";
 import { ValidationError } from "../errors.ts";
 
-const LOG_ENABLED = true;
+// For local development/debugging
+const LOG_ENABLED = false;
 
 export function parseKvKey(input: string): Deno.KvKey {
   if (input === "") return [];

@@ -12,10 +12,10 @@ TODO Phase 1:
 2. Validate logout covers everything 
 3. Failure handling if token expires or is irretrievable 
 4. Abortable list - Requires REST based list
-5. Rework unit consumed to be bytes consumed. Work out units consumed in UI, but store raw bytes in DB. 
-6. Accessibility
 7. Review help content
 8. Sort out user menus
+9. 404 page
+10. 500 page
 
 TODO Release:
 

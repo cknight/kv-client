@@ -34,7 +34,7 @@ export function KvKeyEditor(props: KvKeyEditorProps) {
 
   return (
     <div>
-      <h1 class="text-2xl font-bold">
+      <h1 class="text-2xl font-bold" id="keyLabel">
         Key <span id="keySizeSpan" class="hidden font-light text-base">(~ {keySize.value})</span>
       </h1>
       <div class="w-full flex items-center mt-1">
@@ -42,6 +42,7 @@ export function KvKeyEditor(props: KvKeyEditorProps) {
           <KvKeyInput
             id="kvKey"
             form="pageForm"
+            aria-labelledby={"keyLabel"}
             type="text"
             value={props.kvKeyValue.value}
             typesId={props.typesId}

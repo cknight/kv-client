@@ -39,6 +39,7 @@ export function LocalConnectionRadioButton(props: LocalConnectionRadioButtonProp
     <input
       type="radio"
       class="radio radio-primary bg-base-100"
+      aria-label={"Radio button for " + props.id}
       name="localLocation"
       id={props.id}
       onClick={kvInstanceChosen}

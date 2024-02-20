@@ -1,23 +1,17 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
-import { ulid } from "$std/ulid/mod.ts";
-import { JSX } from "preact/jsx-runtime";
-import { CONNECTIONS_KEY_PREFIX, ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX, env } from "../consts.ts";
-import { LocalConnectionRadioButton } from "../islands/connections/LocalConnectionRadio.tsx";
-import { KvConnection, KvInstance, ToastType } from "../types.ts";
-import { peekAtLocalKvInstances } from "../utils/connections/autoDiscoverKv.ts";
-import { localKv } from "../utils/kv/db.ts";
-import { CancelLocalConnectionButton } from "../islands/connections/CancelLocalConnectionButton.tsx";
+import { useSignal } from "@preact/signals";
+import { CONNECTIONS_KEY_PREFIX, ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX } from "../consts.ts";
 import { Help } from "../islands/Help.tsx";
 import { SelfHostedAccessTokenInput } from "../islands/SelfHostedAccessTokenInput.tsx";
-import { mutex, openKvWithToken } from "../utils/kv/kvConnect.ts";
-import { hashKvKey } from "../utils/utils.ts";
-import { storeEncryptedString } from "../utils/transform/encryption.ts";
-import { shortHash } from "../utils/utils.ts";
-import { URL_REG_EX } from "../utils/urlRegex.ts";
-import { useSignal } from "@preact/signals";
 import { Toast } from "../islands/Toast.tsx";
+import { CancelLocalConnectionButton } from "../islands/connections/CancelLocalConnectionButton.tsx";
+import { KvConnection, ToastType } from "../types.ts";
 import { getSelfHostedConnections } from "../utils/connections/connections.ts";
+import { localKv } from "../utils/kv/db.ts";
 import { connectToSecondaryKv } from "../utils/kv/kvConnect.ts";
+import { storeEncryptedString } from "../utils/transform/encryption.ts";
+import { URL_REG_EX } from "../utils/urlRegex.ts";
+import { shortHash } from "../utils/utils.ts";
 
 interface AllLocalConnectionProps {
   connectionName?: string;

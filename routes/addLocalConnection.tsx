@@ -185,7 +185,7 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
                       <p class="font-bold">{kv.kvLocation}</p>
                       <table class="w-full border-1 mt-2">
                         <thead>
-                          <tr class="border-b-1">
+                          <tr class="border-b-1 text-white">
                             <th>Key</th>
                             <th>Value</th>
                           </tr>
