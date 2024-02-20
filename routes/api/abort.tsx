@@ -1,5 +1,5 @@
 import { Handlers } from "$fresh/server.ts";
-import { abort, shouldAbort } from "../../utils/state/state.ts";
+import { abort } from "../../utils/state/state.ts";
 
 export const handler: Handlers = {
   async POST(req, ctx) {

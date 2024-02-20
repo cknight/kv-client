@@ -1,9 +1,9 @@
 import { effect, Signal, useSignal } from "@preact/signals";
-import { JSX } from "preact/jsx-runtime";
-import { readableSize } from "../../utils/utils.ts";
 import { useEffect, useRef } from "preact/hooks";
+import { JSX } from "preact/jsx-runtime";
 import { UpdateKeyData } from "../../routes/api/updateKey.tsx";
 import { ToastType } from "../../types.ts";
+import { readableSize } from "../../utils/utils.ts";
 
 interface KvDialogProps {
   kvKey: Signal<string>;

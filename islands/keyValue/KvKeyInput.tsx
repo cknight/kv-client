@@ -1,6 +1,6 @@
 import { useSignal } from "@preact/signals";
-import { useEffect } from "preact/hooks";
 import { JSX } from "preact";
+import { useEffect } from "preact/hooks";
 
 export interface KvKeyInputProps extends JSX.HTMLAttributes<HTMLInputElement> {
   disableTypes?: boolean;

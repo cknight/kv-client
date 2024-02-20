@@ -1,6 +1,11 @@
 import { JSX } from "preact/jsx-runtime";
 
-export function InfoIcon({ title, onClick }: { title: string, onClick?: (e: JSX.TargetedEvent<SVGElement, MouseEvent>) => void}) {
+export function InfoIcon(
+  { title, onClick }: {
+    title: string;
+    onClick?: (e: JSX.TargetedEvent<SVGElement, MouseEvent>) => void;
+  },
+) {
   return (
     <svg
       class="h-6 w-6 text-blue-500"

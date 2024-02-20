@@ -1,5 +1,5 @@
-import { AuditRecord, KvConnection } from "../../types.ts";
 import { delay } from "$std/async/delay.ts";
+import { AuditRecord, KvConnection } from "../../types.ts";
 import { localKv } from "./db.ts";
 
 const THIRTY_DAYS_IN_MS = 1000 * 60 * 60 * 24 * 30;

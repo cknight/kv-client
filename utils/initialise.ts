@@ -22,9 +22,13 @@ const encryptionKey = Deno.env.get(env.KV_CLIENT_ENCRYPTION_KEY);
 if (!encryptionKey) {
   console.warn("");
   console.warn("");
-  console.warn("*************************************")
-  console.warn("%c⚠️ WARNING: No encryption key supplied in " + env.KV_CLIENT_ENCRYPTION_KEY + " environment variable.  Access tokens will be lost on process restart.  See TODO for more info.", "color: yellow");
-  console.warn("*************************************")
+  console.warn("*************************************");
+  console.warn(
+    "%c⚠️ WARNING: No encryption key supplied in " + env.KV_CLIENT_ENCRYPTION_KEY +
+      " environment variable.  Access tokens will be lost on process restart.  See TODO for more info.",
+    "color: yellow",
+  );
+  console.warn("*************************************");
   console.warn("");
   console.warn("");
 }

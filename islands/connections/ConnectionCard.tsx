@@ -1,11 +1,10 @@
 import { JSX } from "preact";
 import { Chip } from "../../components/Chip.tsx";
-import { ExportIcon } from "../../components/svg/Export.tsx";
+import { ConnectionInfoDialog } from "../../components/dialogs/ConnectionInfoDialog.tsx";
 import { InfoIcon } from "../../components/svg/Info.tsx";
 import { XIcon } from "../../components/svg/XIcon-red.tsx";
-import { readableSize } from "../../utils/utils.ts";
 import { Environment } from "../../types.ts";
-import { ConnectionInfoDialog } from "../../components/dialogs/ConnectionInfoDialog.tsx";
+import { readableSize } from "../../utils/utils.ts";
 
 export interface ConnectionCardProps {
   name: string;
@@ -68,50 +67,49 @@ export function ConnectionCard(props: ConnectionCardProps) {
     <>
       <button
         onClick={useConnection}
-        
       >
         <div class="flex flex-col min-w-[250px] justify-between bg-[#353535] hover:bg-[#404040] border-gray-300 m-3 rounded-lg shadow border-1 hover:cursor-pointer p-4">
-          
-        <div class="flex">
-          <h1 class="text-lg font-bold leading-tight tracking-tight md:text-xl">
-            {props.name}
-          </h1>
-        </div>
-        <div class="flex flex-wrap">
-          <Chip name={getEnvironment()} bgColor={getEnvironmentColor()} />
-          {props.organisation && <Chip name={"Org: " + props.organisation} bgColor="bg-blue-700" />}
-        </div>
-        <div id="actionRow" class="flex items-center justify-between mt-3">
-          {props.environment === "local" || props.environment === "self-hosted"
-            ? (
-              <div onClick={removeLocalConnection}>
-                <XIcon title="Remove connection" />
-              </div>
-            )
-            : <div></div>}
-          {props.size != -1 &&
-            (
-              <div class="flex justify-center items-center">
-                <p class="text-xl">{readableSize(props.size)}</p>
-              </div>
-            )}
           <div class="flex">
-            <InfoIcon
-              title="View details"
-              onClick={(e) => {
-                // Your click handler code here
-                e.stopPropagation();
-                const dialog = document.getElementById(
-                  props.id + "_connection_info_dialog",
-                ) as HTMLDialogElement;
-                dialog.showModal();
-                dialog.classList.add("modal");
-              }}
-            />
+            <h1 class="text-lg font-bold leading-tight tracking-tight md:text-xl">
+              {props.name}
+            </h1>
+          </div>
+          <div class="flex flex-wrap">
+            <Chip name={getEnvironment()} bgColor={getEnvironmentColor()} />
+            {props.organisation && (
+              <Chip name={"Org: " + props.organisation} bgColor="bg-blue-700" />
+            )}
+          </div>
+          <div id="actionRow" class="flex items-center justify-between mt-3">
+            {props.environment === "local" || props.environment === "self-hosted"
+              ? (
+                <div onClick={removeLocalConnection}>
+                  <XIcon title="Remove connection" />
+                </div>
+              )
+              : <div></div>}
+            {props.size != -1 &&
+              (
+                <div class="flex justify-center items-center">
+                  <p class="text-xl">{readableSize(props.size)}</p>
+                </div>
+              )}
+            <div class="flex">
+              <InfoIcon
+                title="View details"
+                onClick={(e) => {
+                  // Your click handler code here
+                  e.stopPropagation();
+                  const dialog = document.getElementById(
+                    props.id + "_connection_info_dialog",
+                  ) as HTMLDialogElement;
+                  dialog.showModal();
+                  dialog.classList.add("modal");
+                }}
+              />
+            </div>
           </div>
         </div>
-        </div>
-
       </button>
       <ConnectionInfoDialog {...props} />
     </>

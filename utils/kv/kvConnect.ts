@@ -1,3 +1,4 @@
+import { Mutex } from "semaphore/mutex.ts";
 import {
   CONNECTIONS_KEY_PREFIX,
   ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX,
@@ -5,11 +6,10 @@ import {
   env,
 } from "../../consts.ts";
 import { KvConnection } from "../../types.ts";
-import { getUserState } from "../state/state.ts";
 import { ValidationError } from "../errors.ts";
-import { localKv } from "./db.ts";
-import { Mutex } from "semaphore/mutex.ts";
+import { getUserState } from "../state/state.ts";
 import { getEncryptedString } from "../transform/encryption.ts";
+import { localKv } from "./db.ts";
 
 export const mutex = new Mutex();
 

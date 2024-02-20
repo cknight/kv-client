@@ -1,6 +1,6 @@
 import { Handlers } from "$fresh/server.ts";
-import { localKv } from "../../utils/kv/db.ts";
 import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
+import { localKv } from "../../utils/kv/db.ts";
 
 export interface RemoveConnectionJson {
   connectionId: string;

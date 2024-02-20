@@ -1,10 +1,10 @@
+import { useSignal } from "@preact/signals";
 import { Fragment, JSX } from "preact";
-import { KvKeyEditor } from "./keyValue/KvKeyEditor.tsx";
-import { KvValueEditor } from "./keyValue/KvValueEditor.tsx";
 import { KvSetEntry } from "../routes/api/setEntry.tsx";
 import { SupportedValueTypes, ToastType } from "../types.ts";
-import { useSignal } from "@preact/signals";
 import { Toast } from "./Toast.tsx";
+import { KvKeyEditor } from "./keyValue/KvKeyEditor.tsx";
+import { KvValueEditor } from "./keyValue/KvValueEditor.tsx";
 
 export function SetEntryEditor() {
   const showToastSignal = useSignal(false);

@@ -1,9 +1,9 @@
 import { useSignal } from "@preact/signals";
-import { Toast } from "../Toast.tsx";
 import { JSX } from "preact/jsx-runtime";
+import { Caution } from "../../components/Caution.tsx";
 import { ExportStatus, ToastType } from "../../types.ts";
 import { Connections } from "../../utils/connections/connections.ts";
-import { Caution } from "../../components/Caution.tsx";
+import { Toast } from "../Toast.tsx";
 
 interface ExportCriteriaProps {
   connectionId: string;

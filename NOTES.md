@@ -7,15 +7,17 @@ Security model
 
 # ======================= EE = Enterprise edition
 
-TODO Phase 1: 
-1. Write (lots) more tests 
-2. Validate logout covers everything 
-3. Failure handling if token expires or is irretrievable 
+TODO Phase 1:
+
+1. Write (lots) more tests
+2. Validate logout covers everything
+3. Failure handling if token expires or is irretrievable
 4. Abortable list - Requires REST based list
-7. Review help content
-8. Sort out user menus
-9. 404 page
-10. 500 page
+5. Review help content
+6. Sort out user menus
+7. 404 page
+8. 500 page
+9. Help dialog viewing strips connection id from URL?
 
 TODO Release:
 
@@ -23,7 +25,7 @@ TODO Release:
 2. Testing
 3. How to distribute
 4. Remove all console.logs
-5. Clean up every module (document, imports, formatting) 
+5. Clean up every module (document, imports, formatting)
 6. TODO/FIXMEs
 
 Blocked:

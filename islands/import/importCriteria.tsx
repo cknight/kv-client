@@ -1,10 +1,9 @@
 import { useSignal } from "@preact/signals";
-import { Toast } from "../Toast.tsx";
 import { JSX } from "preact/jsx-runtime";
-import { ToastType } from "../../types.ts";
-import { WarningTriangleIcon } from "../../components/svg/WarningTriangle.tsx";
-import { Connections } from "../../utils/connections/connections.ts";
 import { Caution } from "../../components/Caution.tsx";
+import { ToastType } from "../../types.ts";
+import { Connections } from "../../utils/connections/connections.ts";
+import { Toast } from "../Toast.tsx";
 
 interface ImportCriteriaProps {
   error?: string;

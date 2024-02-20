@@ -1,7 +1,7 @@
-import { JSX } from "preact";
-import { Toast } from "../Toast.tsx";
 import { useSignal } from "@preact/signals";
+import { JSX } from "preact";
 import { ToastType } from "../../types.ts";
+import { Toast } from "../Toast.tsx";
 
 export function RemoveLocalConnectionDialog() {
   const showToastSignal = useSignal(false);

@@ -1,8 +1,8 @@
 import { walk } from "$std/fs/walk.ts";
 import { join } from "$std/path/mod.ts";
+import { env } from "../../consts.ts";
 import { KvInstance, KvUIEntry } from "../../types.ts";
 import { createKvUIEntry, hashKvKey } from "../utils.ts";
-import { env } from "../../consts.ts";
 
 const MAX_ROWS = 6; //should be even number
 const DENO_CACHE_DIR = "deno";

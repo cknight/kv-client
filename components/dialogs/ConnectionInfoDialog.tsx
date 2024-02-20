@@ -3,10 +3,11 @@ import { ConnectionCardProps } from "../../islands/connections/ConnectionCard.ts
 import { readableSize } from "../../utils/utils.ts";
 
 export function ConnectionInfoDialog(props: ConnectionCardProps) {
-  
   function close(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault(); //e.g. don't submit the form
-    const dialog = document.getElementById(props.id + "_connection_info_dialog")! as HTMLDialogElement;
+    const dialog = document.getElementById(
+      props.id + "_connection_info_dialog",
+    )! as HTMLDialogElement;
     dialog.close();
     dialog.classList.remove("modal");
   }
@@ -20,7 +21,7 @@ export function ConnectionInfoDialog(props: ConnectionCardProps) {
         <p class="font-bold text-xl">
           Connection Info
         </p>
-        <div class="divider"></div> 
+        <div class="divider"></div>
 
         <table>
           <tbody>
@@ -44,7 +45,9 @@ export function ConnectionInfoDialog(props: ConnectionCardProps) {
             </tr>
             <tr>
               <td class="w-32 py-2 font-bold">Estimated size</td>
-              <td class="break-all whitesapce-normal">{props.size < 0 ? "Unknown" : readableSize(props.size)}</td>
+              <td class="break-all whitesapce-normal">
+                {props.size < 0 ? "Unknown" : readableSize(props.size)}
+              </td>
             </tr>
             <tr>
               <td class="w-32 py-2 font-bold">Id</td>
@@ -53,7 +56,7 @@ export function ConnectionInfoDialog(props: ConnectionCardProps) {
           </tbody>
         </table>
         <div class="flex justify-center mt-4">
-          <button class="btn btn-primary" onClick={close}>OK</button> 
+          <button class="btn btn-primary" onClick={close}>OK</button>
         </div>
       </div>
     </dialog>

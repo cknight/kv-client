@@ -20,7 +20,7 @@ export function KeyHelp(props: { keyPart: string }) {
         <table class="table table-sm border border-[#151515]">
           <thead>
             <tr>
-              <th class="text-[#d5d5d5] text-sm bg-gray-700 shaodw-lg">Type</th>
+              <th class="text-[#d5d5d5] text-sm bg-gray-700 shaodw-lg">KvKey Type</th>
               <th class="text-[#d5d5d5] text-sm bg-gray-700 shaodw-lg">Example values</th>
               <th class="text-[#d5d5d5] text-sm bg-gray-700 shaodw-lg">Resulting Deno.KvKey</th>
             </tr>

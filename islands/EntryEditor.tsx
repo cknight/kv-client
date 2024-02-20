@@ -1,11 +1,10 @@
+import { Signal, useSignal } from "@preact/signals";
 import { Fragment, JSX } from "preact";
-import { KvValueEditor } from "./keyValue/KvValueEditor.tsx";
 import { KvSetEntry } from "../routes/api/setEntry.tsx";
 import { SupportedValueTypes, ToastType } from "../types.ts";
-import { Signal, useSignal } from "@preact/signals";
-import { Toast } from "./Toast.tsx";
-import { simpleTypes } from "../consts.ts";
 import { readableSize } from "../utils/utils.ts";
+import { Toast } from "./Toast.tsx";
+import { KvValueEditor } from "./keyValue/KvValueEditor.tsx";
 
 interface EntryEditorProps {
   kvKey: Signal<string>;

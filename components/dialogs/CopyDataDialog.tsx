@@ -1,10 +1,9 @@
-import { JSX } from "preact";
 import { effect, useSignal } from "@preact/signals";
-import { CopyDeleteMultiProps, ToastType } from "../../types.ts";
-import { CopyKeysData } from "../../routes/api/copyKeys.tsx";
+import { JSX } from "preact";
 import { Toast } from "../../islands/Toast.tsx";
+import { CopyKeysData } from "../../routes/api/copyKeys.tsx";
+import { CopyDeleteMultiProps, ToastType } from "../../types.ts";
 import { Caution } from "../Caution.tsx";
-import { LINK } from "../../consts.ts";
 
 export function CopyDataDialog(props: CopyDeleteMultiProps) {
   const {

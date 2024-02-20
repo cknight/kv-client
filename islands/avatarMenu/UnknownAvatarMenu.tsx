@@ -1,8 +1,7 @@
 import { useSignal } from "@preact/signals";
 import { UnknownAvatarIcon } from "../../components/svg/UnknownAvatar.tsx";
-import { JSX } from "preact/jsx-runtime";
 
-export function UnknownAvatarMenu(props: {path: string}) {
+export function UnknownAvatarMenu(props: { path: string }) {
   const menuVisible = useSignal(false);
   let lastToggle = 0;
 

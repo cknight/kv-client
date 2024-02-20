@@ -1,10 +1,9 @@
-import { effect, Signal, useSignal, useSignalEffect } from "@preact/signals";
-import { KvKeyInput } from "../keyValue/KvKeyInput.tsx";
-import { Help } from "../Help.tsx";
-import { KeyHelp } from "../../components/ListKeyHelp.tsx";
-import { readableSize } from "../../utils/utils.ts";
-import { debounce } from "../../utils/ui/debounce.ts";
+import { Signal, useSignal } from "@preact/signals";
 import { BasicKeyHelp } from "../../components/BasicKeyHelp.tsx";
+import { debounce } from "../../utils/ui/debounce.ts";
+import { readableSize } from "../../utils/utils.ts";
+import { Help } from "../Help.tsx";
+import { KvKeyInput } from "../keyValue/KvKeyInput.tsx";
 
 interface KvKeyEditorProps {
   kvKeyValue: Signal<string>;

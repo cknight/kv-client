@@ -1,6 +1,6 @@
-import { Signal, useSignal, useSignalEffect } from "@preact/signals";
-import { ToastType } from "../types.ts";
+import { Signal, useSignalEffect } from "@preact/signals";
 import { XIcon } from "../components/svg/XIcon.tsx";
+import { ToastType } from "../types.ts";
 
 interface ToastProperties {
   show: Signal<boolean>;

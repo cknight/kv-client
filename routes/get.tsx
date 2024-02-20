@@ -1,12 +1,11 @@
+import { Partial } from "$fresh/runtime.ts";
 import { FreshContext, Handlers, RouteContext } from "$fresh/server.ts";
 import { GetCriteriaBox } from "../islands/get/GetCriteriaBox.tsx";
+import { GetResult } from "../islands/get/GetResult.tsx";
 import { Environment, KvUIEntry } from "../types.ts";
-import { getUserState } from "../utils/state/state.ts";
+import { getConnections, getKvConnectionDetails } from "../utils/connections/connections.ts";
 import { getKv } from "../utils/kv/kvGet.ts";
 import { createKvUIEntry } from "../utils/utils.ts";
-import { Partial } from "$fresh/runtime.ts";
-import { GetResult } from "../islands/get/GetResult.tsx";
-import { getConnections, getKvConnectionDetails } from "../utils/connections/connections.ts";
 
 export interface GetData {
   key: string;
@@ -47,11 +46,11 @@ async function getData(
 ): Promise<KvUIEntry | undefined> {
   const session = ctx.state.session as string;
   const connectionId = new URL(req.url).searchParams.get("connectionId") || "";
-  
+
   if (!connectionId) {
     throw new Error("No connection found");
   }
-  
+
   let resultUIEntry: KvUIEntry | undefined;
   const result = await getKv({ session, connectionId, key: kvKey });
   if (result.versionstamp !== null) {

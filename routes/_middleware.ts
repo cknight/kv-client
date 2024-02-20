@@ -1,7 +1,7 @@
-import { MiddlewareHandlerContext } from "$fresh/server.ts";
+import { FreshContext } from "$fresh/server.ts";
 import { getCookies, setCookie } from "$std/http/cookie.ts";
 
-export async function handler(req: Request, ctx: MiddlewareHandlerContext) {
+export async function handler(req: Request, ctx: FreshContext) {
   const start = Date.now();
 
   if (ctx.destination === "route") {

@@ -38,8 +38,8 @@ export function SelfHostedAccessTokenInput() {
       <Help dialogId="accessTokenHelp" dialogTitle="Access Token">
         <div>
           Self-hosted KV stores require an access token to be able to connect. This is separate from
-          the access tokens generated in Deno Deploy dashboard and are set when creating the
-          self-hosted instance.
+          the access tokens generated in Deno Deploy dashboard. Self-hosted access tokens are set
+          when creating the self-hosted instance.
         </div>
       </Help>
     </div>

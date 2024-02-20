@@ -1,19 +1,15 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
-import { ulid } from "$std/ulid/mod.ts";
-import { JSX } from "preact/jsx-runtime";
+import { useSignal } from "@preact/signals";
 import { CONNECTIONS_KEY_PREFIX } from "../consts.ts";
+import { Help } from "../islands/Help.tsx";
+import { Toast } from "../islands/Toast.tsx";
+import { CancelLocalConnectionButton } from "../islands/connections/CancelLocalConnectionButton.tsx";
 import { LocalConnectionRadioButton } from "../islands/connections/LocalConnectionRadio.tsx";
 import { KvConnection, KvInstance, ToastType } from "../types.ts";
 import { peekAtLocalKvInstances } from "../utils/connections/autoDiscoverKv.ts";
-import { localKv } from "../utils/kv/db.ts";
-import { readableSize } from "../utils/utils.ts";
-import { CancelLocalConnectionButton } from "../islands/connections/CancelLocalConnectionButton.tsx";
-import { Help } from "../islands/Help.tsx";
-import { shortHash } from "../utils/utils.ts";
-import { Toast } from "../islands/Toast.tsx";
-import { useSignal } from "@preact/signals";
-import { useEffect } from "preact/hooks";
 import { getLocalConnections } from "../utils/connections/connections.ts";
+import { localKv } from "../utils/kv/db.ts";
+import { readableSize, shortHash } from "../utils/utils.ts";
 
 interface AllLocalConnectionProps {
   connectionName?: string;
@@ -104,13 +100,6 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
         </div>
         <div class="border border-1 border-[#666] bg-[#353535] rounded-md p-4 mt-3 mx-auto">
           <form method="post" f-client-nav={false}>
-            {
-              /* {isError && (
-              <h2 class="text-lg font-bold p-2 text-red-500 text-center break-all">
-                {errorText || "Invalid connection"}
-              </h2>
-            )} */
-            }
             <div class="mt-3 flex flex-row items-center">
               <label
                 for="connectionName"
@@ -148,8 +137,10 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
               />
               <Help dialogId="locationHelp" dialogTitle="Location">
                 <div>
-                  Enter a full path to a local KV store. These are typically files with a{" "}
-                  <code>.sqlite</code>{" "}
+                  Enter a full path to a local KV store. The file path must be accessible from the
+                  server KV client is running on. Local KV stores are typically files with a{" "}
+                  <code>.sqlite</code>{"  "}or <code>.sqlite3</code>
+                  {""}
                   extension. Alternatively, select an auto-discovered KV store below which will
                   populate this field.
                 </div>
@@ -171,7 +162,7 @@ export default function AddLocalConnection(props: PageProps<AllLocalConnectionPr
         <div>
           <p class="my-5 ml-2">
             Below are auto-discovered KV stores with a selection of sample data to help identify
-            each KV store. Select one below or manually enter a location above.
+            each KV store. Select one below or manually enter a file location above.
           </p>
           {localKVInstances.map((kv) => (
             <div class="rounded-xl w-full overflow-auto mb-3">

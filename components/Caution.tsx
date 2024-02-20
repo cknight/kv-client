@@ -1,5 +1,5 @@
-import { WarningTriangleIcon } from "./svg/WarningTriangle.tsx";
 import { ComponentChildren } from "preact";
+import { WarningTriangleIcon } from "./svg/WarningTriangle.tsx";
 
 export function Caution(props: { children: ComponentChildren }) {
   return (

@@ -1,8 +1,8 @@
-import { JSX } from "preact";
 import { effect, useSignal } from "@preact/signals";
+import { JSX } from "preact";
+import { Toast } from "../../islands/Toast.tsx";
 import { DeleteKeysData } from "../../routes/api/deleteKeys.tsx";
 import { CopyDeleteMultiProps, ToastType } from "../../types.ts";
-import { Toast } from "../../islands/Toast.tsx";
 import { Caution } from "../Caution.tsx";
 
 export function DeleteDataDialog(props: CopyDeleteMultiProps) {

@@ -1,10 +1,10 @@
-import { effect, Signal, useSignal, useSignalEffect } from "@preact/signals";
+import { Signal, useSignal, useSignalEffect } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import { JSX } from "preact/jsx-runtime";
-import { Help } from "../Help.tsx";
-import { SupportedValueTypes } from "../../types.ts";
 import { KvValueJson } from "../../routes/api/valueSize.tsx";
+import { SupportedValueTypes } from "../../types.ts";
 import { debounce } from "../../utils/ui/debounce.ts";
+import { Help } from "../Help.tsx";
 
 interface KvValueEditorProps {
   kvValue: Signal<string>;
@@ -109,7 +109,7 @@ export function KvValueEditor(props: KvValueEditorProps) {
     if (editor.value === null) return;
 
     setEditorValue();
-    
+
     //Update editor based on read only state
     editor.value.setReadOnly(props.readOnly.value);
     const editorDiv = document.getElementById("editor")!;
@@ -132,7 +132,7 @@ export function KvValueEditor(props: KvValueEditorProps) {
 
   /**
    * Set the editor value if the kvValue has changed (taking into account it may be preview-formatted JSON)
-   * This function is state/signal dependent. Don't set the value if the editor isn't yet initialized or if 
+   * This function is state/signal dependent. Don't set the value if the editor isn't yet initialized or if
    * the editor is not in read only mode (this function is triggered on any signal change).
    */
   function setEditorValue() {
@@ -141,7 +141,8 @@ export function KvValueEditor(props: KvValueEditorProps) {
     if (
       editor.value.getValue() === "" ||
       (!isPreviewingFormattedJSON.value && editor.value.getValue() !== props.kvValue.value) ||
-      (isPreviewingFormattedJSON.value && editor.value.getValue() !== JSON.stringify(JSON.parse(props.kvValue.value), null, 2))
+      (isPreviewingFormattedJSON.value &&
+        editor.value.getValue() !== JSON.stringify(JSON.parse(props.kvValue.value), null, 2))
     ) {
       editor.value.setValue(props.kvValue.value);
       updateEditorMode(props.kvValueType.value);
@@ -263,6 +264,13 @@ export function KvValueEditor(props: KvValueEditorProps) {
               <button class="btn btn-sm btn-primary" onClick={previewAsFormattedJSON}>
                 Preview as formatted JSON
               </button>
+              <Help dialogId="formatAsJsonDialog" dialogTitle="Preview As Formatted JSON">
+                <p>
+                  Show the KV value as formatted and pretty-printed JSON. This does not change the
+                  value in the KV store. Editing the value will revert the value to its original
+                  state.
+                </p>
+              </Help>
             </div>
           )}
           {props.kvValueType.value !== "" &&
@@ -385,10 +393,11 @@ export function KvValueEditor(props: KvValueEditorProps) {
                         </p>
                         <p class="mt-2">
                           Since the value type chosen for this KV value can potentially contain
-                          multiple types, it is necessary to include the type information for each
-                          part of this value. E.g. an Array can contain many elements, each of
-                          different types. Thus value types which themselves can contain multiple
-                          types need type definitions embedded within them. An example is{" "}
+                          multiple types inside it, it is necessary to include the type information
+                          for each part of this value. E.g. an Array can contain many elements, each
+                          of different types. Thus value types which themselves can contain multiple
+                          types (such as Array) need type definitions embedded within them. An
+                          example is{" "}
                           <code>{`{type: "Map", value: [["foo","bar"],["hello", "world"]]}`}</code>.
                         </p>
                         <p class="mt-2">
@@ -424,7 +433,9 @@ export function KvValueEditor(props: KvValueEditorProps) {
                               Change the default example <code>["foo", "hello"]</code> to{" "}
                               <code>[1,2,3]</code> or whatever number values you need.
                             </li>
-                            <li>Use this first entry as a guide for your additional entries.</li>
+                            <li>
+                              Use this first entry as a guide for your additional Map entries.
+                            </li>
                           </ol>
                         </p>
                       </Help>
@@ -445,7 +456,6 @@ export function KvValueEditor(props: KvValueEditorProps) {
           class={"mt-4 w-full flex flex-col items-center pr-8 " +
             (props.kvValueType.value === "" ? "hidden" : "")}
         >
-
           <div
             id="editor"
             class={"text-sm h-[500px] rounded focus:outline-none focus:ring-1 focus:ring-blue-400 font-mono w-full p-3 border"}

@@ -1,5 +1,5 @@
-import { parseKvKey } from "../transform/kvKeyParser.ts";
 import { assertEquals, assertThrows } from "$std/assert/mod.ts";
+import { parseKvKey } from "../transform/kvKeyParser.ts";
 
 Deno.test("kvKeyParser - no input", () => {
   assertEquals(parseKvKey(""), []);

@@ -1,8 +1,8 @@
-import { JSX } from "preact";
 import { effect, useSignal } from "@preact/signals";
-import { CopyDeleteSingleProps, ToastType } from "../../types.ts";
+import { JSX } from "preact";
 import { Toast } from "../../islands/Toast.tsx";
 import { DeleteKeyData } from "../../routes/api/deleteKey.tsx";
+import { CopyDeleteSingleProps, ToastType } from "../../types.ts";
 import { Caution } from "../Caution.tsx";
 
 export function DeleteKeyDialog(props: CopyDeleteSingleProps) {
@@ -148,7 +148,9 @@ export function DeleteKeyDialog(props: CopyDeleteSingleProps) {
             </table>
           </div>
           <Caution>
-            <p class="text-yellow-500 ml-2">Check details carefully. This action cannot be undone.</p>
+            <p class="text-yellow-500 ml-2">
+              Check details carefully. This action cannot be undone.
+            </p>
           </Caution>
           {isProd() && (
             <Caution>

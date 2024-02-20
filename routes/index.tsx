@@ -1,11 +1,11 @@
 /// <reference lib="deno.unstable" />
 import { RouteContext } from "$fresh/server.ts";
-import { ConnectionCard } from "../islands/connections/ConnectionCard.tsx";
-import { RemoveLocalConnectionDialog } from "../islands/connections/RemoveLocalConnectionDialog.tsx";
+import { signal } from "@preact/signals";
 import { AddConnectionButton } from "../islands/connections/AddConnectionButton.tsx";
 import { ConnectButton } from "../islands/connections/ConnectButton.tsx";
+import { ConnectionCard } from "../islands/connections/ConnectionCard.tsx";
+import { RemoveLocalConnectionDialog } from "../islands/connections/RemoveLocalConnectionDialog.tsx";
 import { getConnections } from "../utils/connections/connections.ts";
-import { signal } from "@preact/signals";
 
 export default async function Connections(_req: Request, ctx: RouteContext) {
   const { local, remote, selfHosted } = await getConnections(ctx.state.session as string);

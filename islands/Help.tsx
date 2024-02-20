@@ -1,5 +1,5 @@
-import { JSX } from "preact/jsx-runtime";
 import { ComponentChildren } from "preact";
+import { JSX } from "preact/jsx-runtime";
 
 interface HelpProps {
   children: ComponentChildren;

@@ -1,11 +1,11 @@
-import { KvKeyInput } from "../keyValue/KvKeyInput.tsx";
-import { Help } from "../Help.tsx";
-import { KeyHelp } from "../../components/ListKeyHelp.tsx";
-import { JSX } from "preact";
-import { clearListForm, submitListForm } from "../../utils/ui/form.ts";
-import { Toast } from "../Toast.tsx";
 import { useSignal } from "@preact/signals";
+import { JSX } from "preact";
+import { KeyHelp } from "../../components/ListKeyHelp.tsx";
 import { ToastType } from "../../types.ts";
+import { clearListForm, submitListForm } from "../../utils/ui/form.ts";
+import { Help } from "../Help.tsx";
+import { Toast } from "../Toast.tsx";
+import { KvKeyInput } from "../keyValue/KvKeyInput.tsx";
 
 interface ListDataProps {
   prefix: string;
@@ -131,8 +131,8 @@ export function ListCriteriaBox(data: ListDataProps) {
             </select>
             <Help dialogId="limitHelp" dialogTitle="Limit">
               <p>
-                This is the maximum amount of KV entries to retrieve with this list operation. Paging
-                and filtering are preformed against the rows retrieved within this limit.
+                This is the maximum number of KV entries to retrieve with this list operation.
+                Paging and filtering are preformed against the rows retrieved within this limit.
               </p>
             </Help>
           </div>
@@ -149,7 +149,17 @@ export function ListCriteriaBox(data: ListDataProps) {
               />
             </div>
             <Help dialogId="reverseHelp" dialogTitle="Reverse">
-              <p>Return the key-value pairs in lexicographically descending order</p>
+              <p>
+                Return the key-value pairs in{" "}
+                <a
+                  href="https://docs.deno.com/deploy/kv/manual/key_space#key-part-ordering"
+                  target="_blank"
+                  class="link"
+                >
+                  lexicographically descending
+                </a>{" "}
+                order
+              </p>
             </Help>
           </div>
           <div class="w-full flex items-center justify-end mt-5">
@@ -166,8 +176,8 @@ export function ListCriteriaBox(data: ListDataProps) {
             </div>
             <Help dialogId="disableCacheHelp" dialogTitle="Disable cache">
               <p>
-                Do not use the server cache when querying KV. Get all results direct from KV
-                instead.
+                Do not use the KV Client server cache (populated from previous operations) when
+                querying KV. Get all results direct from the KV store.
               </p>
             </Help>
           </div>

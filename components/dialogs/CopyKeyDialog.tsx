@@ -1,8 +1,8 @@
-import { JSX } from "preact";
 import { effect, useSignal } from "@preact/signals";
-import { CopyDeleteSingleProps, ToastType } from "../../types.ts";
+import { JSX } from "preact";
 import { Toast } from "../../islands/Toast.tsx";
 import { CopyKeyData } from "../../routes/api/copyKey.tsx";
+import { CopyDeleteSingleProps, ToastType } from "../../types.ts";
 import { Caution } from "../Caution.tsx";
 
 export function CopyKeyDialog(props: CopyDeleteSingleProps) {
@@ -173,8 +173,7 @@ export function CopyKeyDialog(props: CopyDeleteSingleProps) {
             </table>
           </div>
           <Caution>
-
-          <p class="text-yellow-500 ml-2">Any existing key will be overwritten</p>
+            <p class="text-yellow-500 ml-2">Any existing key will be overwritten</p>
           </Caution>
           {isProd.value && (
             <Caution>
