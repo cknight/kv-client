@@ -61,3 +61,12 @@ export function getUserState(sessionOrCtx: string | PageProps): State {
 
   return state;
 }
+
+export function deleteUserState(session: string): void {
+  const state = getUserState(session);
+  state.kv?.close();
+  state.kv = null;
+  state.connection = null;
+  state.cache.clear();
+  states.delete(session);
+}

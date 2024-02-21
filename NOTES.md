@@ -14,8 +14,6 @@ TODO Phase 1:
 3. Failure handling if token expires or is irretrievable
 4. Abortable list - Requires REST based list
 6. Sort out user menus
-7. 404 page
-8. 500 page
 9. Help dialog viewing strips connection id from URL?
 
 TODO Release:
@@ -45,6 +43,7 @@ Phase 2:
 7. Key tree
 8. Copy from get/list to file
 9. Enforce confirmation of delete all? (type "delete all data" or some such)
+10. Store self-hosted connections by session id?  E.g. avoid sharing self-hosted connections globally?  Or some other solution to improve security?  Might be annoying if the connection keeps disappearing.
 
 Config
 
@@ -71,3 +70,4 @@ EE - Role based access - Enterprise capability
 - Need admin role somehow? Store credentials in KV with short expiry, output to console on startup
   if no admin user. Need recovery option
 - Need UI screen to allocate roles to user
+- OAuth logins
