@@ -13,7 +13,6 @@ TODO Phase 1:
 2. Validate logout covers everything
 3. Failure handling if token expires or is irretrievable
 4. Abortable list - Requires REST based list
-5. Review help content
 6. Sort out user menus
 7. 404 page
 8. 500 page
