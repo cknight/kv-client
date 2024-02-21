@@ -7,8 +7,6 @@ export const DEPLOY_RATE_LIMITER_PREFIX = "deploy-rate-limiter";
 export const EXPORT_PATH = "export_path";
 export const QUEUE_MSG_UNDELIVERED = "undelivered";
 
-export const LINK = "text-[#0000ee] visited:text-violet-700 underline";
-
 // Environment variables
 export const env = {
   KV_CLIENT_ENCRYPTION_KEY: "KV_CLIENT_ENCRYPTION_KEY",

@@ -1,4 +1,3 @@
-import { LINK } from "../consts.ts";
 import { KvKeyInput } from "../islands/keyValue/KvKeyInput.tsx";
 
 export function KeyHelp(props: { keyPart: string }) {
@@ -6,11 +5,11 @@ export function KeyHelp(props: { keyPart: string }) {
     <>
       <div>
         This is the {props.keyPart} key of the{" "}
-        <a href="https://docs.deno.com/kv/manual/operations#list" target="_blank" class={LINK}>
+        <a href="https://docs.deno.com/kv/manual/operations#list" target="_blank" class="link">
           Deno.Kv.prototype.list
         </a>{" "}
         operation. It takes the form of a series of{" "}
-        <a href="https://deno.land/api?s=Deno.KvKeyPart&unstable=" target="_blank" class={LINK}>
+        <a href="https://deno.land/api?s=Deno.KvKeyPart&unstable=" target="_blank" class="link">
           Deno.KvKeyParts
         </a>. Enter the key parts as if you were coding them in Typescript/Javascript, as comma
         separated values. The outer brackets of the key are provided for you. To enter various types

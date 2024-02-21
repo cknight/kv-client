@@ -1,4 +1,3 @@
-import { LINK } from "../consts.ts";
 import { KvKeyInput } from "../islands/keyValue/KvKeyInput.tsx";
 
 export function BasicKeyHelp() {
@@ -6,7 +5,7 @@ export function BasicKeyHelp() {
     <>
       <div>
         This is the key of the Deno KV Entry. It takes the form of a series of{" "}
-        <a href="https://deno.land/api?s=Deno.KvKeyPart&unstable=" target="_blank" class={LINK}>
+        <a href="https://deno.land/api?s=Deno.KvKeyPart&unstable=" target="_blank" class="link">
           Deno.KvKeyParts
         </a>. Enter the key parts as if you were coding them in Typescript/Javascript, as comma
         separated values. The outer brackets of the key are provided for you. To enter various types
