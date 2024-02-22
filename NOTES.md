@@ -12,7 +12,6 @@ TODO Phase 1:
 1. Write (lots) more tests
 2. Failure handling if token expires or is irretrievable
 3. Abortable list - Requires REST based list
-4. Sort out user menus
 5. Help dialog viewing strips connection id from URL?
 
 TODO Release:

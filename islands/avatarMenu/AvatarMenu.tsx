@@ -59,9 +59,9 @@ export function AvatarMenu({ deployUser }: { deployUser: DeployUser }) {
                     Deploy access tokens
                   </a>
                 </li>
-                <li class="border-t border-gray-700 flex rounded-none hover:bg-[#404040]">
+                {/* <li class="border-t border-gray-700 flex rounded-none hover:bg-[#404040]">
                   <a href="/settings" class="py-2.5 flex-1 rounded-none">Settings</a>
-                </li>
+                </li> */}
                 <li class="border-t border-gray-700 rounded-none flex hover:bg-[#404040]">
                   <button onClick={signOut} class="py-2.5 flex-1 rounded-none cursor-pointer">
                     Sign out

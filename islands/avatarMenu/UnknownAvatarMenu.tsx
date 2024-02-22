@@ -55,9 +55,9 @@ export function UnknownAvatarMenu(props: { path: string }) {
                     Deploy access tokens
                   </a>
                 </li>
-                <li class="border-t border-gray-700 rounded-none flex hover:bg-[#404040]">
+                {/* <li class="border-t border-gray-700 rounded-none flex hover:bg-[#404040]">
                   <a href="/settings" class="py-2.5 flex-1 rounded-none">Settings</a>
-                </li>
+                </li> */}
                 <li class="border-t border-gray-700 rounded-none flex hover:bg-[#404040]">
                   <button onClick={clearData} class="py-2.5 flex-1 cursor-pointer rounded-none">
                     Clear data
