@@ -26,6 +26,7 @@ export const handler: Handlers = {
     const connectionName = formData.get("connectionName");
     const connectionLocation = formData.get("connectionLocation");
     const accessToken = formData.get("accessToken");
+    const session = ctx.state.session as string;
     let error = false;
     let errorText: string | undefined;
 
@@ -43,7 +44,9 @@ export const handler: Handlers = {
     } else if (!URL_REG_EX.test(connectionLocation)) {
       error = true;
       errorText = "Connection location must be a valid URL";
-    } else if ((await getSelfHostedConnections()).find((conn) => conn.name === connectionName)) {
+    } else if (
+      (await getSelfHostedConnections(session)).find((conn) => conn.name === connectionName)
+    ) {
       error = true;
       errorText = "A connection with this name already exists";
     } else {

@@ -24,7 +24,6 @@ export default function Error500Page({ error }: PageProps) {
           <p class="mt-12 text-3xl">500 internal error:</p>
           <p class="mt-12 border rounded p-12">{(error as Error).message}</p>
           <a href="/" class="link mt-16">Go back home</a>
-
         </div>
       </div>
     </>

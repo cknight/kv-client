@@ -8,7 +8,8 @@ interface HelpProps {
 }
 
 export function Help(props: HelpProps) {
-  function showHelp() {
+  function showHelp(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
+    event.preventDefault(); //e.g. don't submit the form
     const dialog = document.getElementById(props.dialogId) as HTMLDialogElement;
     dialog.classList.add("modal");
     dialog.showModal();

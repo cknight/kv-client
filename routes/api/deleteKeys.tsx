@@ -4,6 +4,7 @@ import { executorId } from "../../utils/connections/denoDeploy/deployUser.ts";
 import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";
 import { establishKvConnection } from "../../utils/kv/kvConnect.ts";
 import { deleteAll, DeleteResult } from "../../utils/kv/kvDelete.ts";
+import { logDebug } from "../../utils/log.ts";
 import { getUserState } from "../../utils/state/state.ts";
 import { entriesToOperateOn } from "../../utils/ui/buildResultsPage.ts";
 import { asPercentString } from "../../utils/ui/display.ts";
@@ -35,7 +36,7 @@ export const handler: Handlers = {
     try {
       const result = await deleteKeys(data, session);
       const deleteResult = result.deleteResult;
-      console.debug("Delete result", deleteResult);
+      logDebug({ sessionId: session }, "Delete result", deleteResult);
 
       const state = getUserState(session);
 
@@ -50,7 +51,7 @@ export const handler: Handlers = {
         aborted: deleteResult.aborted,
         writeUnitsConsumed: deleteResult.writeUnitsConsumed,
       };
-      await auditAction(deleteAudit);
+      await auditAction(deleteAudit, session);
 
       let status = 200;
       let body = "";

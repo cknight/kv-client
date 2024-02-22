@@ -1,6 +1,6 @@
 export interface I_CacheManager {
   get(parms: CacheKey): CachedList | undefined;
-  add(parms: ListResults): void;
+  add(parms: ListResults, session: string): void;
   set(parms: ListResults): void;
   clear(): void;
 }

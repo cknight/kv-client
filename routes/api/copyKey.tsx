@@ -7,6 +7,7 @@ import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";
 import { connectToSecondaryKv } from "../../utils/kv/kvConnect.ts";
 import { getKv } from "../../utils/kv/kvGet.ts";
 import { setAll, SetResult } from "../../utils/kv/kvSet.ts";
+import { logDebug } from "../../utils/log.ts";
 import { getUserState } from "../../utils/state/state.ts";
 
 export interface CopyKeyData {
@@ -29,7 +30,7 @@ export const handler: Handlers = {
     try {
       const result = await copyKey(data, session);
       const copyResult = result.copyResult;
-      console.debug("Copy result", copyResult);
+      logDebug({ sessionId: session }, "Copy result", copyResult);
 
       const state = getUserState(session);
 
@@ -51,7 +52,7 @@ export const handler: Handlers = {
         aborted: copyResult.aborted,
         writeUnitsConsumed: copyResult.writeUnitsConsumed,
       };
-      await auditAction(copyAudit);
+      await auditAction(copyAudit, session);
 
       let status = 200;
       let body = "";
@@ -100,7 +101,7 @@ async function copyKey(data: CopyKeyData, session: string): Promise<CopyOpResult
 
   const startCopyTime = Date.now();
   const copyResult = await setAll([copyEntry], destKv, "no abort");
-  console.debug("  Time to copy key", Date.now() - startCopyTime, "ms");
+  logDebug({ sessionId: session }, "  Time to copy key", Date.now() - startCopyTime, "ms");
 
   const overallDuration = Date.now() - startTime;
 

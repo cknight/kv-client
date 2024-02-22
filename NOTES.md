@@ -10,15 +10,14 @@ Security model
 TODO Phase 1:
 
 1. Write (lots) more tests
-2. Validate logout covers everything
-3. Failure handling if token expires or is irretrievable
-4. Abortable list - Requires REST based list
-6. Sort out user menus
-9. Help dialog viewing strips connection id from URL?
+2. Failure handling if token expires or is irretrievable
+3. Abortable list - Requires REST based list
+4. Sort out user menus
+5. Help dialog viewing strips connection id from URL?
 
 TODO Release:
 
-1. Documentation
+1. Documentation/Website
 2. Testing
 3. How to distribute
 4. Remove all console.logs
@@ -43,7 +42,9 @@ Phase 2:
 7. Key tree
 8. Copy from get/list to file
 9. Enforce confirmation of delete all? (type "delete all data" or some such)
-10. Store self-hosted connections by session id?  E.g. avoid sharing self-hosted connections globally?  Or some other solution to improve security?  Might be annoying if the connection keeps disappearing.
+10. Store self-hosted connections by session id? E.g. avoid sharing self-hosted connections
+    globally? Or some other solution to improve security? Might be annoying if the connection keeps
+    disappearing.
 
 Config
 

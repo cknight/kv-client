@@ -8,6 +8,7 @@ import { establishKvConnection } from "../../utils/kv/kvConnect.ts";
 import { listKv } from "../../utils/kv/kvList.ts";
 import { setAll } from "../../utils/kv/kvSet.ts";
 import { computeSize, readUnitsConsumed } from "../../utils/kv/kvUnitsConsumed.ts";
+import { logDebug } from "../../utils/log.ts";
 import { getUserState } from "../../utils/state/state.ts";
 import { asPercentString } from "../../utils/ui/display.ts";
 
@@ -32,7 +33,7 @@ export const handler: Handlers = {
 
     try {
       if (inputFileFormEntry && inputFileFormEntry instanceof File) {
-        console.debug("  writing import file to disk");
+        logDebug({ sessionId: session }, "  writing import file to disk");
         const tempDir = await Deno.makeTempDir();
         const fullPathFile = join(tempDir, inputFileFormEntry.name);
         try {
@@ -41,16 +42,18 @@ export const handler: Handlers = {
             fullPathFile,
             new Uint8Array(await inputFileFormEntry.arrayBuffer()),
           );
-          console.debug("  import file successfully written to disk at " + fullPathFile);
+          logDebug(
+            { sessionId: session },
+            "  import file successfully written to disk at " + fullPathFile,
+          );
 
           // Step 2: Open KV connection to file and validate
           const importFromKv = await Deno.openKv(fullPathFile);
           await importFromKv.get(["a random key to test the connection"]);
 
           // Step 3: Read all entries and write to KV
-          console.debug("  KV connection opened and validated");
+          logDebug({ sessionId: session }, "  KV connection opened and validated");
           const entries = await Array.fromAsync(importFromKv.list({ prefix: [] }));
-          const session = ctx.state.session as string;
           const setResult = await setAll(entries, state.kv!, connectionId);
 
           let opSize = 0;
@@ -72,7 +75,7 @@ export const handler: Handlers = {
             writeUnitsConsumed: setResult.writeUnitsConsumed,
             readUnitsConsumed: readUnitsConsumed(opSize),
           };
-          await auditAction(auditRecord);
+          await auditAction(auditRecord, session);
 
           if (setResult.aborted) {
             status = 499;
@@ -92,7 +95,7 @@ export const handler: Handlers = {
           await Deno.remove(tempDir, { recursive: true });
         }
       } else if (importSource && typeof importSource === "string") {
-        console.debug("  importing from URL");
+        logDebug({ sessionId: session }, "  importing from URL");
 
         const listOptions: KvListOptions = {
           session,
@@ -108,7 +111,10 @@ export const handler: Handlers = {
         };
         const listResults = await listKv(listOptions);
 
-        console.debug("  data retrieved from secondary KV connection (import source)");
+        logDebug(
+          { sessionId: session },
+          "  data retrieved from secondary KV connection (import source)",
+        );
 
         const conn = await getKvConnectionDetails(connectionId);
         const sourceConn = await getKvConnectionDetails(importSource);
@@ -128,7 +134,7 @@ export const handler: Handlers = {
             writeUnitsConsumed: 0,
             readUnitsConsumed: listResults.opStats.unitsConsumed,
           };
-          await auditAction(auditRecord);
+          await auditAction(auditRecord, session);
           status = 499;
           body = "Import aborted.  No keys were imported.";
         } else {
@@ -136,7 +142,7 @@ export const handler: Handlers = {
           const kv = await establishKvConnection(session, connectionId);
 
           const setResult = await setAll(listResults.results, kv, abortId!);
-          console.debug("  all entries imported to primary KV connection");
+          logDebug({ sessionId: session }, "  all entries imported to primary KV connection");
 
           const auditRecord: ImportAuditLog = {
             auditType: "import",
@@ -152,7 +158,7 @@ export const handler: Handlers = {
             writeUnitsConsumed: setResult.writeUnitsConsumed,
             readUnitsConsumed: listResults.opStats.unitsConsumed,
           };
-          await auditAction(auditRecord);
+          await auditAction(auditRecord, session);
 
           if (setResult.aborted) {
             status = 499;
@@ -174,7 +180,7 @@ export const handler: Handlers = {
       status = 500;
     }
 
-    console.debug("  import complete", body);
+    logDebug({ sessionId: session }, "  import complete", body);
     return new Response(body, {
       status,
     });

@@ -1,5 +1,6 @@
 import { _24_HOURS_IN_MS } from "../../consts.ts";
 import { CachedList, CacheKey, I_CacheManager, ListResults } from "../../types.ts";
+import { logDebug } from "../log.ts";
 
 export class CacheManager implements I_CacheManager {
   private cache: Map<string, CachedList> = new Map();
@@ -17,7 +18,7 @@ export class CacheManager implements I_CacheManager {
     return result;
   }
 
-  add(parms: ListResults): void {
+  add(parms: ListResults, session: string): void {
     const key = this.#key(parms.connectionId, parms.prefix, parms.start, parms.end, parms.reverse);
     const cachedListResults = this.cache.get(key);
 
@@ -34,7 +35,8 @@ export class CacheManager implements I_CacheManager {
     }
 
     const result = this.cache.get(key);
-    console.debug(
+    logDebug(
+      { sessionId: session },
       "Cache for key",
       JSON.stringify(key),
       "|| cursor:",

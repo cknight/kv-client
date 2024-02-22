@@ -4,6 +4,8 @@ import { AccessTokenInput } from "../islands/AccessTokenInput.tsx";
 import { buildRemoteData } from "../utils/connections/denoDeploy/deployUser.ts";
 import { persistConnectionData } from "../utils/connections/denoDeploy/persistConnectionData.ts";
 import { localKv } from "../utils/kv/db.ts";
+import { logDebug } from "../utils/log.ts";
+import { userNames } from "../utils/state/state.ts";
 import { getUserState } from "../utils/state/state.ts";
 import { storeEncryptedString } from "../utils/transform/encryption.ts";
 
@@ -32,13 +34,14 @@ export const handler: Handlers = {
         await localKv.set([DEPLOY_USER_KEY_PREFIX, session], deployUser, {
           expireIn: _24_HOURS_IN_MS,
         });
+        userNames.set(session, deployUser.id);
         await storeEncryptedString(
           [ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session],
           accessToken,
         );
         await persistConnectionData(deployUser);
 
-        console.debug(`Fetched deploy user data in ${Date.now() - start}ms`);
+        logDebug({ sessionId: session }, `Fetched deploy user data in ${Date.now() - start}ms`);
 
         return new Response("", {
           status: 303,

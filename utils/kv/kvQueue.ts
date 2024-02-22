@@ -1,4 +1,5 @@
 import { QueueDeleteExportFile } from "../../types.ts";
+import { logDebug } from "../log.ts";
 import { localKv } from "./db.ts";
 
 function isDeleteExportFile(msg: unknown): msg is QueueDeleteExportFile {
@@ -23,5 +24,5 @@ localKv.listenQueue(async (msg: unknown) => {
  * importing this module will.
  */
 export function registerQueueListener() {
-  console.debug("Queue listener now registered");
+  logDebug({ sessionId: "-" }, "Queue listener now registered");
 }

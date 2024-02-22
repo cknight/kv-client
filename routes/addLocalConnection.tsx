@@ -24,6 +24,7 @@ export const handler: Handlers = {
     const formData = await req.formData();
     const connectionName = formData.get("connectionName");
     const connectionLocation = formData.get("connectionLocation");
+    const session = ctx.state.session as string;
     let error = false;
     let errorText: string | undefined;
 
@@ -35,7 +36,7 @@ export const handler: Handlers = {
     } else if (!connectionLocation || typeof connectionLocation !== "string") {
       error = true;
       errorText = "Enter a connection location";
-    } else if ((await getLocalConnections()).find((conn) => conn.name === connectionName)) {
+    } else if ((await getLocalConnections(session)).find((conn) => conn.name === connectionName)) {
       error = true;
       errorText = "A connection with this name already exists";
     } else {
@@ -68,7 +69,7 @@ export const handler: Handlers = {
         errorText = e.message.split(":")[0];
       }
     }
-    const localKVInstances = await peekAtLocalKvInstances();
+    const localKVInstances = await peekAtLocalKvInstances(session);
 
     return await ctx.render({
       error,
@@ -79,7 +80,7 @@ export const handler: Handlers = {
     });
   },
   async GET(req, ctx) {
-    const localKVInstances = await peekAtLocalKvInstances();
+    const localKVInstances = await peekAtLocalKvInstances(ctx.state.session as string);
     return await ctx.render({ kvInstances: localKVInstances, error: false });
   },
 };

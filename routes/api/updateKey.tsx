@@ -4,6 +4,7 @@ import { executorId } from "../../utils/connections/denoDeploy/deployUser.ts";
 import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";
 import { establishKvConnection } from "../../utils/kv/kvConnect.ts";
 import { setAll, SetResult } from "../../utils/kv/kvSet.ts";
+import { logDebug } from "../../utils/log.ts";
 import { getUserState } from "../../utils/state/state.ts";
 import { json5Parse, json5Stringify } from "../../utils/transform/stringSerialization.ts";
 import { entriesToOperateOn } from "../../utils/ui/buildResultsPage.ts";
@@ -35,7 +36,7 @@ export const handler: Handlers = {
 
     try {
       const result = await updateKey(data, session);
-      console.debug("Update result", result);
+      logDebug({ sessionId: session }, "Update result", result);
 
       if (result.updateResult.setKeyCount === 1) {
         body = "Update successful";
@@ -110,7 +111,7 @@ async function updateKey(data: UpdateKeyData, session: string): Promise<UpdateOp
     writeUnitsConsumed: writeUnitsConsumed,
     newVersionstamp: lastSuccessfulVersionstamp,
   };
-  await auditAction(updateAudit);
+  await auditAction(updateAudit, session);
 
   return {
     duration: overallDuration,

@@ -1,4 +1,5 @@
 import { CacheInvalidationError } from "../errors.ts";
+import { logDebug } from "../log.ts";
 import { getUserState } from "../state/state.ts";
 import { hashKvKey, toJSON } from "../utils.ts";
 
@@ -63,7 +64,8 @@ export async function entriesToOperateOn(
   if (keysSelected.length === 0 && (data.filter === undefined || data.filter === "")) {
     // Scenario 1 - Operate on all results
     kvEntries = cachedListResults.dataRetrieved;
-    console.debug(
+    logDebug(
+      { sessionId: session },
       `Operating on all ${kvEntries.length} key${kvEntries.length > 1 ? "s" : ""}`,
     );
   } else {
@@ -72,11 +74,13 @@ export async function entriesToOperateOn(
       cachedListResults.dataRetrieved,
       data.from,
       data.show,
+      session,
     );
     if (keysSelected.length === 0) {
       // Scenario 2 - Operate on all filtered results
       kvEntries = resultsWorkingSet;
-      console.debug(
+      logDebug(
+        { sessionId: session },
         `Operating on all ${kvEntries.length} filtered keys${kvEntries.length > 1 ? "s" : ""}`,
       );
     } else {
@@ -96,13 +100,17 @@ export async function entriesToOperateOn(
         );
       }
 
-      console.debug(
+      logDebug(
+        { sessionId: session },
         `Operating on ${kvEntries.length} key${data.keysSelected.length > 1 ? "s" : ""}`,
       );
     }
   }
 
-  console.debug(`  Time to match ${kvEntries.length} keys: ${Date.now() - startTime}ms`);
+  logDebug(
+    { sessionId: session },
+    `  Time to match ${kvEntries.length} keys: ${Date.now() - startTime}ms`,
+  );
   return kvEntries;
 }
 
@@ -111,6 +119,7 @@ export function buildResultsPage(
   results: Deno.KvEntry<unknown>[],
   from: number,
   show: number,
+  session: string,
 ) {
   let filtered = false;
   let resultsWorkingSet = results;
@@ -124,7 +133,12 @@ export function buildResultsPage(
       }
     }
 
-    console.debug(`  Filtering ${results.length} rows took `, Date.now() - startTime, `ms`);
+    logDebug(
+      { sessionId: session },
+      `  Filtering ${results.length} rows took `,
+      Date.now() - startTime,
+      `ms`,
+    );
     resultsWorkingSet = matchingFilterResults;
     filtered = true;
   }

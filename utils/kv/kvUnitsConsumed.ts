@@ -1,4 +1,5 @@
 import { AuditRecord, UnitsConsumed } from "../../types.ts";
+import { logDebug } from "../log.ts";
 import { approximateSize } from "../utils.ts";
 import { localKv } from "./db.ts";
 
@@ -31,7 +32,7 @@ export function writeUnitsConsumed(bytesSent: number): number {
   return Math.ceil(bytesSent / BYTES_PER_WRITE_UNIT);
 }
 
-export async function unitsConsumedToday(): Promise<UnitsConsumed> {
+export async function unitsConsumedToday(session: string): Promise<UnitsConsumed> {
   const auditIterator = localKv.list<AuditRecord>({
     prefix: ["audit"],
     start: ["audit", getStartOfUTCDay()],
@@ -57,7 +58,8 @@ export async function unitsConsumedToday(): Promise<UnitsConsumed> {
     }
   }
   const result = { operations, read: readUnits, write: writeUnits };
-  console.debug(
+  logDebug(
+    { sessionId: session },
     `Units consumed today (${totalRemoteAuditsToday} remote ops from ${totalAuditsToday} total ops): ${
       JSON.stringify(result)
     }`,

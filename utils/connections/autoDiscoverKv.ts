@@ -2,6 +2,7 @@ import { walk } from "$std/fs/walk.ts";
 import { join } from "$std/path/mod.ts";
 import { env } from "../../consts.ts";
 import { KvInstance, KvUIEntry } from "../../types.ts";
+import { logDebug } from "../log.ts";
 import { createKvUIEntry, hashKvKey } from "../utils.ts";
 
 const MAX_ROWS = 6; //should be even number
@@ -20,14 +21,15 @@ const DEFAULT_KV_FILENAME = "kv.sqlite3";
  *
  * @returns <KvInstance[]> containing the full file path and a partial array of data
  */
-export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
+export async function peekAtLocalKvInstances(session: string): Promise<KvInstance[]> {
   const start = Date.now();
   const denoDir = Deno.env.get(env.DENO_DIR);
   const fullCacheDir = denoDir || join(cacheDir() || "", DENO_CACHE_DIR);
   const locationDir = join(fullCacheDir, LOCATION_DATA_DIR);
 
   try {
-    console.debug(
+    logDebug(
+      { sessionId: session },
       "Attempting to auto-discover KV instances cached at " + locationDir,
     );
     if (!Deno.statSync(locationDir).isDirectory) {
@@ -90,7 +92,8 @@ export async function peekAtLocalKvInstances(): Promise<KvInstance[]> {
       kv.close();
     }
   }
-  console.debug(
+  logDebug(
+    { sessionId: session },
     `Auto-discovered ${instances.length} KV instances in ${Date.now() - start}ms`,
   );
   return instances;

@@ -4,6 +4,7 @@ import { executorId } from "../../utils/connections/denoDeploy/deployUser.ts";
 import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";
 import { establishKvConnection } from "../../utils/kv/kvConnect.ts";
 import { deleteAll } from "../../utils/kv/kvDelete.ts";
+import { logDebug } from "../../utils/log.ts";
 import { getUserState } from "../../utils/state/state.ts";
 import { parseKvKey } from "../../utils/transform/kvKeyParser.ts";
 
@@ -25,7 +26,7 @@ export const handler: Handlers = {
 
     try {
       const result = await deleteKey(data, session);
-      console.debug("Delete successful:", result);
+      logDebug({ sessionId: session }, "Delete successful:", result);
 
       const state = getUserState(session);
 
@@ -40,7 +41,7 @@ export const handler: Handlers = {
         aborted: false,
         writeUnitsConsumed: result.writeUnitsConsumed,
       };
-      await auditAction(deleteAudit);
+      await auditAction(deleteAudit, session);
 
       let status = 200;
       let body = "";

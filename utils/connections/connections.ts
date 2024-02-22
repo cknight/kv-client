@@ -1,6 +1,7 @@
 import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
 import { KvConnection } from "../../types.ts";
 import { localKv } from "../kv/db.ts";
+import { logDebug } from "../log.ts";
 import { deployKvEnvironment, DeployUser, getDeployUserData } from "./denoDeploy/deployUser.ts";
 
 export interface Connections {
@@ -30,12 +31,12 @@ export async function getConnections(session: string): Promise<Connections> {
       ))
     ));
   }
-  const localConnections = await getLocalConnections();
-  const selfHostedConnections = await getSelfHostedConnections();
+  const localConnections = await getLocalConnections(session);
+  const selfHostedConnections = await getSelfHostedConnections(session);
   return { local: localConnections, selfHosted: selfHostedConnections, remote };
 }
 
-export async function getLocalConnections(): Promise<KvConnection[]> {
+export async function getLocalConnections(session: string): Promise<KvConnection[]> {
   const start = Date.now();
   const connections: KvConnection[] = [];
   const connectionList = localKv.list<KvConnection>({ prefix: [CONNECTIONS_KEY_PREFIX] });
@@ -51,11 +52,14 @@ export async function getLocalConnections(): Promise<KvConnection[]> {
       }
     }
   }
-  console.debug(`Loaded ${connections.length} local connections in ${Date.now() - start}ms`);
+  logDebug(
+    { sessionId: session },
+    `Loaded ${connections.length} local connections in ${Date.now() - start}ms`,
+  );
   return connections;
 }
 
-export async function getSelfHostedConnections(): Promise<KvConnection[]> {
+export async function getSelfHostedConnections(session: string): Promise<KvConnection[]> {
   const start = Date.now();
   const connections: KvConnection[] = [];
   const connectionList = localKv.list<KvConnection>({ prefix: [CONNECTIONS_KEY_PREFIX] });
@@ -64,7 +68,10 @@ export async function getSelfHostedConnections(): Promise<KvConnection[]> {
       connections.push(connection.value);
     }
   }
-  console.debug(`Loaded ${connections.length} self-hosted connections in ${Date.now() - start}ms`);
+  logDebug(
+    { sessionId: session },
+    `Loaded ${connections.length} self-hosted connections in ${Date.now() - start}ms`,
+  );
   return connections;
 }
 

@@ -10,6 +10,7 @@ import { ValidationError } from "../errors.ts";
 import { getUserState } from "../state/state.ts";
 import { getEncryptedString } from "../transform/encryption.ts";
 import { localKv } from "./db.ts";
+import { logDebug } from "../log.ts";
 
 export const mutex = new Mutex();
 
@@ -23,11 +24,11 @@ export async function establishKvConnection(
     throw new ValidationError("Invalid session");
   } else if (userState.connection?.id === connectionId && userState.kv) {
     // Already connected to the requested connection
-    console.debug(`Reusing connection to '${userState.connection?.name}'`);
+    logDebug({ sessionId: session }, `Reusing connection to '${userState.connection?.name}'`);
     return userState.kv;
   } else if (userState.connection?.id !== connectionId && userState.kv) {
     // Connected to a different connection, so close it first
-    console.debug(`Closing connection to '${userState.connection?.name}'`);
+    logDebug({ sessionId: session }, `Closing connection to '${userState.connection?.name}'`);
     userState!.kv.close();
     userState.kv = null;
     userState.connection = null;
@@ -76,7 +77,10 @@ export async function establishKvConnection(
     throw new ValidationError(`Connection ${connectionId} does not exist`);
   }
 
-  console.debug(`Established KV connection to '${connection.name} (${connection.environment})'`);
+  logDebug(
+    { sessionId: session },
+    `Established KV connection to '${connection.name} (${connection.environment})'`,
+  );
   return userState.kv;
 }
 

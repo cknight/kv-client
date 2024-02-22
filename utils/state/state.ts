@@ -1,11 +1,13 @@
 import { PageProps } from "$fresh/server.ts";
 import { ExportStatus, State } from "../../types.ts";
+import { logDebug } from "../log.ts";
 import { CacheManager } from "./cache.ts";
 
 const states: Map<string, State> = new Map();
 const abortSet = new Set<string>();
 const exportStatus = new Map<string, ExportStatus>();
 const _10_MINUTES = 1000 * 60 * 10;
+export const userNames = new Map<string, string>();
 
 export function abort(id: string): void {
   abortSet.add(id);
@@ -24,8 +26,8 @@ export function shouldAbort(id: string): boolean {
   return false;
 }
 
-export function updateExportStatus(id: string, status: ExportStatus): void {
-  console.debug("Updating export status", id, status);
+export function updateExportStatus(id: string, status: ExportStatus, session: string): void {
+  logDebug({ sessionId: session }, "Updating export status", id, status);
   exportStatus.set(id, status);
 
   if (status.status !== "in progress" && status.status !== "initiating") {
@@ -69,4 +71,5 @@ export function deleteUserState(session: string): void {
   state.connection = null;
   state.cache.clear();
   states.delete(session);
+  userNames.delete(session);
 }

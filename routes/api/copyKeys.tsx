@@ -7,6 +7,7 @@ import { localKv } from "../../utils/kv/db.ts";
 import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";
 import { connectToSecondaryKv } from "../../utils/kv/kvConnect.ts";
 import { setAll, SetResult } from "../../utils/kv/kvSet.ts";
+import { logDebug } from "../../utils/log.ts";
 import { getUserState } from "../../utils/state/state.ts";
 import { entriesToOperateOn, KeyOperationData } from "../../utils/ui/buildResultsPage.ts";
 import { asPercentString } from "../../utils/ui/display.ts";
@@ -39,7 +40,7 @@ export const handler: Handlers = {
     try {
       const result = await copyKeys(data, session);
       const copyResult = result.copyResult;
-      console.debug("Copy result", copyResult);
+      logDebug({ sessionId: session }, "Copy result", copyResult);
 
       const state = getUserState(session);
 
@@ -61,7 +62,7 @@ export const handler: Handlers = {
         aborted: copyResult.aborted,
         writeUnitsConsumed: copyResult.writeUnitsConsumed,
       };
-      await auditAction(copyAudit);
+      await auditAction(copyAudit, session);
 
       let status = 200;
       let body = "";
@@ -131,7 +132,7 @@ async function copyKeys(data: CopyKeysData, session: string): Promise<CopyOpResu
   //      and then GET progress updates through a separate endpoint.
   const startCopyTime = Date.now();
   const copyResult = await setAll(copyEntries, destKv, abortId);
-  console.debug("  Time to copy keys", Date.now() - startCopyTime, "ms");
+  logDebug({ sessionId: session }, "  Time to copy keys", Date.now() - startCopyTime, "ms");
 
   const overallDuration = Date.now() - startTime;
   return {

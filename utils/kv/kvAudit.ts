@@ -1,10 +1,11 @@
 import { delay } from "$std/async/delay.ts";
 import { AuditRecord, KvConnection } from "../../types.ts";
+import { logDebug } from "../log.ts";
 import { localKv } from "./db.ts";
 
 const THIRTY_DAYS_IN_MS = 1000 * 60 * 60 * 24 * 30;
 
-export async function auditAction(audit: AuditRecord) {
+export async function auditAction(audit: AuditRecord, session: string) {
   let auditSuccess = false;
   let attempts = 0;
   while (attempts < 10 && !auditSuccess) {
@@ -17,11 +18,11 @@ export async function auditAction(audit: AuditRecord) {
       .commit();
     auditSuccess = result.ok;
     if (!auditSuccess) {
-      console.debug("Audit key collision, trying again");
+      logDebug({ sessionId: session }, "Audit key collision, trying again");
       await delay(1);
       attempts++;
     } else {
-      console.debug("Audit successful:", audit);
+      logDebug({ sessionId: session }, "Audit successful:", audit);
     }
   }
   if (!auditSuccess) {

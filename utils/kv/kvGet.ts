@@ -1,5 +1,6 @@
 import { GetAuditLog, KvGetOptions } from "../../types.ts";
 import { executorId } from "../connections/denoDeploy/deployUser.ts";
+import { logDebug } from "../log.ts";
 import { getUserState } from "../state/state.ts";
 import { parseKvKey } from "../transform/kvKeyParser.ts";
 import { auditAction } from "./kvAudit.ts";
@@ -13,7 +14,7 @@ export async function getKv(getOptions: KvGetOptions): Promise<Deno.KvEntryMaybe
   const kv = await establishKvConnection(session, connectionId);
 
   const kvKey = parseKvKey(key);
-  console.debug(`kv.get([${key}]) for connection ${connectionId}`);
+  logDebug({ sessionId: session }, `kv.get([${key}]) for connection ${connectionId}`);
 
   const start = Date.now();
   const entry = await kv!.get(kvKey);
@@ -34,7 +35,7 @@ export async function getKv(getOptions: KvGetOptions): Promise<Deno.KvEntryMaybe
     resultVersionstamp: entry.versionstamp,
     readUnitsConsumed: readUnitsConsumed(size),
   };
-  await auditAction(audit);
+  await auditAction(audit, session);
 
   return entry;
 }

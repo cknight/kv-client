@@ -1,6 +1,7 @@
 import { KvListOptions, ListAuditLog, OpStats, PartialListResults, State } from "../../types.ts";
 import { executorId } from "../connections/denoDeploy/deployUser.ts";
 import { ValidationError } from "../errors.ts";
+import { logDebug } from "../log.ts";
 import { getUserState, shouldAbort } from "../state/state.ts";
 import { parseKvKey } from "../transform/kvKeyParser.ts";
 import { toJSON } from "../utils.ts";
@@ -37,7 +38,8 @@ export async function listKv(
 
   if (cachedListResults) {
     const cachedData = cachedListResults.dataRetrieved.slice(0, maxEntries);
-    console.debug(
+    logDebug(
+      { sessionId: session },
       "Cached data:",
       cachedData.length,
       "Limit:",
@@ -55,7 +57,7 @@ export async function listKv(
 
     if (!cachedListResults.cursor && cachedData.length > 0) {
       // All data has already been retrieved, so return whatever we have
-      console.debug("All data already retrieved from cache");
+      logDebug({ sessionId: session }, "All data already retrieved from cache");
       return {
         results: cachedData,
         cursor: cachedListResults.cursor,
@@ -64,7 +66,7 @@ export async function listKv(
       };
     } else if (cachedData.length === maxEntries) {
       // We don't have all data, but we do have exactly the data requested, so return it
-      console.debug("All data requested already in cache");
+      logDebug({ sessionId: session }, "All data requested already in cache");
       return {
         results: cachedData,
         cursor: cachedListResults.cursor,
@@ -93,7 +95,10 @@ export async function listKv(
     batchSize: maxEntries > 500 ? 500 : maxEntries,
   };
   const listIterator = state.kv!.list(selector, options);
-  console.debug("kv.list(" + toJSON(selector) + ", " + JSON.stringify(options) + ")");
+  logDebug(
+    { sessionId: session },
+    "kv.list(" + toJSON(selector) + ", " + JSON.stringify(options) + ")",
+  );
   let count = 0;
   let operationSize = 0;
   let newCursor: string | false = "";
@@ -114,7 +119,7 @@ export async function listKv(
       aborted = true;
       break;
     } else if (count % 100000 === 0) {
-      console.debug("Retrieved", count, "results");
+      logDebug({ sessionId: session }, "Retrieved", count, "results");
     }
     result = await listIterator.next();
   }
@@ -138,7 +143,7 @@ export async function listKv(
       cursor: newCursor,
     });
   } else {
-    console.debug("Caching", newResults.length, "results.  Cursor", newCursor);
+    logDebug({ sessionId: session }, "Caching", newResults.length, "results.  Cursor", newCursor);
     state.cache.add({
       connectionId,
       prefix,
@@ -147,7 +152,7 @@ export async function listKv(
       reverse,
       results: newResults,
       cursor: newCursor,
-    });
+    }, session);
   }
 
   const readUnits = readUnitsConsumed(operationSize);
@@ -168,11 +173,12 @@ export async function listKv(
       rtms: queryOnlyTime,
       aborted,
     };
-    await auditAction(audit);
+    await auditAction(audit, session);
   }
 
   const finalResults = cachedResults.concat(newResults);
-  console.debug(
+  logDebug(
+    { sessionId: session },
     "List results:",
     finalResults.length - newResults.length,
     "results from cache,",
@@ -226,7 +232,7 @@ function validateInputs(
 
   if (prefix.length > 0 && start.length > 0 && end.length > 0) {
     throw new ValidationError(
-      "Cannot specify a prefix, start and end key.  Valid combinations are prefix, prefix/start, prefix/end or start/end",
+      "Cannot specify a prefix, start and end key.",
     );
   }
 }

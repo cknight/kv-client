@@ -5,6 +5,7 @@ import { ValidationError } from "../../utils/errors.ts";
 import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";
 import { establishKvConnection } from "../../utils/kv/kvConnect.ts";
 import { setAll } from "../../utils/kv/kvSet.ts";
+import { logDebug } from "../../utils/log.ts";
 import { getUserState } from "../../utils/state/state.ts";
 import { parseKvKey } from "../../utils/transform/kvKeyParser.ts";
 import { buildKvValue } from "../../utils/transform/kvValueParser.ts";
@@ -65,9 +66,9 @@ export const handler: Handlers = {
         writeUnitsConsumed: writeUnitsConsumed,
         versionstamp: lastSuccessfulVersionstamp,
       };
-      await auditAction(setAudit);
+      await auditAction(setAudit, session);
 
-      console.debug("Set result", result);
+      logDebug({ sessionId: session }, "Set result", result);
 
       if (result.setKeyCount === 1) {
         body = "Entry successfully set";

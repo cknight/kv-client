@@ -6,6 +6,7 @@ import {
 } from "../../../consts.ts";
 import { Environment } from "../../../types.ts";
 import { localKv } from "../../kv/db.ts";
+import { logDebug } from "../../log.ts";
 import { getEncryptedString } from "../../transform/encryption.ts";
 import { getOrganizationDetail, getProjectDbs, getRootData } from "./dash.ts";
 import { persistConnectionData } from "./persistConnectionData.ts";
@@ -147,7 +148,7 @@ export async function getDeployUserData(
       try {
         const newDeployUser = await buildRemoteData(accessToken, session);
         if (newDeployUser) {
-          console.debug("Successfully loaded new Deploy user data");
+          logDebug({ sessionId: session }, "Successfully loaded new Deploy user data");
           await localKv.set([DEPLOY_USER_KEY_PREFIX, session], newDeployUser, {
             expireIn: _24_HOURS_IN_MS,
           });
@@ -160,6 +161,5 @@ export async function getDeployUserData(
       }
     }
   }
-
   return deployUser;
 }

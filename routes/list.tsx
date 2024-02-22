@@ -104,7 +104,7 @@ export const handler: Handlers = {
 };
 
 async function getStats(session: string, partialResults: PartialListResults): Promise<Stats> {
-  const unitsConsumed = await unitsConsumedToday();
+  const unitsConsumed = await unitsConsumedToday(session);
   return {
     unitsConsumedToday: unitsConsumed,
     opStats: partialResults.opStats,
@@ -152,6 +152,7 @@ async function getResults(
     results,
     listInputData.from,
     listInputData.show,
+    session,
   );
   const resultsToShow = await Promise.all(resultsPage.map(async (e) => await createKvUIEntry(e)));
 

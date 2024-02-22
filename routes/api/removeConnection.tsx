@@ -1,6 +1,7 @@
 import { Handlers } from "$fresh/server.ts";
 import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
 import { localKv } from "../../utils/kv/db.ts";
+import { logDebug } from "../../utils/log.ts";
 
 export interface RemoveConnectionJson {
   connectionId: string;
@@ -10,13 +11,14 @@ export interface RemoveConnectionJson {
  * API to remove a connection
  */
 export const handler: Handlers = {
-  async POST(req, _ctx) {
+  async POST(req, ctx) {
     const value = await req.json() as RemoveConnectionJson;
+    const session = ctx.state.session as string;
     try {
       const connectionId = value.connectionId;
       if (connectionId && typeof connectionId === "string") {
         await localKv.delete([CONNECTIONS_KEY_PREFIX, connectionId]);
-        console.debug("Removed connection", connectionId);
+        logDebug({ sessionId: session }, "Removed connection", connectionId);
         return new Response("", {
           status: 200,
         });
