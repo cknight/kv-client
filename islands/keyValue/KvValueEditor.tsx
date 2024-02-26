@@ -78,7 +78,7 @@ export function KvValueEditor(props: KvValueEditorProps) {
       session.insert(cursor, `{ type: "Set", value: ["foo", "hello"] }`);
     } else if (typeHelper === "Array") {
       session.insert(cursor, `["foo", "hello"]`);
-    } else if (typeHelper === "Object") {
+    } else if (typeHelper === "object") {
       session.insert(cursor, `{ foo: "bar", c: 1234 }`);
     } else if (typeHelper === "true" || typeHelper === "false" || typeHelper === "null") {
       session.insert(cursor, typeHelper);
@@ -359,10 +359,10 @@ export function KvValueEditor(props: KvValueEditorProps) {
                           Map
                         </option>
                         <option
-                          value="Object"
-                          disabled={disabledTypeTemplates.value.includes("Object")}
+                          value="object"
+                          disabled={disabledTypeTemplates.value.includes("object")}
                         >
-                          Object
+                          object
                         </option>
                         <option
                           value="RegExp"

@@ -7,7 +7,7 @@ import { setAll, SetResult } from "../../utils/kv/kvSet.ts";
 import { logDebug } from "../../utils/log.ts";
 import { getUserState } from "../../utils/state/state.ts";
 import { json5Parse, json5Stringify } from "../../utils/transform/stringSerialization.ts";
-import { entriesToOperateOn } from "../../utils/ui/buildResultsPage.ts";
+import { entriesToOperateOn } from "../../utils/ui/list/buildResultsPage.ts";
 import { asMaxLengthString } from "../../utils/utils.ts";
 
 export interface UpdateKeyData {

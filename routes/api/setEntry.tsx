@@ -47,7 +47,6 @@ export const handler: Handlers = {
       }
 
       const kvValue: unknown = buildKvValue(valueString, valueType);
-
       const entry: Deno.KvEntry<unknown> = { key: kvKey, value: kvValue, versionstamp: "1" };
       const result = await setAll([entry], kv, "");
       const { setKeyCount, writeUnitsConsumed, lastSuccessfulVersionstamp } = result;

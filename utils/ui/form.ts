@@ -15,6 +15,10 @@ const getFormIds = [
   "disableCache",
 ];
 
+export function updateListUrl() {
+  listFormIds.forEach(updateUrl);
+}
+
 export function submitListForm() {
   listFormIds.forEach(updateUrl);
   const form = document.getElementById("pageForm") as HTMLFormElement;

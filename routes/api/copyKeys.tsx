@@ -9,7 +9,7 @@ import { connectToSecondaryKv } from "../../utils/kv/kvConnect.ts";
 import { setAll, SetResult } from "../../utils/kv/kvSet.ts";
 import { logDebug } from "../../utils/log.ts";
 import { getUserState } from "../../utils/state/state.ts";
-import { entriesToOperateOn, KeyOperationData } from "../../utils/ui/buildResultsPage.ts";
+import { entriesToOperateOn, KeyOperationData } from "../../utils/ui/list/buildResultsPage.ts";
 import { asPercentString } from "../../utils/ui/display.ts";
 
 export interface CopyKeysData {

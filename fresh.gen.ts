@@ -20,6 +20,7 @@ import * as $api_export_initiate from "./routes/api/export/initiate.tsx";
 import * as $api_export_status from "./routes/api/export/status.tsx";
 import * as $api_import from "./routes/api/import.tsx";
 import * as $api_keyTypes from "./routes/api/keyTypes.tsx";
+import * as $api_list from "./routes/api/list.tsx";
 import * as $api_removeConnection from "./routes/api/removeConnection.tsx";
 import * as $api_setEntry from "./routes/api/setEntry.tsx";
 import * as $api_updateKey from "./routes/api/updateKey.tsx";
@@ -80,6 +81,7 @@ const manifest = {
     "./routes/api/export/status.tsx": $api_export_status,
     "./routes/api/import.tsx": $api_import,
     "./routes/api/keyTypes.tsx": $api_keyTypes,
+    "./routes/api/list.tsx": $api_list,
     "./routes/api/removeConnection.tsx": $api_removeConnection,
     "./routes/api/setEntry.tsx": $api_setEntry,
     "./routes/api/updateKey.tsx": $api_updateKey,

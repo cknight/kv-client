@@ -43,7 +43,7 @@ export function buildKvValue(valueInput: string, valueType: SupportedValueTypes)
     case "Array":
     case "Map":
     case "Set":
-    case "Object": {
+    case "object": {
       if (value === "") throw new ValidationError(`Value is not a ${valueType}`);
       let typedValue = value;
       if (valueType === "Map" || valueType === "Set") {
@@ -150,7 +150,7 @@ export function buildKvValue(valueInput: string, valueType: SupportedValueTypes)
 function notType(value: unknown, expectedType: string): boolean {
   if (
     typeof value === "object" && value != null && value.constructor &&
-    value.constructor.name === expectedType
+    (value.constructor.name === expectedType || value.constructor.name === "Object" && expectedType === "object")
   ) {
     return false;
   }

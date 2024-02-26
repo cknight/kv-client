@@ -6,7 +6,7 @@ import { establishKvConnection } from "../../utils/kv/kvConnect.ts";
 import { deleteAll, DeleteResult } from "../../utils/kv/kvDelete.ts";
 import { logDebug } from "../../utils/log.ts";
 import { getUserState } from "../../utils/state/state.ts";
-import { entriesToOperateOn } from "../../utils/ui/buildResultsPage.ts";
+import { entriesToOperateOn } from "../../utils/ui/list/buildResultsPage.ts";
 import { asPercentString } from "../../utils/ui/display.ts";
 
 export interface DeleteKeysData {

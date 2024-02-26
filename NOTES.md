@@ -12,7 +12,7 @@ TODO Phase 1:
 1. Write (lots) more tests
 2. Failure handling if token expires or is irretrievable
 3. Abortable list - Requires REST based list
-5. Help dialog viewing strips connection id from URL?
+4. Move console.logging to logging framework
 
 TODO Release:
 
@@ -71,3 +71,21 @@ EE - Role based access - Enterprise capability
   if no admin user. Need recovery option
 - Need UI screen to allocate roles to user
 - OAuth logins
+
+
+DOCS
+===============
+Installation
+Connections
+Keys
+Values
+Operations
+ - Get
+ - List
+ -- filtering
+ -- search all data
+ - Set
+ - Import
+ - Export
+Consistency
+Security

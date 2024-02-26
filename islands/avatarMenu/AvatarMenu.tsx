@@ -4,14 +4,13 @@ import { DeployUser } from "../../utils/connections/denoDeploy/deployUser.ts";
 
 export function AvatarMenu({ deployUser }: { deployUser: DeployUser }) {
   const menuVisible = useSignal(false);
-  let lastToggle = 0;
+  const lastToggle = useSignal(0);
 
   function toggleMenu() {
-    console.log("Toggling");
-    if (Date.now() - lastToggle < 100) return;
+    if (Date.now() - lastToggle.value < 500) return;
 
     menuVisible.value = !menuVisible.value;
-    lastToggle = Date.now();
+    lastToggle.value = Date.now();
   }
 
   async function signOut() {

@@ -1,4 +1,4 @@
-import { useSignal } from "@preact/signals";
+import { computed, useSignal } from "@preact/signals";
 import { JSX } from "preact";
 import { StatsBar } from "../../components/StatsBar.tsx";
 import { CopyDataDialog } from "../../components/dialogs/CopyDataDialog.tsx";
@@ -7,11 +7,13 @@ import { DoubleLeftIcon } from "../../components/svg/DoubleLeft.tsx";
 import { DoubleRightIcon } from "../../components/svg/DoubleRight.tsx";
 import { SingleLeftIcon } from "../../components/svg/SingleLeft.tsx";
 import { SingleRightIcon } from "../../components/svg/SingleRight.tsx";
+import { ListAPIResponseData } from "../../routes/api/list.tsx";
 import { Environment, KvUIEntry, Stats, ToastType } from "../../types.ts";
-import { submitListForm } from "../../utils/ui/form.ts";
 import { EntryEditor } from "../EntryEditor.tsx";
 import { Help } from "../Help.tsx";
 import { Toast } from "../Toast.tsx";
+import { updateListUrl } from "../../utils/ui/form.ts";
+import { freshImports } from "$fresh/src/dev/imports.ts";
 
 interface ListResultsProps {
   results: KvUIEntry[] | undefined;
@@ -63,6 +65,9 @@ export function ListResults(props: ListResultsProps) {
   const { prefix, start, end, reverse, session } = props;
   const entries = filtered ? " filtered entries" : " entries";
 
+  const resultsSignal = useSignal(results);
+  const resultsCountSignal = useSignal(resultsCount);
+  const filteredSignal = useSignal(filtered);
   const fullViewKey = useSignal("");
   const fullViewValue = useSignal("");
   const fullViewKeyHash = useSignal("");
@@ -72,55 +77,83 @@ export function ListResults(props: ListResultsProps) {
   const toastMsg = useSignal("");
   const toastType = useSignal<ToastType>("info");
   const shouldShowResults = useSignal(true);
+  const from = useSignal(props.from);
+  const show = useSignal(props.show);
+  const listCompleteSignal = useSignal(props.listComplete);
+  const statsSignal = useSignal<Stats | undefined>(props.stats);
+  
+  const to = computed(() => {
+    return Math.min(from.value + show.value - 1, resultsCountSignal.value);
+});
 
-  const to = Math.min(props.from + props.show - 1, resultsCount);
+  function fetchResults() {
+    updateListUrl();
+    const form = document.getElementById("pageForm") as HTMLFormElement;
+    const formData = new FormData(form);
+    formData.set("from", from.value.toString());
+    formData.set("show", show.value.toString());
+    formData.append("connectionId", props.connectionId);
+    fetch("/api/list", {
+      method: "POST",
+      body: formData,
+    }).then((response) => response.json())
+      .then((data) => {
+        const newData: ListAPIResponseData = JSON.parse(data);
+        if (newData.results) {
+          resultsSignal.value = newData.results;
+          resultsCountSignal.value = newData.fullResultsCount;
+          filteredSignal.value = newData.filtered;
+          listCompleteSignal.value = newData.listComplete;
+          statsSignal.value = newData.stats;
+          shouldShowResults.value = true;
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
 
   function onShowChange() {
-    const from = document.getElementById("from") as HTMLInputElement;
-    from.value = "1";
-    submitListForm();
+    from.value = 1;
+    show.value = parseInt((document.getElementById("show") as HTMLSelectElement).value);
+    fetchResults();
   }
 
   function applyFilter() {
-    const from = document.getElementById("from") as HTMLInputElement;
-    from.value = "1";
-    submitListForm();
+    from.value = 1;
+    fetchResults();
   }
 
   function clearFilter() {
     const filter = document.getElementById("filter") as HTMLInputElement;
     filter.value = "";
-    submitListForm();
+    fetchResults();
   }
 
   function page(forward: boolean, event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault();
-    const newFrom = forward ? props.from + props.show : props.from - props.show;
-    if (newFrom > resultsCount) {
+    const newFrom = forward ? from.value + show.value : from.value - show.value;
+    if (newFrom > resultsCountSignal.value) {
       return;
     }
-
-    const from = document.getElementById("from") as HTMLInputElement;
-    from.value = newFrom < 1 ? "1" : newFrom.toString();
-    submitListForm();
+    from.value = newFrom < 1 ? 1 : newFrom;
+    fetchResults();
   }
 
   function firstPage(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault();
-    const from = document.getElementById("from") as HTMLInputElement;
-    from.value = "1";
-    submitListForm();
+    from.value = 1;
+    fetchResults();
   }
 
   function lastPage(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault();
-    let newFrom = props.from;
-    while (newFrom + props.show < resultsCount) {
-      newFrom += props.show;
+    let newFrom = from.value;
+    while (newFrom + show.value < resultsCountSignal.value) {
+      newFrom += show.value;
     }
-    const from = document.getElementById("from") as HTMLInputElement;
-    from.value = newFrom.toString();
-    submitListForm();
+    from.value = newFrom;
+    fetchResults();
   }
 
   function fullView(event: JSX.TargetedEvent<HTMLTableRowElement, MouseEvent>) {
@@ -163,7 +196,7 @@ export function ListResults(props: ListResultsProps) {
     if (target) {
       const checkboxes = document.querySelectorAll("#resultRows input[type='checkbox']");
       if (target.checked) {
-        selected.value = results!.map((result) => result.keyHash);
+        selected.value = resultsSignal.value!.map((result) => result.keyHash);
         checkboxes.forEach((checkbox) => {
           (checkbox as HTMLInputElement).checked = true;
         });
@@ -176,11 +209,12 @@ export function ListResults(props: ListResultsProps) {
     }
   }
 
+  //TODO doe this need to be computed as well?
   function scopeText() {
     if (selected.value.length > 0) {
       return selected.value.length + " selected";
     }
-    return resultsCount + (filtered ? " filtered" : " results");
+    return resultsCountSignal.value + (filteredSignal.value ? " filtered" : " results");
   }
 
   function deleteEntries(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
@@ -199,7 +233,7 @@ export function ListResults(props: ListResultsProps) {
 
   return (
     <div>
-      {shouldShowResults.value && (resultsCount > 0 || filtered) &&
+      {shouldShowResults.value && (resultsCountSignal.value > 0 || filteredSignal.value) &&
         (
           <div
             id="resultsPanel"
@@ -254,13 +288,13 @@ export function ListResults(props: ListResultsProps) {
                         class="checkbox checkbox-xs checkbox-primary w-4 h-4"
                       />
                     </th>
-                    <th class="text-[#d5d5d5] text-base bg-gray-700 shaodw-lg">Key</th>
-                    <th class="text-[#d5d5d5] text-base bg-gray-700 shaodw-lg">Value</th>
-                    <th class="text-[#d5d5d5] text-base bg-gray-700 shaodw-lg">Value Type</th>
+                    <th class="text-[#d5d5d5] text-base bg-gray-700">Key</th>
+                    <th class="text-[#d5d5d5] text-base bg-gray-700">Value</th>
+                    <th class="text-[#d5d5d5] text-base bg-gray-700">Value Type</th>
                   </tr>
                 </thead>
                 <tbody id="resultRows">
-                  {results!.map((result) => {
+                  {resultsSignal.value!.map((result) => {
                     return (
                       <tr id={result.keyHash} class="hover" onClick={fullView}>
                         <td class="w-12 text-center">
@@ -297,25 +331,25 @@ export function ListResults(props: ListResultsProps) {
                     onChange={onShowChange}
                     class="select select-primary select-sm mx-2"
                   >
-                    <option value="10" selected={props.show === 10}>10</option>
-                    <option value="20" selected={props.show === 20}>20</option>
-                    <option value="50" selected={props.show === 50}>50</option>
-                    <option value="100" selected={props.show === 100}>100</option>
-                    <option value="200" selected={props.show === 200}>200</option>
-                    <option value="500" selected={props.show === 500}>500</option>
+                    <option value="10" selected={show.value === 10}>10</option>
+                    <option value="20" selected={show.value === 20}>20</option>
+                    <option value="50" selected={show.value === 50}>50</option>
+                    <option value="100" selected={show.value === 100}>100</option>
+                    <option value="200" selected={show.value === 200}>200</option>
+                    <option value="500" selected={show.value === 500}>500</option>
                   </select>
                   entries
                 </div>
                 <div class="flex items-center gap-x-2">
-                  Showing {props.from} to {to} of{" "}
-                  {props.listComplete ? resultsCount + entries : " many"}
-                  <input id="from" name="from" type="hidden" form="pageForm" value={props.from} />
+                  Showing {from.value} to {to.value} of{" "}
+                  {listCompleteSignal.value ? resultsCountSignal.value + entries : " many"}
+                  <input id="from" name="from" type="hidden" form="pageForm" value={from.value} />
                   <button
                     class="btn btn-primary btn-sm"
                     onClick={firstPage}
                     f-partial="/list"
                     aria-label="First page"
-                    disabled={props.from === 1}
+                    disabled={from.value === 1}
                   >
                     <DoubleLeftIcon />
                   </button>
@@ -324,7 +358,7 @@ export function ListResults(props: ListResultsProps) {
                     onClick={(e) => page(false, e)}
                     f-partial="/list"
                     aria-label="Previous page"
-                    disabled={props.from === 1}
+                    disabled={from.value === 1}
                   >
                     <SingleLeftIcon />
                   </button>
@@ -333,7 +367,7 @@ export function ListResults(props: ListResultsProps) {
                     onClick={(e) => page(true, e)}
                     f-partial="/list"
                     aria-label="Next page"
-                    disabled={props.from + props.show > resultsCount}
+                    disabled={from.value + show.value > resultsCountSignal.value}
                   >
                     <SingleRightIcon />
                   </button>
@@ -342,7 +376,7 @@ export function ListResults(props: ListResultsProps) {
                     onClick={lastPage}
                     f-partial="/list"
                     aria-label="Last page"
-                    disabled={props.from + props.show > resultsCount}
+                    disabled={from.value + show.value > resultsCountSignal.value}
                   >
                     <DoubleRightIcon />
                   </button>
@@ -351,7 +385,7 @@ export function ListResults(props: ListResultsProps) {
             </div>
           </div>
         )}
-      {props.stats && <StatsBar stats={props.stats} />}
+      {statsSignal.value && <StatsBar stats={statsSignal.value} />}
 
       <EntryEditor
         kvKey={fullViewKey}
@@ -372,9 +406,9 @@ export function ListResults(props: ListResultsProps) {
         prefix={prefix}
         start={start}
         end={end}
-        from={props.from}
-        show={props.show}
-        resultsCount={resultsCount}
+        from={from.value}
+        show={show.value}
+        resultsCount={resultsCountSignal.value}
         reverse={reverse}
         filter={filter}
       />
@@ -386,9 +420,9 @@ export function ListResults(props: ListResultsProps) {
         prefix={prefix}
         start={start}
         end={end}
-        from={props.from}
-        show={props.show}
-        resultsCount={resultsCount}
+        from={from.value}
+        show={show.value}
+        resultsCount={resultsCountSignal.value}
         reverse={reverse}
         filter={filter}
       />

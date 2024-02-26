@@ -230,7 +230,7 @@ export type SupportedValueTypes =
   | "JSON"
   | "KvU64"
   | "Map"
-  | "Object"
+  | "object"
   | "RegExp"
   | "Set"
   | "Uint8Array";

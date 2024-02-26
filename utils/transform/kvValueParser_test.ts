@@ -172,24 +172,24 @@ Deno.test("Set reject", () => {
   assertThrows(() => buildKvValue("{}", "Set"), ValidationError, "Invalid Set: Invalid Set value");
 });
 
-Deno.test("Object", () => {
-  assertEquals(buildKvValue("{}", "Object"), {});
-  assertEquals(buildKvValue('{ "a": 1 }', "Object"), { a: 1 });
-  assertEquals(buildKvValue('{ "a": {type: "bigint", value: "2"} }', "Object"), { a: 2n });
+Deno.test("object", () => {
+  assertEquals(buildKvValue("{}", "object"), {});
+  assertEquals(buildKvValue('{ "a": 1 }', "object"), { a: 1 });
+  assertEquals(buildKvValue('{ "a": {type: "bigint", value: "2"} }', "object"), { a: 2n });
   assertEquals(
-    buildKvValue('{ a: [{type: "bigint", value: "2"}, {type: "Set", value: [1,2,3]}] }', "Object"),
+    buildKvValue('{ a: [{type: "bigint", value: "2"}, {type: "Set", value: [1,2,3]}] }', "object"),
     { a: [2n, new Set([1, 2, 3])] },
   );
 });
 
-Deno.test("Object reject", () => {
+Deno.test("object reject", () => {
   assertThrows(
-    () => buildKvValue("abc", "Object"),
+    () => buildKvValue("abc", "object"),
     ValidationError,
-    "Invalid Object: JSON5: invalid character 'a' at 1:1",
+    "Invalid object: JSON5: invalid character 'a' at 1:1",
   );
-  assertThrows(() => buildKvValue("", "Object"), ValidationError, "Value is not a Object");
-  assertThrows(() => buildKvValue("[]", "Object"), ValidationError, "Value is not a Object");
+  assertThrows(() => buildKvValue("", "object"), ValidationError, "Value is not a object");
+  assertThrows(() => buildKvValue("[]", "object"), ValidationError, "Value is not a object");
 });
 
 Deno.test("RegExp", () => {
