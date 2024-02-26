@@ -30,6 +30,19 @@ export function logInfo(session: { sessionId: string | null }, ...args: unknown[
     console.info(getPrefix(session), ...args);
   }
 }
+
+export function logWarn(session: { sessionId: string | null }, ...args: unknown[]) {
+  if (configuredLogLevels.includes("WARN")) {
+    console.warn(getPrefix(session), ...args);
+  }
+}
+
+export function logError(session: { sessionId: string | null }, ...args: unknown[]) {
+  if (configuredLogLevels.includes("ERROR")) {
+    console.error(getPrefix(session), ...args);
+  }
+}
+
 function getUserId(sessionId: string | null): string {
   if (!sessionId) {
     return "-";

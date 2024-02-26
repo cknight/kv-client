@@ -11,8 +11,6 @@ TODO Phase 1:
 
 1. Write (lots) more tests
 2. Failure handling if token expires or is irretrievable
-3. Abortable list - Requires REST based list
-4. Move console.logging to logging framework
 
 TODO Release:
 
@@ -44,6 +42,8 @@ Phase 2:
 10. Store self-hosted connections by session id? E.g. avoid sharing self-hosted connections
     globally? Or some other solution to improve security? Might be annoying if the connection keeps
     disappearing.
+11. Abortable list
+12. Light mode
 
 Config
 

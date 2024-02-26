@@ -1,21 +1,23 @@
 import { QueueDeleteExportFile } from "../../types.ts";
-import { logDebug } from "../log.ts";
+import { logDebug, logError } from "../log.ts";
 import { localKv } from "./db.ts";
 
 function isDeleteExportFile(msg: unknown): msg is QueueDeleteExportFile {
   return (msg as QueueDeleteExportFile).channel === "DeleteMessage";
 }
 
+const listenQueueUser = {sessionId: "-- listenQueue --"}
+
 localKv.listenQueue(async (msg: unknown) => {
   if (isDeleteExportFile(msg)) {
-    console.log("Deleting export file", msg.message.exportId);
+    logDebug(listenQueueUser, "Deleting export file", msg.message.exportId);
     try {
       await Deno.remove(msg.message.tempDirPath, { recursive: true });
     } catch (e) {
-      console.error("Unable to delete file:", e.message);
+      logError(listenQueueUser, "Unable to delete file:", e.message);
     }
   } else {
-    console.error("Unknown queue message", msg);
+    logError(listenQueueUser, "Unknown queue message", msg);
   }
 });
 

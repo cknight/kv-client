@@ -7,7 +7,7 @@ import { localKv } from "../../utils/kv/db.ts";
 import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";
 import { connectToSecondaryKv } from "../../utils/kv/kvConnect.ts";
 import { setAll, SetResult } from "../../utils/kv/kvSet.ts";
-import { logDebug } from "../../utils/log.ts";
+import { logDebug, logError } from "../../utils/log.ts";
 import { getUserState } from "../../utils/state/state.ts";
 import { entriesToOperateOn, KeyOperationData } from "../../utils/ui/list/buildResultsPage.ts";
 import { asPercentString } from "../../utils/ui/display.ts";
@@ -89,7 +89,7 @@ export const handler: Handlers = {
         status,
       });
     } catch (e) {
-      console.log("Failed to copy keys", e.message);
+      logError({sessionId: session}, "Failed to copy keys", e.message);
       const errorMessage = e instanceof CacheInvalidationError ? e.message : "Failed to copy keys";
       return new Response(errorMessage, {
         status: 500,

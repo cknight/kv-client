@@ -5,7 +5,7 @@ import { ValidationError } from "../../utils/errors.ts";
 import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";
 import { establishKvConnection } from "../../utils/kv/kvConnect.ts";
 import { setAll } from "../../utils/kv/kvSet.ts";
-import { logDebug } from "../../utils/log.ts";
+import { logDebug, logError } from "../../utils/log.ts";
 import { getUserState } from "../../utils/state/state.ts";
 import { parseKvKey } from "../../utils/transform/kvKeyParser.ts";
 import { buildKvValue } from "../../utils/transform/kvValueParser.ts";
@@ -28,6 +28,7 @@ export const handler: Handlers = {
     const start = Date.now();
     const { key: keyString, kvValue: valueString, valueType, doNotOverwrite, connectionId } =
       await req.json() as KvSetEntry;
+    const session = ctx.state.session as string;
 
     let status = 200;
     let body = "";
@@ -35,7 +36,6 @@ export const handler: Handlers = {
     try {
       const kvKey: Deno.KvKey = parseKvKey(keyString);
 
-      const session = ctx.state.session as string;
       const state = getUserState(session);
       const kv = await establishKvConnection(session, connectionId);
 
@@ -77,8 +77,7 @@ export const handler: Handlers = {
         status = 500;
       }
     } catch (e) {
-      console.log(e);
-      console.error("Error setting entry", e);
+      logError({sessionId: session}, "Error setting entry", e);
       status = 500;
       body = "Error setting entry: " + e.message;
     }

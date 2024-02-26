@@ -8,6 +8,7 @@ import { establishKvConnection } from "../../utils/kv/kvConnect.ts";
 import { listKv } from "../../utils/kv/kvList.ts";
 import { setAll } from "../../utils/kv/kvSet.ts";
 import { computeSize, readUnitsConsumed } from "../../utils/kv/kvUnitsConsumed.ts";
+import { logError } from "../../utils/log.ts";
 import { logDebug } from "../../utils/log.ts";
 import { getUserState } from "../../utils/state/state.ts";
 import { asPercentString } from "../../utils/ui/display.ts";
@@ -88,7 +89,7 @@ export const handler: Handlers = {
               : "No keys imported";
           }
         } catch (e) {
-          console.log(e);
+          logError({sessionId: session}, "Failed to import", e);
           return new Response(e.message, { status: 500 });
         } finally {
           // Step 4: Delete file from disk
@@ -175,7 +176,7 @@ export const handler: Handlers = {
         }
       }
     } catch (e) {
-      console.log(e);
+      logError({sessionId: session}, "Failed to import", e);
       body = e.message;
       status = 500;
     }

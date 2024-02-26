@@ -4,7 +4,7 @@ import { join } from "$std/path/join.ts";
 import { ImportCriteria } from "../islands/import/importCriteria.tsx";
 import { getConnections } from "../utils/connections/connections.ts";
 import { setAll } from "../utils/kv/kvSet.ts";
-import { logDebug } from "../utils/log.ts";
+import { logDebug, logError } from "../utils/log.ts";
 import { getUserState } from "../utils/state/state.ts";
 
 interface ImportProps {
@@ -37,7 +37,7 @@ export const handler: Handlers = {
         await setAll(entries, state.kv!, connectionId);
         logDebug({ sessionId: session }, "  all entries written to KV");
       } catch (e) {
-        console.log(e);
+        logError({sessionId: session}, "Failed to import", e);
         return ctx.render({ error: e.message });
       } finally {
         // Step 4: Delete file from disk

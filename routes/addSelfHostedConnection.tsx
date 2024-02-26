@@ -12,6 +12,7 @@ import { connectToSecondaryKv } from "../utils/kv/kvConnect.ts";
 import { storeEncryptedString } from "../utils/transform/encryption.ts";
 import { URL_REG_EX } from "../utils/urlRegex.ts";
 import { shortHash } from "../utils/utils.ts";
+import { logError } from "../utils/log.ts";
 
 interface AllLocalConnectionProps {
   connectionName?: string;
@@ -75,7 +76,7 @@ export const handler: Handlers = {
           headers: { Location: "/" },
         });
       } catch (e) {
-        console.log(e);
+        logError({ sessionId: session }, "Failed to add self hosted connection", e);
         error = true;
         errorText = e.message.split(":")[0];
       }

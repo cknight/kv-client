@@ -18,7 +18,6 @@ export function computeSize(key: Deno.KvKey, value?: unknown): number {
     const serializedValue = approximateSize(value);
     return keySize + serializedValue;
   } catch (e) {
-    console.log(e);
     console.error("Error computing size:", e);
     return 0;
   }

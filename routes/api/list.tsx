@@ -15,7 +15,6 @@ export type ListAPIResponseData = {
 export const handler: Handlers = {
   async POST(req, ctx) {
     const form = await req.formData();
-    console.log(form);
     const session = ctx.state.session as string;
     const listInputData: ListInputData = {
       prefix: form.get("prefix")?.toString() || "",
