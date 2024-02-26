@@ -8,9 +8,8 @@ import { CancelLocalConnectionButton } from "../islands/connections/CancelLocalC
 import { KvConnection, ToastType } from "../types.ts";
 import { getSelfHostedConnections } from "../utils/connections/connections.ts";
 import { localKv } from "../utils/kv/db.ts";
-import { connectToSecondaryKv } from "../utils/kv/kvConnect.ts";
+import { connectToSecondaryKv, openKvWithToken } from "../utils/kv/kvConnect.ts";
 import { storeEncryptedString } from "../utils/transform/encryption.ts";
-import { URL_REG_EX } from "../utils/urlRegex.ts";
 import { shortHash } from "../utils/utils.ts";
 import { logError } from "../utils/log.ts";
 
@@ -42,9 +41,9 @@ export const handler: Handlers = {
     } else if (!accessToken || typeof accessToken !== "string") {
       error = true;
       errorText = "Enter an access token";
-    } else if (!URL_REG_EX.test(connectionLocation)) {
+    } else if (!connectionLocation.startsWith("http://") && !connectionLocation.startsWith("https://")) {
       error = true;
-      errorText = "Connection location must be a valid URL";
+      errorText = "Connection location must be URL starting with http:// or https://";
     } else if (
       (await getSelfHostedConnections(session)).find((conn) => conn.name === connectionName)
     ) {
@@ -56,7 +55,7 @@ export const handler: Handlers = {
         // See https://github.com/denoland/deno/issues/22248
         const hashedLocation = await shortHash(connectionLocation);
         storeEncryptedString([ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX, hashedLocation], accessToken);
-        const tempKv = await connectToSecondaryKv(ctx.state.session as string, hashedLocation);
+        const tempKv = await openKvWithToken(connectionLocation, accessToken);
         tempKv.close();
 
         //add connection to KV
