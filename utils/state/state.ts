@@ -9,6 +9,11 @@ const exportStatus = new Map<string, ExportStatus>();
 const _10_MINUTES = 1000 * 60 * 10;
 export const userNames = new Map<string, string>();
 
+//For testing purposes only
+export const _internals = {
+  deleteId: -1,
+}
+
 export function abort(id: string): void {
   abortSet.add(id);
 
@@ -26,12 +31,20 @@ export function shouldAbort(id: string): boolean {
   return false;
 }
 
+/**
+ * For a given export job, update the status.  If complete, delete the status after 10 minutes to
+ * prevent memory leaks.
+ * 
+ * @param id The id of the export job
+ * @param status The status of the job
+ * @param session session id of the user
+ */
 export function updateExportStatus(id: string, status: ExportStatus, session: string): void {
   logDebug({ sessionId: session }, "Updating export status", id, status);
   exportStatus.set(id, status);
 
   if (status.status !== "in progress" && status.status !== "initiating") {
-    setTimeout(() => {
+    _internals.deleteId = setTimeout(() => {
       exportStatus.delete(id);
     }, _10_MINUTES);
   }

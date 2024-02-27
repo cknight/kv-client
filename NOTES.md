@@ -10,14 +10,12 @@ Security model
 TODO Phase 1:
 
 1. Write (lots) more tests
-2. Failure handling if token expires or is irretrievable
 
 TODO Release:
 
 1. Documentation/Website
 2. Testing
 3. How to distribute
-4. Remove all console.logs
 5. Clean up every module (document, imports, formatting)
 6. TODO/FIXMEs
 
