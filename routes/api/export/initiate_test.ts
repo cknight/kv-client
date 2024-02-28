@@ -81,6 +81,9 @@ test({
 
       //This processes the export in the background and will immediately return a 200, initiating the export
       const resp = await handler.POST(request, ctx);
+      assertEquals(resp.status, 200);
+      assertEquals(await resp.text(), "Export initiated");
+
       const status = getExportStatus("456");
       assertEquals(status?.status, "initiating");
 
@@ -137,6 +140,9 @@ test({
 
       //This processes the export in the background and will immediately return a 200, initiating the export
       const resp = await handler.POST(request, ctx);
+      assertEquals(resp.status, 200);
+      assertEquals(await resp.text(), "Export initiated");
+
       const status = getExportStatus("456");
       assertEquals(status?.status, "initiating");
 
@@ -186,6 +192,9 @@ test({
 
       //This processes the export in the background and will immediately return a 200, initiating the export
       const resp = await handler.POST(request, ctx);
+      assertEquals(resp.status, 200);
+      assertEquals(await resp.text(), "Export initiated");
+
       const status = getExportStatus("456");
       assertEquals(status?.status, "initiating");
       console.log("Initiated export");
