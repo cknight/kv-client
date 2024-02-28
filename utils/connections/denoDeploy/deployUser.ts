@@ -157,6 +157,8 @@ export async function getDeployUserData(
         }
       } catch (e) {
         console.error(`Failed to fetch Deploy user details: ${e.message}`);
+        await localKv.delete([DEPLOY_USER_KEY_PREFIX, session]);
+        await localKv.delete([ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session]);
         return null;
       }
     }
