@@ -10,16 +10,11 @@ const exportStatus = new Map<string, ExportStatus>();
 const _10_MINUTES = 1000 * 60 * 10;
 export const userNames = new Map<string, string>();
 
-//For testing purposes only
-export const _internals = {
-  enqueueWork,
-};
-
-export function abort(id: string): void {
+export async function abort(id: string): Promise<void> {
   abortSet.add(id);
 
   // Clean up after 10 minutes just in case
-  _internals.enqueueWork({
+  await enqueueWork({
     channel: "DeleteAbortId",
     message: {
       abortId: id,
@@ -47,12 +42,12 @@ export function shouldAbort(id: string): boolean {
  * @param status The status of the job
  * @param session session id of the user
  */
-export function updateExportStatus(id: string, status: ExportStatus, session: string): void {
+export async function updateExportStatus(id: string, status: ExportStatus, session: string): Promise<void> {
   logDebug({ sessionId: session }, "Updating export status", id, status);
   exportStatus.set(id, status);
 
   if (status.status !== "in progress" && status.status !== "initiating") {
-    _internals.enqueueWork({
+    await enqueueWork({
       channel: "DeleteStatus",
       message: {
         exportId: id,

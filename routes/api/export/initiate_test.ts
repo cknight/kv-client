@@ -4,11 +4,18 @@ import { assertEquals } from "$std/assert/assert_equals.ts";
 import { join } from "$std/path/join.ts";
 import { CONNECTIONS_KEY_PREFIX, EXPORT_PATH } from "../../../consts.ts";
 import manifest from "../../../fresh.gen.ts";
-import { ExportAuditLog, QueueDeleteExportFile } from "../../../types.ts";
+import {
+  ExportAuditLog,
+  QueueDeleteAbortId,
+  QueueDeleteExportFile,
+  QueueDeleteExportStatus,
+} from "../../../types.ts";
 import { logout } from "../../../utils/connections/denoDeploy/logout.ts";
 import { localKv } from "../../../utils/kv/db.ts";
-import { abort, getExportStatus, _internals as stateInternals } from "../../../utils/state/state.ts";
-import { handler, _internals as initiateInternals } from "./initiate.tsx";
+import { _internals } from "../../../utils/kv/kvQueue.ts";
+import { abort, getExportStatus } from "../../../utils/state/state.ts";
+import { disableQueue } from "../../../utils/test/testUtils.ts";
+import { handler } from "./initiate.tsx";
 
 const test = Deno.test;
 
@@ -49,18 +56,27 @@ test({
   async fn() {
     const testDb = await getTestDbPath();
     let tempDbFile: string | undefined;
+    let enqueueCount = 1;
 
     try {
-      let exportIdEnqueued: string | undefined;
-      let tempDbPathEnqueued: string | undefined;
       // deno-lint-ignore require-await
-      initiateInternals.enqueueWork = async (
+      _internals.enqueue = async (
         msg: unknown,
         delay: number,
       ) => {
-        exportIdEnqueued = (msg as QueueDeleteExportFile).message.exportId;
-        tempDbPathEnqueued = (msg as QueueDeleteExportFile).message.tempDirPath;
-        assertEquals(delay, 24 * 60 * 60 * 1000);
+        if (enqueueCount === 1) {
+          assertEquals((msg as QueueDeleteExportStatus).message.exportId, "456");
+          assertEquals(delay, 10 * 60 * 1000);
+        } else if (enqueueCount === 2) {
+          const tempDbFile = (await localKv.get<string>([EXPORT_PATH, "session", "456"])).value;
+          assertEquals((msg as QueueDeleteExportFile).message.exportId, "456");
+          assertEquals((msg as QueueDeleteExportFile).message.tempDirPath, tempDbFile);
+          assertEquals(delay, 24 * 60 * 60 * 1000);
+        } else {
+          console.log("Unexpected call to enqueue", msg, delay);
+          throw new Error("Unexpected call to enqueue");
+        }
+        enqueueCount++;
       };
 
       assert(handler.POST);
@@ -87,17 +103,15 @@ test({
       const status = getExportStatus("456");
       assertEquals(status?.status, "initiating");
 
-      const result = await waitForExportToComplete("complete", "456", 0);
+      await waitForExportToComplete("complete", "456", 0);
 
       tempDbFile = await assertRecordsInTempDbFile();
 
-      //Assert that the temp file was queued for deletion
-      assertEquals(exportIdEnqueued, "456");
-      assertEquals(tempDbPathEnqueued, tempDbFile);
-
       await assertAuditRecord();
     } finally {
+      console.log("Cleaning up");
       tempDbFile && await Deno.remove(tempDbFile);
+      console.log("Deleted temp db file");
       await deleteTempDbFolder();
       await localKv.delete([EXPORT_PATH, "session", "456"]);
       await localKv.delete([CONNECTIONS_KEY_PREFIX, "123"]);
@@ -112,14 +126,17 @@ test({
   async fn() {
     const testDb = await getTestDbPath();
     let tempDbFile: string | undefined;
-
+    let thrown = false;
     try {
       // deno-lint-ignore require-await
-      initiateInternals.enqueueWork = async (
+      _internals.enqueue = async (
         msg: unknown,
         delay: number,
       ) => {
-        throw new Error("Test error");
+        if (!thrown) {
+          thrown = true;
+          throw new Error("Force test error");
+        }
       };
 
       assert(handler.POST);
@@ -146,7 +163,7 @@ test({
       const status = getExportStatus("456");
       assertEquals(status?.status, "initiating");
 
-      const result = await waitForExportToComplete("failed", "456", 0);
+      await waitForExportToComplete("failed", "456", 0);
 
       await assertAuditRecord();
     } finally {
@@ -167,12 +184,7 @@ test({
     let tempDbFile: string | undefined;
 
     try {
-      initiateInternals.enqueueWork = async (
-        msg: unknown,
-        delay: number,
-      ) => {
-        //noop
-      };
+      disableQueue();
 
       assert(handler.POST);
 
@@ -199,8 +211,8 @@ test({
       assertEquals(status?.status, "initiating");
       console.log("Initiated export");
       await waitForExportToComplete("in progress", "456", 0);
-      abort("456");
-      const result = await waitForExportToComplete("aborted", "456", 0);
+      await abort("456");
+      await waitForExportToComplete("aborted", "456", 0);
 
       await assertAbortedAuditRecord();
     } finally {
@@ -223,7 +235,11 @@ async function getTestDbPath() {
   return testDb;
 }
 
-async function waitForExportToComplete(expectedStatus: string, exportId: string, attempt: number): Promise<void> {
+async function waitForExportToComplete(
+  expectedStatus: string,
+  exportId: string,
+  attempt: number,
+): Promise<void> {
   if (attempt++ > 20) {
     throw new Error("Export did not complete for status: " + expectedStatus);
   }
@@ -302,7 +318,7 @@ async function addTestConnection(testDb: string) {
   });
 }
 
-async function populateSimulatedLocalKv(testDb: string, numberKeys:number) {
+async function populateSimulatedLocalKv(testDb: string, numberKeys: number) {
   const tempKv = await Deno.openKv(testDb);
   for (let i = 0; i < numberKeys; i++) {
     await tempKv.set([`key-${i}`], `value-${i}`);

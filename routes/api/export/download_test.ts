@@ -32,7 +32,7 @@ test("No export found for id returns 400", async () => {
 test("Export still in progress returns 400", async () => {
   assert(handler.GET);
 
-  updateExportStatus(
+  await updateExportStatus(
     "123",
     { status: "in progress", keysProcessed: 0, bytesProcessed: 0 },
     "session",
@@ -47,7 +47,7 @@ test("Export still in progress returns 400", async () => {
 test("No export file found returns 400", async () => {
   assert(handler.GET);
 
-  updateExportStatus("123", { status: "complete", keysProcessed: 0, bytesProcessed: 0 }, "session");
+  await updateExportStatus("123", { status: "complete", keysProcessed: 0, bytesProcessed: 0 }, "session");
   const request = new Request("http://localhost:8080/api/export/download?exportId=123");
   const state = { session: "session" };
   const ctx = createFreshContext<void, typeof state>(request, { manifest, state });
@@ -64,7 +64,7 @@ test("Export file is streamed back", async () => {
     tempFilePath = await Deno.makeTempFile();
     await localKv.set([EXPORT_PATH, "session", "123"], tempFilePath);
   
-    updateExportStatus("123", { status: "complete", keysProcessed: 0, bytesProcessed: 0 }, "session");
+    await updateExportStatus("123", { status: "complete", keysProcessed: 0, bytesProcessed: 0 }, "session");
     const request = new Request("http://localhost:8080/api/export/download?exportId=123");
     const state = { session: "session" };
     const ctx = createFreshContext<void, typeof state>(request, { manifest, state });

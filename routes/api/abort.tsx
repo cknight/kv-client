@@ -7,8 +7,12 @@ export const handler: Handlers = {
     const session = ctx.state.session as string;
     const abortId = await req.text();
 
+    if (!abortId) {
+      return new Response("No abortId provided", { status: 400 });
+    }
+
     logDebug({ sessionId: session }, "Request to abort operation received");
-    abort(abortId);
+    await abort(abortId);
 
     return new Response("", {
       status: 200,

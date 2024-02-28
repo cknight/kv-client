@@ -27,7 +27,7 @@ Deno.test("No status found returns 400", async () => {
 
 Deno.test("Status is returned", async () => {
   assert(handler.GET);
-  updateExportStatus("123", { status: "complete", keysProcessed: 0, bytesProcessed: 0 }, "session");
+  await updateExportStatus("123", { status: "complete", keysProcessed: 0, bytesProcessed: 0 }, "session");
   const request = new Request("http://localhost:8080/api/export/status?exportId=123");
   const state = { session: "session" };
   const ctx = createFreshContext<void, typeof state>(request, { manifest, state });

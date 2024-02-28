@@ -30,7 +30,7 @@ export const handler: Handlers = {
     }
 
     try {
-      updateExportStatus(
+      await updateExportStatus(
         exportId,
         { status: "initiating", keysProcessed: 0, bytesProcessed: 0 },
         session,
@@ -70,7 +70,7 @@ async function initiateExport(session: string, connectionId: string, exportId: s
     const listIterator = kv.list({ prefix: [] }, { batchSize: 500, consistency: "eventual" });
     for await (const entry of listIterator) {
       if (shouldAbort(exportId)) {
-        updateExportStatus(exportId, { status: "aborted", keysProcessed, bytesProcessed }, session);
+        await updateExportStatus(exportId, { status: "aborted", keysProcessed, bytesProcessed }, session);
         throw new UnableToCompleteError("Export aborted", true);
       }
 
@@ -85,7 +85,7 @@ async function initiateExport(session: string, connectionId: string, exportId: s
     if (kvEntries.length > 0) {
       await setEntriesInDbFile(kvEntries, tempKv);
     }
-    updateExportStatus(exportId, { status: "complete", keysProcessed, bytesProcessed }, session);
+    await updateExportStatus(exportId, { status: "complete", keysProcessed, bytesProcessed }, session);
     logDebug(
       { sessionId: session },
       `Export complete for id ${exportId} in ${Date.now() - startTime}ms`,
@@ -108,7 +108,7 @@ async function initiateExport(session: string, connectionId: string, exportId: s
   } catch (e) {
     console.error("Failed to export", e);
     if (!(e instanceof UnableToCompleteError)) {
-      updateExportStatus(exportId, { status: "failed", keysProcessed, bytesProcessed }, session);
+      await updateExportStatus(exportId, { status: "failed", keysProcessed, bytesProcessed }, session);
     }
     console.log("Cleaning up temp dir", tempDir);
     tempDir && await Deno.remove(tempDir, { recursive: true });
@@ -138,17 +138,17 @@ async function initiateExport(session: string, connectionId: string, exportId: s
     bytesProcessed = Deno.statSync(tempDbPath!).size;
 
     if (setResult.aborted) {
-      updateExportStatus(exportId, { status: "aborted", keysProcessed, bytesProcessed }, session);
+      await updateExportStatus(exportId, { status: "aborted", keysProcessed, bytesProcessed }, session);
       throw new UnableToCompleteError("Export aborted", true);
     } else if (setResult.failedKeys.length > 0) {
       logDebug(
         { sessionId: session },
         `Failed to set ${setResult.failedKeys} keys during export for id ${exportId}`,
       );
-      updateExportStatus(exportId, { status: "failed", keysProcessed, bytesProcessed }, session);
+      await updateExportStatus(exportId, { status: "failed", keysProcessed, bytesProcessed }, session);
       throw new UnableToCompleteError("Export failed");
     }
-    updateExportStatus(exportId, { status: "in progress", keysProcessed, bytesProcessed }, session);
+    await updateExportStatus(exportId, { status: "in progress", keysProcessed, bytesProcessed }, session);
   }
 }
 
@@ -167,9 +167,5 @@ async function enqueueDeletionOfTemporaryDbFile(exportId: string, tempDbPath: st
       tempDirPath: tempDbPath,
     },
   };
-  await _internals.enqueueWork(deleteMsg, _24_HOURS_IN_MS);
+  await enqueueWork(deleteMsg, _24_HOURS_IN_MS);
 }
-
-export const _internals = {
-  enqueueWork,
-};

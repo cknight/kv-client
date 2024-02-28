@@ -18,6 +18,14 @@ function isDeleteAbortId(msg: unknown): msg is QueueDeleteAbortId {
 const listenQueueUser = {sessionId: "-- listenQueue --"}
 
 export async function enqueueWork(msg: unknown, delay: number): Promise<void> {
+  await _internals.enqueue(msg, delay);
+}
+
+export const _internals = {
+  enqueue,
+};
+
+async function enqueue(msg: unknown, delay: number): Promise<void> {
   await localKv.enqueue(msg, {
     delay,
     keysIfUndelivered: [["QUEUE_MSG_UNDELIVERED"]],
