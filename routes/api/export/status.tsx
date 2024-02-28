@@ -5,7 +5,7 @@ export const handler: Handlers = {
   GET(req, ctx) {
     const exportId = new URL(req.url).searchParams.get("exportId");
     if (!exportId) {
-      return new Response("No connectionId provided", { status: 400 });
+      return new Response("No exportId provided", { status: 400 });
     }
 
     const status = getExportStatus(exportId);
