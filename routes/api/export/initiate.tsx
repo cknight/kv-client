@@ -1,12 +1,13 @@
 import { Handlers } from "$fresh/server.ts";
 import { join } from "$std/path/join.ts";
-import { EXPORT_PATH, QUEUE_MSG_UNDELIVERED } from "../../../consts.ts";
+import { EXPORT_PATH } from "../../../consts.ts";
 import { ExportAuditLog, QueueDeleteExportFile } from "../../../types.ts";
 import { getKvConnectionDetails } from "../../../utils/connections/connections.ts";
 import { executorId } from "../../../utils/connections/denoDeploy/deployUser.ts";
 import { localKv } from "../../../utils/kv/db.ts";
 import { auditAction, auditConnectionName } from "../../../utils/kv/kvAudit.ts";
 import { establishKvConnection } from "../../../utils/kv/kvConnect.ts";
+import { enqueueWork } from "../../../utils/kv/kvQueue.ts";
 import { setAll } from "../../../utils/kv/kvSet.ts";
 import { computeSize, readUnitsConsumed } from "../../../utils/kv/kvUnitsConsumed.ts";
 import { logDebug } from "../../../utils/log.ts";
@@ -29,12 +30,12 @@ export const handler: Handlers = {
     }
 
     try {
-      //don't await
       updateExportStatus(
         exportId,
         { status: "initiating", keysProcessed: 0, bytesProcessed: 0 },
         session,
       );
+      //don't await so that this becomes a background process
       initiateExport(session, connectionId, exportId);
     } catch (e) {
       console.error("Failed to export", e);
@@ -47,7 +48,6 @@ export const handler: Handlers = {
 
 async function initiateExport(session: string, connectionId: string, exportId: string) {
   const startTime = Date.now();
-
   const kv = await establishKvConnection(session, connectionId);
   const connDetails = await getKvConnectionDetails(connectionId);
 
@@ -62,7 +62,7 @@ async function initiateExport(session: string, connectionId: string, exportId: s
     tempDir = await Deno.makeTempDir({ prefix: "kv_client_export_" });
     tempDbPath = join(tempDir, "export.db");
     tempKv = await Deno.openKv(tempDbPath);
-    localKv.set([EXPORT_PATH, session, exportId], tempDbPath, { expireIn: _24_HOURS_IN_MS });
+    await localKv.set([EXPORT_PATH, session, exportId], tempDbPath, { expireIn: _24_HOURS_IN_MS });
 
     let kvEntries: Deno.KvEntry<unknown>[] = [];
     // Since reading an entire KV store cannot be done in a consistent manner if more than 500 keys,
@@ -78,31 +78,20 @@ async function initiateExport(session: string, connectionId: string, exportId: s
       totalEntrySizes += computeSize(entry.key, entry.value);
       // 1000 is the max number of keys that can be set at once.  This is a KV constraint.
       if (kvEntries.length === 1000) {
-        await setEntriesInDbFile(kvEntries, tempKv, tempDir);
+        await setEntriesInDbFile(kvEntries, tempKv);
         kvEntries = [];
       }
     }
     if (kvEntries.length > 0) {
-      await setEntriesInDbFile(kvEntries, tempKv, tempDir);
+      await setEntriesInDbFile(kvEntries, tempKv);
     }
     updateExportStatus(exportId, { status: "complete", keysProcessed, bytesProcessed }, session);
-    tempKv.close();
     logDebug(
       { sessionId: session },
       `Export complete for id ${exportId} in ${Date.now() - startTime}ms`,
     );
 
-    const deleteMsg: QueueDeleteExportFile = {
-      channel: "DeleteMessage",
-      message: {
-        exportId,
-        tempDirPath: tempDbPath,
-      },
-    };
-    await localKv.enqueue(deleteMsg, {
-      delay: _24_HOURS_IN_MS,
-      keysIfUndelivered: [[QUEUE_MSG_UNDELIVERED]],
-    });
+    await enqueueDeletionOfTemporaryDbFile(exportId, tempDbPath);
 
     const auditRecord: ExportAuditLog = {
       auditType: "export",
@@ -121,7 +110,7 @@ async function initiateExport(session: string, connectionId: string, exportId: s
     if (!(e instanceof UnableToCompleteError)) {
       updateExportStatus(exportId, { status: "failed", keysProcessed, bytesProcessed }, session);
     }
-    tempKv && tempKv.close();
+    console.log("Cleaning up temp dir", tempDir);
     tempDir && await Deno.remove(tempDir, { recursive: true });
     const auditRecord: ExportAuditLog = {
       auditType: "export",
@@ -136,12 +125,13 @@ async function initiateExport(session: string, connectionId: string, exportId: s
     };
     await auditAction(auditRecord, session);
     return;
+  } finally {
+    tempKv && tempKv.close();
   }
 
   async function setEntriesInDbFile(
     kvEntries: Deno.KvEntry<unknown>[],
     tempKv: Deno.Kv,
-    tempDir: string,
   ) {
     const setResult = await setAll(kvEntries, tempKv, exportId);
     keysProcessed += setResult.setKeyCount;
@@ -168,3 +158,18 @@ class UnableToCompleteError extends Error {
     this.name = "UnableToCompleteError";
   }
 }
+
+async function enqueueDeletionOfTemporaryDbFile(exportId: string, tempDbPath: string) {
+  const deleteMsg: QueueDeleteExportFile = {
+    channel: "DeleteMessage",
+    message: {
+      exportId,
+      tempDirPath: tempDbPath,
+    },
+  };
+  await _internals.enqueueWork(deleteMsg, _24_HOURS_IN_MS);
+}
+
+export const _internals = {
+  enqueueWork,
+};

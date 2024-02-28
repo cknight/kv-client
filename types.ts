@@ -248,3 +248,17 @@ export type QueueDeleteExportFile = {
     tempDirPath: string;
   };
 };
+
+export type QueueDeleteExportStatus = {
+  channel: "DeleteStatus";
+  message: {
+    exportId: string;
+  };
+};
+
+export type QueueDeleteAbortId = {
+  channel: "DeleteAbortId";
+  message: {
+    abortId: string;
+  };
+};

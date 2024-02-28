@@ -1,5 +1,6 @@
 import { PageProps } from "$fresh/server.ts";
-import { ExportStatus, State } from "../../types.ts";
+import { ExportStatus, QueueDeleteAbortId, QueueDeleteExportStatus, State } from "../../types.ts";
+import { enqueueWork } from "../kv/kvQueue.ts";
 import { logDebug } from "../log.ts";
 import { CacheManager } from "./cache.ts";
 
@@ -11,16 +12,23 @@ export const userNames = new Map<string, string>();
 
 //For testing purposes only
 export const _internals = {
-  deleteId: -1,
-}
+  enqueueWork,
+};
 
 export function abort(id: string): void {
   abortSet.add(id);
 
   // Clean up after 10 minutes just in case
-  setTimeout(() => {
-    abortSet.delete(id);
-  }, _10_MINUTES);
+  _internals.enqueueWork({
+    channel: "DeleteAbortId",
+    message: {
+      abortId: id,
+    },
+  } as QueueDeleteAbortId, _10_MINUTES);
+}
+
+export function deleteAbortId(id: string): void {
+  abortSet.delete(id);
 }
 
 export function shouldAbort(id: string): boolean {
@@ -34,7 +42,7 @@ export function shouldAbort(id: string): boolean {
 /**
  * For a given export job, update the status.  If complete, delete the status after 10 minutes to
  * prevent memory leaks.
- * 
+ *
  * @param id The id of the export job
  * @param status The status of the job
  * @param session session id of the user
@@ -44,14 +52,21 @@ export function updateExportStatus(id: string, status: ExportStatus, session: st
   exportStatus.set(id, status);
 
   if (status.status !== "in progress" && status.status !== "initiating") {
-    _internals.deleteId = setTimeout(() => {
-      exportStatus.delete(id);
-    }, _10_MINUTES);
+    _internals.enqueueWork({
+      channel: "DeleteStatus",
+      message: {
+        exportId: id,
+      },
+    } as QueueDeleteExportStatus, _10_MINUTES);
   }
 }
 
 export function getExportStatus(id: string): ExportStatus | undefined {
   return exportStatus.get(id);
+}
+
+export function deleteExportStatus(id: string): void {
+  exportStatus.delete(id);
 }
 
 export function getUserState(sessionOrCtx: string | PageProps): State {

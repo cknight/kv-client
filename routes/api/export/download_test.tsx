@@ -4,7 +4,6 @@ import manifest from "../../../fresh.gen.ts";
 import { assert } from "$std/assert/assert.ts";
 import { assertEquals } from "$std/assert/assert_equals.ts";
 import { updateExportStatus } from "../../../utils/state/state.ts";
-import { _internals } from "../../../utils/state/state.ts";
 import { localKv } from "../../../utils/kv/db.ts";
 import { EXPORT_PATH } from "../../../consts.ts";
 
@@ -55,24 +54,27 @@ test("No export file found returns 400", async () => {
   const resp = await handler.GET(request, ctx);
   assertEquals(resp.status, 400);
   assertEquals(await resp.text(), "No export file found");
-  clearTimeout(_internals.deleteId);
 });
 
 test("Export file is streamed back", async () => {
-  assert(handler.GET);
+  let tempFilePath = "";
+  try {
+    assert(handler.GET);
 
-  const tempFilePath = await Deno.makeTempFile();
-  await localKv.set([EXPORT_PATH, "session", "123"], tempFilePath);
-
-  updateExportStatus("123", { status: "complete", keysProcessed: 0, bytesProcessed: 0 }, "session");
-  const request = new Request("http://localhost:8080/api/export/download?exportId=123");
-  const state = { session: "session" };
-  const ctx = createFreshContext<void, typeof state>(request, { manifest, state });
-  const resp = await handler.GET(request, ctx);
-  assertEquals(resp.status, 200);
-  // Check that the body is a ReadableStream (and then cancel it to avoid memory leaks)
-  assert(resp.body instanceof ReadableStream);
-  resp.body.cancel();
-
-  clearTimeout(_internals.deleteId);
+    tempFilePath = await Deno.makeTempFile();
+    await localKv.set([EXPORT_PATH, "session", "123"], tempFilePath);
+  
+    updateExportStatus("123", { status: "complete", keysProcessed: 0, bytesProcessed: 0 }, "session");
+    const request = new Request("http://localhost:8080/api/export/download?exportId=123");
+    const state = { session: "session" };
+    const ctx = createFreshContext<void, typeof state>(request, { manifest, state });
+    const resp = await handler.GET(request, ctx);
+    assertEquals(resp.status, 200);
+    // Check that the body is a ReadableStream (and then cancel it to avoid memory leaks)
+    assert(resp.body instanceof ReadableStream);
+    resp.body.cancel();
+  } finally {
+      await localKv.delete([EXPORT_PATH, "session", "123"]);
+      await Deno.remove(tempFilePath);
+  }
 });
