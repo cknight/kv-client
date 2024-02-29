@@ -1,20 +1,18 @@
-import { createFreshContext } from "$fresh-testing-library/server.ts";
 import { assert } from "$std/assert/assert.ts";
 import { assertEquals } from "$std/assert/assert_equals.ts";
 import { join } from "$std/path/join.ts";
 import { CONNECTIONS_KEY_PREFIX, EXPORT_PATH } from "../../../consts.ts";
-import manifest from "../../../fresh.gen.ts";
-import {
-  ExportAuditLog,
-  QueueDeleteAbortId,
-  QueueDeleteExportFile,
-  QueueDeleteExportStatus,
-} from "../../../types.ts";
+import { ExportAuditLog, QueueDeleteExportFile, QueueDeleteExportStatus } from "../../../types.ts";
 import { logout } from "../../../utils/connections/denoDeploy/logout.ts";
 import { localKv } from "../../../utils/kv/db.ts";
 import { _internals } from "../../../utils/kv/kvQueue.ts";
 import { abort, getExportStatus } from "../../../utils/state/state.ts";
-import { disableQueue } from "../../../utils/test/testUtils.ts";
+import {
+  addTestConnection,
+  createFreshCtx,
+  disableQueue,
+  SESSION_ID,
+} from "../../../utils/test/testUtils.ts";
 import { handler } from "./initiate.tsx";
 
 const test = Deno.test;
@@ -28,7 +26,7 @@ test("No connectionId provided returns 400", async () => {
     body: formData,
   });
 
-  const ctx = createFreshContext(request, { manifest });
+  const ctx = createFreshCtx(request);
   const resp = await handler.POST(request, ctx);
   assertEquals(resp.status, 400);
   assertEquals(await resp.text(), "No connectionId provided");
@@ -44,7 +42,7 @@ test("No exportId provided returns 400", async () => {
     body: formData,
   });
 
-  const ctx = createFreshContext(request, { manifest });
+  const ctx = createFreshCtx(request);
   const resp = await handler.POST(request, ctx);
   assertEquals(resp.status, 400);
   assertEquals(await resp.text(), "No exportId provided");
@@ -68,7 +66,7 @@ test({
           assertEquals((msg as QueueDeleteExportStatus).message.exportId, "456");
           assertEquals(delay, 10 * 60 * 1000);
         } else if (enqueueCount === 2) {
-          const tempDbFile = (await localKv.get<string>([EXPORT_PATH, "session", "456"])).value;
+          const tempDbFile = (await localKv.get<string>([EXPORT_PATH, SESSION_ID, "456"])).value;
           assertEquals((msg as QueueDeleteExportFile).message.exportId, "456");
           assertEquals((msg as QueueDeleteExportFile).message.tempDirPath, tempDbFile);
           assertEquals(delay, 24 * 60 * 60 * 1000);
@@ -83,7 +81,7 @@ test({
 
       // create a local db, populate with test data and add a connection to it (id: 123)
       await populateSimulatedLocalKv(testDb, 1005);
-      await addTestConnection(testDb);
+      await addTestConnection(testDb, "123");
 
       const formData = new FormData();
       formData.append("connectionId", "123");
@@ -92,8 +90,7 @@ test({
         method: "POST",
         body: formData,
       });
-      const state = { session: "session" };
-      const ctx = createFreshContext<void, typeof state>(request, { manifest, state });
+      const ctx = createFreshCtx(request);
 
       //This processes the export in the background and will immediately return a 200, initiating the export
       const resp = await handler.POST(request, ctx);
@@ -109,20 +106,18 @@ test({
 
       await assertAuditRecord();
     } finally {
-      console.log("Cleaning up");
       tempDbFile && await Deno.remove(tempDbFile);
-      console.log("Deleted temp db file");
       await deleteTempDbFolder();
-      await localKv.delete([EXPORT_PATH, "session", "456"]);
+      await localKv.delete([EXPORT_PATH, SESSION_ID, "456"]);
       await localKv.delete([CONNECTIONS_KEY_PREFIX, "123"]);
-      await logout("session");
+      await logout(SESSION_ID);
     }
   },
 });
 
 test({
   name: "Initiate export - exception occurs",
-  sanitizeResources: false,
+  sanitizeResources: true,
   async fn() {
     const testDb = await getTestDbPath();
     let tempDbFile: string | undefined;
@@ -143,7 +138,7 @@ test({
 
       // create a local db, populate with test data and add a connection to it (id: 123)
       await populateSimulatedLocalKv(testDb, 1005);
-      await addTestConnection(testDb);
+      await addTestConnection(testDb, "123");
 
       const formData = new FormData();
       formData.append("connectionId", "123");
@@ -152,8 +147,7 @@ test({
         method: "POST",
         body: formData,
       });
-      const state = { session: "session" };
-      const ctx = createFreshContext<void, typeof state>(request, { manifest, state });
+      const ctx = createFreshCtx(request);
 
       //This processes the export in the background and will immediately return a 200, initiating the export
       const resp = await handler.POST(request, ctx);
@@ -169,16 +163,16 @@ test({
     } finally {
       tempDbFile && await Deno.remove(tempDbFile);
       await deleteTempDbFolder();
-      await localKv.delete([EXPORT_PATH, "session", "456"]);
+      await localKv.delete([EXPORT_PATH, SESSION_ID, "456"]);
       await localKv.delete([CONNECTIONS_KEY_PREFIX, "123"]);
-      await logout("session");
+      await logout(SESSION_ID);
     }
   },
 });
 
 test({
   name: "Initiate export - user aborts",
-  sanitizeResources: false,
+  sanitizeResources: true,
   async fn() {
     const testDb = await getTestDbPath();
     let tempDbFile: string | undefined;
@@ -190,7 +184,7 @@ test({
 
       // create a local db, populate with test data and add a connection to it (id: 123)
       await populateSimulatedLocalKv(testDb, 30000);
-      await addTestConnection(testDb);
+      await addTestConnection(testDb, "123");
 
       const formData = new FormData();
       formData.append("connectionId", "123");
@@ -199,8 +193,7 @@ test({
         method: "POST",
         body: formData,
       });
-      const state = { session: "session" };
-      const ctx = createFreshContext<void, typeof state>(request, { manifest, state });
+      const ctx = createFreshCtx(request);
 
       //This processes the export in the background and will immediately return a 200, initiating the export
       const resp = await handler.POST(request, ctx);
@@ -218,9 +211,9 @@ test({
     } finally {
       tempDbFile && await Deno.remove(tempDbFile);
       await deleteTempDbFolder();
-      await localKv.delete([EXPORT_PATH, "session", "456"]);
+      await localKv.delete([EXPORT_PATH, SESSION_ID, "456"]);
       await localKv.delete([CONNECTIONS_KEY_PREFIX, "123"]);
-      await logout("session");
+      await logout(SESSION_ID);
     }
   },
 });
@@ -265,8 +258,8 @@ async function assertAuditRecord() {
   assertEquals(auditRecord.aborted, false);
   assertEquals(auditRecord.bytesRead, 4096);
   assertEquals(auditRecord.auditType, "export");
-  assertEquals(auditRecord.connection, "test (local), 123");
-  assertEquals(auditRecord.executorId, "session");
+  assertEquals(auditRecord.connection, "test-123 (local), 123");
+  assertEquals(auditRecord.executorId, SESSION_ID);
   assertEquals(auditRecord.infra, "local");
   assertEquals(auditRecord.keysExported, 1005);
   assertEquals(auditRecord.rtms > 0, true);
@@ -282,8 +275,8 @@ async function assertAbortedAuditRecord() {
   assertEquals(auditRecord.aborted, true);
   assertEquals(auditRecord.bytesRead > 0, true);
   assertEquals(auditRecord.auditType, "export");
-  assertEquals(auditRecord.connection, "test (local), 123");
-  assertEquals(auditRecord.executorId, "session");
+  assertEquals(auditRecord.connection, "test-123 (local), 123");
+  assertEquals(auditRecord.executorId, SESSION_ID);
   assertEquals(auditRecord.infra, "local");
   assertEquals(auditRecord.keysExported > 0, true);
   assertEquals(auditRecord.rtms > 0, true);
@@ -291,7 +284,7 @@ async function assertAbortedAuditRecord() {
 }
 
 async function assertRecordsInTempDbFile() {
-  const tempDbFile = (await localKv.get<string>([EXPORT_PATH, "session", "456"])).value;
+  const tempDbFile = (await localKv.get<string>([EXPORT_PATH, SESSION_ID, "456"])).value;
   assert(tempDbFile);
   const tempDbKv = await Deno.openKv(tempDbFile);
   const entries = await Array.fromAsync(tempDbKv.list<string>({ prefix: [] }));
@@ -305,17 +298,6 @@ async function assertRecordsInTempDbFile() {
     assertEquals(dataMap.get(`key-${i}`), `value-${i}`);
   }
   return tempDbFile;
-}
-
-async function addTestConnection(testDb: string) {
-  await localKv.set([CONNECTIONS_KEY_PREFIX, "123"], {
-    kvLocation: testDb,
-    environment: "local",
-    name: "test",
-    id: "123",
-    infra: "local",
-    size: 0,
-  });
 }
 
 async function populateSimulatedLocalKv(testDb: string, numberKeys: number) {

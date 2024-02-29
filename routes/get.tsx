@@ -4,7 +4,7 @@ import { GetCriteriaBox } from "../islands/get/GetCriteriaBox.tsx";
 import { GetResult } from "../islands/get/GetResult.tsx";
 import { Environment, KvUIEntry } from "../types.ts";
 import { getConnections, getKvConnectionDetails } from "../utils/connections/connections.ts";
-import { getKv } from "../utils/kv/kvGet.ts";
+import { kvGet } from "../utils/kv/kvGet.ts";
 import { createKvUIEntry } from "../utils/utils.ts";
 
 export interface GetData {
@@ -52,7 +52,7 @@ async function getData(
   }
 
   let resultUIEntry: KvUIEntry | undefined;
-  const result = await getKv({ session, connectionId, key: kvKey });
+  const result = await kvGet({ session, connectionId, key: kvKey });
   if (result.versionstamp !== null) {
     resultUIEntry = await createKvUIEntry(result);
   }

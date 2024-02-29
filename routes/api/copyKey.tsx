@@ -5,7 +5,7 @@ import { executorId } from "../../utils/connections/denoDeploy/deployUser.ts";
 import { localKv } from "../../utils/kv/db.ts";
 import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";
 import { connectToSecondaryKv } from "../../utils/kv/kvConnect.ts";
-import { getKv } from "../../utils/kv/kvGet.ts";
+import { kvGet } from "../../utils/kv/kvGet.ts";
 import { setAll, SetResult } from "../../utils/kv/kvSet.ts";
 import { logDebug } from "../../utils/log.ts";
 import { getUserState } from "../../utils/state/state.ts";
@@ -92,16 +92,20 @@ async function copyKey(data: CopyKeyData, session: string): Promise<CopyOpResult
     connectionId: sourceConnectionId,
     key: keyToCopy,
   };
-  const copyEntry = await getKv(getKvOptions);
+  const copyEntry = await kvGet(getKvOptions);
   if (copyEntry.versionstamp === null) {
     throw new Error(`Key [${keyToCopy}] does not exist`);
   }
 
   const destKv = await connectToSecondaryKv(session, destConnectionId);
-
-  const startCopyTime = Date.now();
-  const copyResult = await setAll([copyEntry], destKv, "no abort");
-  logDebug({ sessionId: session }, "  Time to copy key", Date.now() - startCopyTime, "ms");
+  let copyResult: SetResult;
+  try{
+    const startCopyTime = Date.now();
+    copyResult = await setAll([copyEntry], destKv, "no abort");
+    logDebug({ sessionId: session }, "  Time to copy key", Date.now() - startCopyTime, "ms");
+  } finally {
+    destKv.close();
+  }
 
   const overallDuration = Date.now() - startTime;
 

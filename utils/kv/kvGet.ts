@@ -7,7 +7,7 @@ import { auditAction } from "./kvAudit.ts";
 import { establishKvConnection } from "./kvConnect.ts";
 import { computeSize, readUnitsConsumed } from "./kvUnitsConsumed.ts";
 
-export async function getKv(getOptions: KvGetOptions): Promise<Deno.KvEntryMaybe<unknown>> {
+export async function kvGet(getOptions: KvGetOptions): Promise<Deno.KvEntryMaybe<unknown>> {
   const { session, connectionId, key } = getOptions;
   const state = getUserState(session);
 
