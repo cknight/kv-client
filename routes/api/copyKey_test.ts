@@ -27,7 +27,7 @@ Deno.test("Copy Key - happy path", async () => {
       keyToCopy: `"${KEY_TO_COPY}"`,
     };
 
-    const request = new Request("http://localhost:8080/api/export/initiate", {
+    const request = new Request("http://localhost:8080/api/export/copyKey", {
       method: "POST",
       body: JSON.stringify(requestData),
     });
@@ -64,7 +64,7 @@ Deno.test("Copy Key - key not found", async () => {
       keyToCopy: `"this key does not exist"`,
     };
 
-    const request = new Request("http://localhost:8080/api/export/initiate", {
+    const request = new Request("http://localhost:8080/api/export/copyKey", {
       method: "POST",
       body: JSON.stringify(requestData),
     });

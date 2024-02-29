@@ -127,12 +127,16 @@ async function copyKeys(data: CopyKeysData, session: string): Promise<CopyOpResu
   const copyEntries = await entriesToOperateOn(keyOperationData, session);
 
   const destKv = await connectToSecondaryKv(session, destConnectionId);
-
-  //TODO - implement SSE progress updates.  Client can register progress id through POST body,
-  //      and then GET progress updates through a separate endpoint.
-  const startCopyTime = Date.now();
-  const copyResult = await setAll(copyEntries, destKv, abortId);
-  logDebug({ sessionId: session }, "  Time to copy keys", Date.now() - startCopyTime, "ms");
+  let copyResult: SetResult;
+  try {
+    //TODO - implement SSE progress updates.  Client can register progress id through POST body,
+    //      and then GET progress updates through a separate endpoint.
+    const startCopyTime = Date.now();
+    copyResult = await setAll(copyEntries, destKv, abortId);
+    logDebug({ sessionId: session }, "  Time to copy keys", Date.now() - startCopyTime, "ms");
+  } finally {
+    destKv.close();
+  }
 
   const overallDuration = Date.now() - startTime;
   return {

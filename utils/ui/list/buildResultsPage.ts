@@ -93,7 +93,7 @@ export async function entriesToOperateOn(
 
       if (kvEntries.length !== keysSelected.length) {
         console.error(
-          "Mismatch between keys to operate on and keys retrieved from cache.  Aborting.",
+          `Mismatch between number of keys to operate on (${keysSelected.length}) and keys retrieved from cache (${kvEntries.length}).  Aborting.`,
         );
         throw new Error(
           "Internal error.  Mismatch between keys to operate on and keys retrieved from cache.  Aborting.",
