@@ -85,6 +85,8 @@ export async function entriesToOperateOn(
       );
     } else {
       // Scenario 3 - Operate on specific keys
+      console.log("keysSelected", keysSelected);
+      console.log("resultsPage", resultsPage);
       for (const result of resultsPage) {
         if (keysSelected.includes(await hashKvKey(result.key))) {
           kvEntries.push(result);

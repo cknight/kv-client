@@ -43,7 +43,7 @@ export default async function defineLayout(req: Request, ctx: FreshContext) {
               class="text-2xl font-bold cursor-pointer"
               aria-label="Return to connections page"
             >
-              <img src="/logo-darkmode.png" class="h-10" alt="KV client logo image" />
+              <img src="/logo-darkmode.png" class="h-10" alt="KV client logo" />
             </a>
             <a
               href="/"
