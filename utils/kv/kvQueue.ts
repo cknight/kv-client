@@ -15,7 +15,7 @@ function isDeleteAbortId(msg: unknown): msg is QueueDeleteAbortId {
   return (msg as QueueDeleteAbortId).channel === "DeleteAbortId";
 }
 
-const listenQueueUser = {sessionId: "-- listenQueue --"}
+const listenQueueUser = { sessionId: "-- listenQueue --" };
 
 export async function enqueueWork(msg: unknown, delay: number): Promise<void> {
   await _internals.enqueue(msg, delay);

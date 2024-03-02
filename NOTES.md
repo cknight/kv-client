@@ -16,8 +16,8 @@ TODO Release:
 1. Documentation/Website
 2. Testing
 3. How to distribute
-5. Clean up every module (document, imports, formatting)
-6. TODO/FIXMEs
+4. Clean up every module (document, imports, formatting)
+5. TODO/FIXMEs
 
 Blocked:
 
@@ -70,20 +70,12 @@ EE - Role based access - Enterprise capability
 - Need UI screen to allocate roles to user
 - OAuth logins
 
+# DOCS
 
-DOCS
-===============
-Installation
-Connections
-Keys
-Values
-Operations
- - Get
- - List
- -- filtering
- -- search all data
- - Set
- - Import
- - Export
-Consistency
-Security
+Installation Connections Keys Values Operations
+
+- Get
+- List -- filtering -- search all data
+- Set
+- Import
+- Export Consistency Security

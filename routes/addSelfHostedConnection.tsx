@@ -41,7 +41,9 @@ export const handler: Handlers = {
     } else if (!accessToken || typeof accessToken !== "string") {
       error = true;
       errorText = "Enter an access token";
-    } else if (!connectionLocation.startsWith("http://") && !connectionLocation.startsWith("https://")) {
+    } else if (
+      !connectionLocation.startsWith("http://") && !connectionLocation.startsWith("https://")
+    ) {
       error = true;
       errorText = "Connection location must be URL starting with http:// or https://";
     } else if (

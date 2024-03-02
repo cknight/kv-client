@@ -91,7 +91,7 @@ export const handler: Handlers = {
               : "No keys imported";
           }
         } catch (e) {
-          logError({sessionId: session}, "Failed to import", e);
+          logError({ sessionId: session }, "Failed to import", e);
           return new Response(e.message, { status: 500 });
         } finally {
           // Step 4: Delete file from disk
@@ -178,7 +178,7 @@ export const handler: Handlers = {
         }
       }
     } catch (e) {
-      logError({sessionId: session}, "Failed to import", e);
+      logError({ sessionId: session }, "Failed to import", e);
       body = e.message;
       status = 500;
     }

@@ -70,7 +70,11 @@ async function initiateExport(session: string, connectionId: string, exportId: s
     const listIterator = kv.list({ prefix: [] }, { batchSize: 500, consistency: "eventual" });
     for await (const entry of listIterator) {
       if (shouldAbort(exportId)) {
-        await updateExportStatus(exportId, { status: "aborted", keysProcessed, bytesProcessed }, session);
+        await updateExportStatus(
+          exportId,
+          { status: "aborted", keysProcessed, bytesProcessed },
+          session,
+        );
         throw new UnableToCompleteError("Export aborted", true);
       }
 
@@ -85,7 +89,11 @@ async function initiateExport(session: string, connectionId: string, exportId: s
     if (kvEntries.length > 0) {
       await setEntriesInDbFile(kvEntries, tempKv);
     }
-    await updateExportStatus(exportId, { status: "complete", keysProcessed, bytesProcessed }, session);
+    await updateExportStatus(
+      exportId,
+      { status: "complete", keysProcessed, bytesProcessed },
+      session,
+    );
     logDebug(
       { sessionId: session },
       `Export complete for id ${exportId} in ${Date.now() - startTime}ms`,
@@ -108,7 +116,11 @@ async function initiateExport(session: string, connectionId: string, exportId: s
   } catch (e) {
     console.error("Failed to export", e);
     if (!(e instanceof UnableToCompleteError)) {
-      await updateExportStatus(exportId, { status: "failed", keysProcessed, bytesProcessed }, session);
+      await updateExportStatus(
+        exportId,
+        { status: "failed", keysProcessed, bytesProcessed },
+        session,
+      );
     }
     console.log("Cleaning up temp dir", tempDir);
     tempDir && await Deno.remove(tempDir, { recursive: true });
@@ -138,17 +150,29 @@ async function initiateExport(session: string, connectionId: string, exportId: s
     bytesProcessed = Deno.statSync(tempDbPath!).size;
 
     if (setResult.aborted) {
-      await updateExportStatus(exportId, { status: "aborted", keysProcessed, bytesProcessed }, session);
+      await updateExportStatus(
+        exportId,
+        { status: "aborted", keysProcessed, bytesProcessed },
+        session,
+      );
       throw new UnableToCompleteError("Export aborted", true);
     } else if (setResult.failedKeys.length > 0) {
       logDebug(
         { sessionId: session },
         `Failed to set ${setResult.failedKeys} keys during export for id ${exportId}`,
       );
-      await updateExportStatus(exportId, { status: "failed", keysProcessed, bytesProcessed }, session);
+      await updateExportStatus(
+        exportId,
+        { status: "failed", keysProcessed, bytesProcessed },
+        session,
+      );
       throw new UnableToCompleteError("Export failed");
     }
-    await updateExportStatus(exportId, { status: "in progress", keysProcessed, bytesProcessed }, session);
+    await updateExportStatus(
+      exportId,
+      { status: "in progress", keysProcessed, bytesProcessed },
+      session,
+    );
   }
 }
 

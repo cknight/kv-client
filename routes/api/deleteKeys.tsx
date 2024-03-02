@@ -113,7 +113,7 @@ async function deleteKeys(data: DeleteKeysData, session: string): Promise<Delete
   //      and then GET progress updates through a separate endpoint.
   const startDeleteTime = Date.now();
   const deleteResult = await deleteAll(kvKeysToDelete, state.kv!, abortId);
-  logDebug({sessionId: session}, "  Time to delete keys", Date.now() - startDeleteTime, "ms");
+  logDebug({ sessionId: session }, "  Time to delete keys", Date.now() - startDeleteTime, "ms");
 
   const overallDuration = Date.now() - startTime;
   return { duration: overallDuration, deleteEntries: deleteEntries.length, deleteResult };

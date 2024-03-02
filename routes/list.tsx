@@ -4,7 +4,7 @@ import { ListResults } from "../islands/list/ListResults.tsx";
 import { Environment, KvUIEntry, Stats } from "../types.ts";
 import { Partial } from "$fresh/runtime.ts";
 import { getConnections, getKvConnectionDetails } from "../utils/connections/connections.ts";
-import { ListInputData, getResults } from "../utils/ui/list/listHelper.ts";
+import { getResults, ListInputData } from "../utils/ui/list/listHelper.ts";
 
 export interface ListData {
   prefix: string;

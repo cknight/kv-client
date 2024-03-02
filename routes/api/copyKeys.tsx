@@ -89,7 +89,7 @@ export const handler: Handlers = {
         status,
       });
     } catch (e) {
-      logError({sessionId: session}, "Failed to copy keys", e.message);
+      logError({ sessionId: session }, "Failed to copy keys", e.message);
       const errorMessage = e instanceof CacheInvalidationError ? e.message : "Failed to copy keys";
       return new Response(errorMessage, {
         status: 500,

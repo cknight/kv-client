@@ -6,7 +6,7 @@ import { DeleteAuditLog, ListResults, State } from "../../types.ts";
 import { logout } from "../../utils/connections/denoDeploy/logout.ts";
 import { localKv } from "../../utils/kv/db.ts";
 import { getUserState } from "../../utils/state/state.ts";
-import { SESSION_ID, addTestConnection, createFreshCtx } from "../../utils/test/testUtils.ts";
+import { addTestConnection, createFreshCtx, SESSION_ID } from "../../utils/test/testUtils.ts";
 import { DeleteKeyData, handler } from "./deleteKey.tsx";
 
 const SOURCE = "test_source.db";

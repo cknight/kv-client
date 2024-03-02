@@ -37,7 +37,7 @@ export const handler: Handlers = {
         await setAll(entries, state.kv!, connectionId);
         logDebug({ sessionId: session }, "  all entries written to KV");
       } catch (e) {
-        logError({sessionId: session}, "Failed to import", e);
+        logError({ sessionId: session }, "Failed to import", e);
         return ctx.render({ error: e.message });
       } finally {
         // Step 4: Delete file from disk

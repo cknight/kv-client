@@ -81,10 +81,10 @@ export function ListResults(props: ListResultsProps) {
   const show = useSignal(props.show);
   const listCompleteSignal = useSignal(props.listComplete);
   const statsSignal = useSignal<Stats | undefined>(props.stats);
-  
+
   const to = computed(() => {
     return Math.min(from.value + show.value - 1, resultsCountSignal.value);
-});
+  });
 
   function fetchResults() {
     updateListUrl();

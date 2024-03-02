@@ -42,7 +42,11 @@ export function shouldAbort(id: string): boolean {
  * @param status The status of the job
  * @param session session id of the user
  */
-export async function updateExportStatus(id: string, status: ExportStatus, session: string): Promise<void> {
+export async function updateExportStatus(
+  id: string,
+  status: ExportStatus,
+  session: string,
+): Promise<void> {
   logDebug({ sessionId: session }, "Updating export status", id, status);
   exportStatus.set(id, status);
 

@@ -150,7 +150,8 @@ export function buildKvValue(valueInput: string, valueType: SupportedValueTypes)
 function notType(value: unknown, expectedType: string): boolean {
   if (
     typeof value === "object" && value != null && value.constructor &&
-    (value.constructor.name === expectedType || value.constructor.name === "Object" && expectedType === "object")
+    (value.constructor.name === expectedType ||
+      value.constructor.name === "Object" && expectedType === "object")
   ) {
     return false;
   }

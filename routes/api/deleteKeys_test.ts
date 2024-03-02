@@ -6,7 +6,7 @@ import { DeleteAuditLog, ListResults, State } from "../../types.ts";
 import { logout } from "../../utils/connections/denoDeploy/logout.ts";
 import { localKv } from "../../utils/kv/db.ts";
 import { abort, getUserState } from "../../utils/state/state.ts";
-import { SESSION_ID, addTestConnection, createFreshCtx } from "../../utils/test/testUtils.ts";
+import { addTestConnection, createFreshCtx, SESSION_ID } from "../../utils/test/testUtils.ts";
 import { hashKvKey } from "../../utils/utils.ts";
 import { DeleteKeysData, handler } from "./deleteKeys.tsx";
 
@@ -62,7 +62,7 @@ Deno.test("Delete keys - happy path", async () => {
     const entry2 = await kv.get([KEY_TO_DELETE_2]);
     assertEquals(entry2.value, null);
     assertEquals(entry2.versionstamp, null);
-    
+
     //validate key 3 is kept
     const entry3 = await kv.get([KEY_TO_KEEP]);
     assertEquals(entry3.value, "value_to_copy");

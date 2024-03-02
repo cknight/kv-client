@@ -99,7 +99,7 @@ async function copyKey(data: CopyKeyData, session: string): Promise<CopyOpResult
 
   const destKv = await connectToSecondaryKv(session, destConnectionId);
   let copyResult: SetResult;
-  try{
+  try {
     const startCopyTime = Date.now();
     copyResult = await setAll([copyEntry], destKv, "no abort");
     logDebug({ sessionId: session }, "  Time to copy key", Date.now() - startCopyTime, "ms");

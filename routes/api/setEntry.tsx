@@ -77,7 +77,7 @@ export const handler: Handlers = {
         status = 500;
       }
     } catch (e) {
-      logError({sessionId: session}, "Error setting entry", e);
+      logError({ sessionId: session }, "Error setting entry", e);
       status = 500;
       body = "Error setting entry: " + e.message;
     }
