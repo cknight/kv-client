@@ -9,7 +9,6 @@ export const handler: Handlers = {
    * @returns <empty>, <invalid>, or a comma-separated list of types
    */
   async POST(req, _ctx) {
-    const start = Date.now();
     const key = await req.text();
 
     let responseTypes = "";
