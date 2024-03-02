@@ -17,12 +17,11 @@ export const handler: Handlers = {
   async POST(req, ctx) {
     const start = Date.now();
     const form = await req.formData();
-    const inputFileFormEntry: FormDataEntryValue | null = form.get("importFile");
+    const inputFileFormEntry = form.get("importFile");
     const connectionId = form.get("connectionId");
     const importSource = form.get("importSource");
     const abortId = form.get("abortId") as string | undefined;
     const session = ctx.state.session as string;
-    const state = getUserState(session);
     let status = 200;
     let body = "";
 
@@ -55,7 +54,10 @@ export const handler: Handlers = {
           // Step 3: Read all entries and write to KV
           logDebug({ sessionId: session }, "  KV connection opened and validated");
           const entries = await Array.fromAsync(importFromKv.list({ prefix: [] }));
-          const setResult = await setAll(entries, state.kv!, connectionId);
+          logDebug({ sessionId: session }, "  entries read from file");
+          const kv = await establishKvConnection(session, connectionId);
+          const setResult = await setAll(entries, kv, abortId || "");
+          importFromKv.close();
 
           let opSize = 0;
           for (const entry of entries) {
@@ -70,7 +72,7 @@ export const handler: Handlers = {
             rtms: Date.now() - start,
             importSource: "File: " + inputFileFormEntry.name,
             importInfra: "file",
-            keysImported: entries.length,
+            keysImported: setResult.setKeyCount,
             keysFailed: setResult.failedKeys.length,
             aborted: setResult.aborted,
             writeUnitsConsumed: setResult.writeUnitsConsumed,
