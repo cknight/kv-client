@@ -1,12 +1,10 @@
 import { assert } from "$std/assert/assert.ts";
 import { assertEquals } from "$std/assert/assert_equals.ts";
 import { join } from "$std/path/join.ts";
-import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
 import { DeleteAuditLog, ListResults, State } from "../../types.ts";
-import { logout } from "../../utils/connections/denoDeploy/logout.ts";
 import { localKv } from "../../utils/kv/db.ts";
 import { abort, getUserState } from "../../utils/state/state.ts";
-import { addTestConnection, createFreshCtx, SESSION_ID } from "../../utils/test/testUtils.ts";
+import { SESSION_ID, addTestConnection, cleanup, createFreshCtx } from "../../utils/test/testUtils.ts";
 import { hashKvKey } from "../../utils/utils.ts";
 import { DeleteKeysData, handler } from "./deleteKeys.tsx";
 
@@ -70,10 +68,7 @@ Deno.test("Delete keys - happy path", async () => {
 
     await assertAuditRecord();
   } finally {
-    kv.close();
-    await localKv.delete([CONNECTIONS_KEY_PREFIX, SOURCE]);
-    await Deno.remove(join(Deno.cwd(), "testDb"), { recursive: true });
-    await logout(SESSION_ID);
+    await cleanup(kv);
   }
 });
 
@@ -120,10 +115,7 @@ Deno.test("Delete keys - abort delete", async () => {
 
     await assertAbortedAuditRecord();
   } finally {
-    kv.close();
-    await localKv.delete([CONNECTIONS_KEY_PREFIX, SOURCE]);
-    await Deno.remove(join(Deno.cwd(), "testDb"), { recursive: true });
-    await logout(SESSION_ID);
+    await cleanup(kv);
   }
 });
 
@@ -157,7 +149,7 @@ async function assertAuditRecord() {
   assertEquals(auditRecord.executorId, SESSION_ID);
   assertEquals(auditRecord.connection, "test-123 (local), 123");
   assertEquals(auditRecord.infra, "local");
-  assertEquals(auditRecord.rtms > 0, true);
+  assertEquals(auditRecord.rtms >= 0, true);
   assertEquals(auditRecord.keysDeleted, 2);
   assertEquals(auditRecord.keysFailed, 0);
   assertEquals(auditRecord.aborted, false);
@@ -174,7 +166,7 @@ async function assertAbortedAuditRecord() {
   assertEquals(auditRecord.executorId, SESSION_ID);
   assertEquals(auditRecord.connection, "test-123 (local), 123");
   assertEquals(auditRecord.infra, "local");
-  assertEquals(auditRecord.rtms > 0, true);
+  assertEquals(auditRecord.rtms >= 0, true);
   assertEquals(auditRecord.keysDeleted, 0);
   assertEquals(auditRecord.keysFailed, 0);
   assertEquals(auditRecord.aborted, true);

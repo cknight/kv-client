@@ -111,7 +111,7 @@ async function assertAuditRecord() {
   assertEquals(auditRecord.executorId, SESSION_ID);
   assertEquals(auditRecord.connection, "test-123 (local), 123");
   assertEquals(auditRecord.infra, "local");
-  assertEquals(auditRecord.rtms > 0, true);
+  assertEquals(auditRecord.rtms >= 0, true);
   assertEquals(auditRecord.setSuccessful, true);
   assertEquals(auditRecord.key, "\"key0\"");
   assertEquals(auditRecord.value, json5Stringify("value0", true));

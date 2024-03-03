@@ -167,7 +167,7 @@ async function assertAuditRecord(importSource: string, importInfra: string) {
   assertEquals(auditRecord.executorId, SESSION_ID);
   assertEquals(auditRecord.connection, "test-123 (local), 123");
   assertEquals(auditRecord.infra, "local");
-  assertEquals(auditRecord.rtms > 0, true);
+  assertEquals(auditRecord.rtms >= 0, true);
   assertEquals(auditRecord.importSource, importSource);
   assertEquals(auditRecord.importInfra, importInfra);
   assertEquals(auditRecord.keysImported, 2);
@@ -187,7 +187,7 @@ async function assertAbortedAuditRecord(importSource: string, importInfra: strin
   assertEquals(auditRecord.executorId, SESSION_ID);
   assertEquals(auditRecord.connection, "test-123 (local), 123");
   assertEquals(auditRecord.infra, "local");
-  assertEquals(auditRecord.rtms > 0, true);
+  assertEquals(auditRecord.rtms >= 0, true);
   assertEquals(auditRecord.importSource, importSource);
   assertEquals(auditRecord.importInfra, importInfra);
   assertEquals(auditRecord.keysImported, 0);

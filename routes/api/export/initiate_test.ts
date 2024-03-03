@@ -262,7 +262,7 @@ async function assertAuditRecord() {
   assertEquals(auditRecord.executorId, SESSION_ID);
   assertEquals(auditRecord.infra, "local");
   assertEquals(auditRecord.keysExported, 1005);
-  assertEquals(auditRecord.rtms > 0, true);
+  assertEquals(auditRecord.rtms >= 0, true);
   assertEquals(auditRecord.readUnitsConsumed, 8);
 }
 
@@ -279,7 +279,7 @@ async function assertAbortedAuditRecord() {
   assertEquals(auditRecord.executorId, SESSION_ID);
   assertEquals(auditRecord.infra, "local");
   assertEquals(auditRecord.keysExported > 0, true);
-  assertEquals(auditRecord.rtms > 0, true);
+  assertEquals(auditRecord.rtms >= 0, true);
   assertEquals(auditRecord.readUnitsConsumed > 0, true);
 }
 

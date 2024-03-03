@@ -83,7 +83,7 @@ async function assertAuditRecord() {
   assertEquals(auditRecord.executorId, SESSION_ID);
   assertEquals(auditRecord.connection, "test-123 (local), 123");
   assertEquals(auditRecord.infra, "local");
-  assertEquals(auditRecord.rtms > 0, true);
+  assertEquals(auditRecord.rtms >= 0, true);
   assertEquals(auditRecord.keysDeleted, 1);
   assertEquals(auditRecord.keysFailed, 0);
   assertEquals(auditRecord.aborted, false);

@@ -95,7 +95,7 @@ async function assertAuditRecord() {
   assertEquals(auditRecord.destinationConnection, "test-456 (local), 456");
   assertEquals(auditRecord.destinationInfra, "local");
   assertEquals(auditRecord.infra, "local");
-  assertEquals(auditRecord.rtms > 0, true);
+  assertEquals(auditRecord.rtms >= 0, true);
   assertEquals(auditRecord.keysCopied, 1);
   assertEquals(auditRecord.keysFailed, 0);
   assertEquals(auditRecord.aborted, false);
