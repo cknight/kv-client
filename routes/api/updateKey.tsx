@@ -27,6 +27,9 @@ interface UpdateOpResult {
   updateResult: Omit<SetResult, "aborted">;
 }
 
+/**
+ * Update the value of an existing key
+ */
 export const handler: Handlers = {
   async POST(req, ctx) {
     const session = ctx.state.session as string;
@@ -46,7 +49,7 @@ export const handler: Handlers = {
         status = 500;
       }
     } catch (e) {
-      console.error("Error updating key", e.message);
+      console.error("Error updating key:", e.message);
       status = 500;
       body = e.message;
     }
