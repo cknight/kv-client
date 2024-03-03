@@ -93,7 +93,8 @@ export function getUserState(sessionOrCtx: string | PageProps): State {
 
 export function deleteUserState(session: string): void {
   const state = getUserState(session);
-  state.kv?.close();
+  state.kv?.close(); 
+  console.log("Closing kv connection");
   state.kv = null;
   state.connection = null;
   state.cache.clear();

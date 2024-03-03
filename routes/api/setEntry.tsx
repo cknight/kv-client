@@ -66,7 +66,6 @@ export const handler: Handlers = {
         versionstamp: lastSuccessfulVersionstamp,
       };
       await auditAction(setAudit, session);
-
       logDebug({ sessionId: session }, "Set result", result);
 
       if (result.setKeyCount === 1) {

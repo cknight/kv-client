@@ -3,6 +3,7 @@ export interface I_CacheManager {
   add(parms: ListResults, session: string): void;
   set(parms: ListResults): void;
   clear(): void;
+  size(): number;
 }
 
 export interface State {

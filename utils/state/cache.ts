@@ -8,6 +8,10 @@ export class CacheManager implements I_CacheManager {
   constructor() {
   }
 
+  size(): number {
+    return this.cache.size;
+  }
+
   get(parms: CacheKey): CachedList | undefined {
     const key = this.#key(parms.connectionId, parms.prefix, parms.start, parms.end, parms.reverse);
     const result = this.cache.get(key);
