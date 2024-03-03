@@ -45,6 +45,6 @@ export const handler: Handlers = {
       stats: searchData.stats,
     };
 
-    return Response.json(JSON.stringify(responseData));
+    return Response.json(responseData);
   },
 };

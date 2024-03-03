@@ -98,7 +98,7 @@ export function ListResults(props: ListResultsProps) {
       body: formData,
     }).then((response) => response.json())
       .then((data) => {
-        const newData: ListAPIResponseData = JSON.parse(data);
+        const newData: ListAPIResponseData = data;
         if (newData.results) {
           resultsSignal.value = newData.results;
           resultsCountSignal.value = newData.fullResultsCount;
