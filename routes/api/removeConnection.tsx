@@ -23,7 +23,7 @@ export const handler: Handlers = {
           status: 200,
         });
       } else {
-        return new Response("Invalid connection ID", {
+        return new Response("Invalid connection id supplied", {
           status: 400,
         });
       }
