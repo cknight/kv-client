@@ -20,38 +20,46 @@ export const handler: Handlers = {
       if (accessToken.length < 10) {
         return ctx.render({ error: true });
       }
-
+      
       const start = Date.now();
-      const deployUser = await buildRemoteData(accessToken, session);
-
-      if (deployUser) {
-        /*
-         * Store:
-         * 1. Deploy user object in KV for 1 day (will force refresh of data)
-         * 2. Access token in KV for duration of session
-         * 3. Remote connections data indefinitely (will get overwritten on next user connection)
-         */
-        await localKv.set([DEPLOY_USER_KEY_PREFIX, session], deployUser, {
-          expireIn: _24_HOURS_IN_MS,
-        });
-        userNames.set(session, deployUser.id);
-        await storeEncryptedString(
-          [ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session],
-          accessToken,
-        );
-        await persistConnectionData(deployUser);
-
-        logDebug({ sessionId: session }, `Fetched deploy user data in ${Date.now() - start}ms`);
-
-        return new Response("", {
-          status: 303,
-          headers: { Location: "/" },
-        });
+      try {
+        const deployUser = await _internals.buildRemoteData(accessToken, session);
+  
+        if (deployUser) {
+          /*
+           * Store:
+           * 1. Deploy user object in KV for 1 day (will force refresh of data)
+           * 2. Access token in KV for duration of session
+           * 3. Remote connections data indefinitely (will get overwritten on next user connection)
+           */
+          await localKv.set([DEPLOY_USER_KEY_PREFIX, session], deployUser, {
+            expireIn: _24_HOURS_IN_MS,
+          });
+          userNames.set(session, deployUser.id);
+          await storeEncryptedString(
+            [ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session],
+            accessToken,
+          );
+          await persistConnectionData(deployUser);
+  
+          logDebug({ sessionId: session }, `Fetched deploy user data in ${Date.now() - start}ms`);
+  
+          return new Response("", {
+            status: 303,
+            headers: { Location: "/" },
+          });
+        }        
+      } catch (e) {
+        return ctx.render({ error: true });
       }
     }
     return ctx.render({ error: true });
   },
 };
+
+export const _internals = {
+  buildRemoteData
+}
 
 export default function AccessToken(data: PageProps<boolean>) {
   const state = getUserState(data);
