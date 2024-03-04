@@ -12,7 +12,6 @@ import { getUserState } from "../utils/state/state.ts";
 
 export default async function defineLayout(req: Request, ctx: FreshContext) {
   const tabBarRoutes = ["list", "set", "get", "import", "export"];
-  const state = getUserState(ctx);
   const session = (ctx.state as Record<string, unknown>).session as string;
   let deployUser: DeployUser | null = null;
   if (session) {
