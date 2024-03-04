@@ -18,6 +18,7 @@ TODO Release:
 3. How to distribute
 4. Clean up every module (document, imports, formatting)
 5. TODO/FIXMEs
+6. Implement CI
 
 Blocked:
 

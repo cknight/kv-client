@@ -52,9 +52,12 @@ export async function createDb() {
 export async function cleanup(kv?: Deno.Kv) {
   if (kv) {
     kv.close();
-    console.log("Closed kv 1")
+    console.log("Closed kv 1");
   }
-  await Deno.remove(join(Deno.cwd(), "testDb"), { recursive: true });
+  try {
+    await Deno.remove(join(Deno.cwd(), "testDb"), { recursive: true });
+  } catch (_e) { /* ignore */ }
+
   await localKv.delete([CONNECTIONS_KEY_PREFIX, "123"]);
   await logout(SESSION_ID);
 }
