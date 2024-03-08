@@ -13,6 +13,8 @@ const KEY_TO_DELETE_1 = "key_to_delete1";
 const KEY_TO_DELETE_2 = "key_to_delete2";
 const KEY_TO_KEEP = "key_to_keep";
 
+// TODO - Write test for delete of several keys from filtered results
+
 Deno.test("Delete keys - happy path", async () => {
   const kv = await createDb();
 

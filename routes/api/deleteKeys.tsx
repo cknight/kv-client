@@ -88,10 +88,11 @@ export const handler: Handlers = {
 };
 
 async function deleteKeys(data: DeleteKeysData, session: string): Promise<DeleteOpResult> {
-  const { connectionId, keysToDelete, prefix, start, end, reverse, from, show, abortId } = data;
+  const { connectionId, keysToDelete, filter, prefix, start, end, reverse, from, show, abortId } = data;
   const keyOperationData = {
     connectionId,
     keysSelected: keysToDelete,
+    filter,
     prefix,
     start,
     end,
@@ -100,7 +101,7 @@ async function deleteKeys(data: DeleteKeysData, session: string): Promise<Delete
     show,
   };
   const startTime = Date.now();
-
+  console.log(keyOperationData);
   //Compute which keys to delete
   const deleteEntries = await entriesToOperateOn(keyOperationData, session);
   const kvKeysToDelete = deleteEntries.map((e) => e.key);

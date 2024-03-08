@@ -8,6 +8,7 @@ import { handler, UpdateKeyData } from "./updateKey.tsx";
 import { localKv } from "../../utils/kv/db.ts";
 import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
 import { json5Stringify } from "../../utils/transform/stringSerialization.ts";
+import { DB_ID } from "../../utils/test/testUtils.ts";
 
 Deno.test("Update Key - happy path", async () => {
   const kv = await createDb();
@@ -56,7 +57,7 @@ Deno.test("Update Key - no cached data", async () => {
     // Deliberately don't add the data to the cache
 
     const requestData: UpdateKeyData = {
-      connectionId: "123",
+      connectionId: DB_ID,
       keyHash: await hashKvKey(preEntry.key),
       value: json5Stringify("new_value", true),
       prefix: "",
