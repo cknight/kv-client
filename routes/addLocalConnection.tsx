@@ -29,7 +29,7 @@ export const handler: Handlers = {
     let errorText: string | undefined;
 
     if (
-      !connectionName || typeof connectionName !== "string"
+      !connectionName || typeof connectionName !== "string" || connectionName.length === 0
     ) {
       error = true;
       errorText = "Enter a connection name";
@@ -47,6 +47,7 @@ export const handler: Handlers = {
         //validate is valid KV store
         const maybeKv = await Deno.openKv(connectionLocation);
         await Array.fromAsync(maybeKv.list({ prefix: [] }, { limit: 1 }));
+        maybeKv.close();
 
         //add connection to KV
         const connection: KvConnection = {
@@ -79,7 +80,7 @@ export const handler: Handlers = {
       connectionLocation,
     });
   },
-  async GET(req, ctx) {
+  async GET(_req, ctx) {
     const localKVInstances = await peekAtLocalKvInstances(ctx.state.session as string);
     return await ctx.render({ kvInstances: localKVInstances, error: false });
   },
