@@ -1,15 +1,17 @@
 import { assert } from "$std/assert/assert.ts";
 import { assertEquals } from "$std/assert/assert_equals.ts";
 import { join } from "$std/path/join.ts";
+import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
 import { ImportAuditLog } from "../../types.ts";
-import { logout } from "../../utils/connections/denoDeploy/logout.ts";
 import { localKv } from "../../utils/kv/db.ts";
 import { abort } from "../../utils/state/state.ts";
-import { addTestConnection, createFreshCtx, SESSION_ID } from "../../utils/test/testUtils.ts";
+import { addTestConnection, cleanup, createFreshCtx, DB_ID, SESSION_ID } from "../../utils/test/testUtils.ts";
+import { shortHash } from "../../utils/utils.ts";
 import { handler } from "../api/import.tsx";
 
 const IMPORT_FROM = join(Deno.cwd(), "testDb", "import_from.db");
 const IMPORT_INTO = join(Deno.cwd(), "testDb", "import_into.db");
+const FROM_ID = await shortHash(IMPORT_FROM);
 
 Deno.test("Import file to KV - happy path file", async () => {
   let intoKv: Deno.Kv | undefined;
@@ -19,7 +21,7 @@ Deno.test("Import file to KV - happy path file", async () => {
     const fromFile = Deno.readFileSync(join(Deno.cwd(), "testDb", "import_from.db"));
     const formData = new FormData();
     formData.append("importFile", new Blob([fromFile], { type: "application/octet-stream" }));
-    formData.append("connectionId", "123");
+    formData.append("connectionId", DB_ID);
 
     const preEntry1 = await intoKv.get(["testKey"]);
     const preEntry2 = await intoKv.get(["testKey2"]);
@@ -35,9 +37,8 @@ Deno.test("Import file to KV - happy path file", async () => {
     assertEquals(entry2.value, "testValue2");
     await assertAuditRecord("File: blob", "file");
   } finally {
-    intoKv?.close();
-    await Deno.remove(join(Deno.cwd(), "testDb"), { recursive: true });
-    await logout(SESSION_ID);
+    await cleanup(intoKv);
+    await localKv.delete([CONNECTIONS_KEY_PREFIX, FROM_ID]);
   }
 });
 
@@ -46,10 +47,10 @@ Deno.test("Import file to KV - happy path connection", async () => {
   try {
     //'from' db is used to create the file to import
     intoKv = await createDbs();
-    await addTestConnection(IMPORT_FROM, IMPORT_FROM);
+    await addTestConnection(IMPORT_FROM, FROM_ID);
     const formData = new FormData();
-    formData.append("connectionId", "123");
-    formData.append("importSource", IMPORT_FROM);
+    formData.append("connectionId", DB_ID);
+    formData.append("importSource", FROM_ID);
 
     const preEntry1 = await intoKv.get(["testKey"]);
     const preEntry2 = await intoKv.get(["testKey2"]);
@@ -63,11 +64,10 @@ Deno.test("Import file to KV - happy path connection", async () => {
     const entry2 = await intoKv.get(["testKey2"]);
     assertEquals(entry1.value, "testValue");
     assertEquals(entry2.value, "testValue2");
-    await assertAuditRecord(`test-${IMPORT_FROM} (local), ${IMPORT_FROM}`, "local");
+    await assertAuditRecord(`test-${FROM_ID} (local), ${FROM_ID}`, "local");
   } finally {
-    intoKv?.close();
-    await Deno.remove(join(Deno.cwd(), "testDb"), { recursive: true });
-    await logout(SESSION_ID);
+    await cleanup(intoKv);
+    await localKv.delete([CONNECTIONS_KEY_PREFIX, FROM_ID]);
   }
 });
 
@@ -79,7 +79,7 @@ Deno.test("Import file to KV - File aborted", async () => {
     const fromFile = Deno.readFileSync(join(Deno.cwd(), "testDb", "import_from.db"));
     const formData = new FormData();
     formData.append("importFile", new Blob([fromFile], { type: "application/octet-stream" }));
-    formData.append("connectionId", "123");
+    formData.append("connectionId", DB_ID);
     formData.append("abortId", "abort-1234");
 
     const preEntry1 = await intoKv.get(["testKey"]);
@@ -98,9 +98,8 @@ Deno.test("Import file to KV - File aborted", async () => {
     assertEquals(entry2.value, null);
     await assertAbortedAuditRecord("File: blob", "file");
   } finally {
-    intoKv?.close();
-    await Deno.remove(join(Deno.cwd(), "testDb"), { recursive: true });
-    await logout(SESSION_ID);
+    await cleanup(intoKv);
+    await localKv.delete([CONNECTIONS_KEY_PREFIX, FROM_ID]);
   }
 });
 
@@ -109,10 +108,10 @@ Deno.test("Import file to KV - Connection aborted", async () => {
   try {
     //'from' db is used to create the file to import
     intoKv = await createDbs();
-    await addTestConnection(IMPORT_FROM, IMPORT_FROM);
+    await addTestConnection(IMPORT_FROM, FROM_ID);
     const formData = new FormData();
-    formData.append("connectionId", "123");
-    formData.append("importSource", IMPORT_FROM);
+    formData.append("connectionId", DB_ID);
+    formData.append("importSource", FROM_ID);
     formData.append("abortId", "abort-1234");
 
     const preEntry1 = await intoKv.get(["testKey"]);
@@ -129,11 +128,10 @@ Deno.test("Import file to KV - Connection aborted", async () => {
     const entry2 = await intoKv.get(["testKey2"]);
     assertEquals(entry1.value, null);
     assertEquals(entry2.value, null);
-    await assertAbortedAuditRecord(`test-${IMPORT_FROM} (local), ${IMPORT_FROM}`, "local");
+    await assertAbortedAuditRecord(`test-${FROM_ID} (local), ${FROM_ID}`, "local");
   } finally {
-    intoKv?.close();
-    await Deno.remove(join(Deno.cwd(), "testDb"), { recursive: true });
-    await logout(SESSION_ID);
+    await cleanup(intoKv);
+    await localKv.delete([CONNECTIONS_KEY_PREFIX, FROM_ID]);
   }
 });
 
@@ -165,7 +163,7 @@ async function assertAuditRecord(importSource: string, importInfra: string) {
   assert(auditRecord);
   assertEquals(auditRecord.auditType, "import");
   assertEquals(auditRecord.executorId, SESSION_ID);
-  assertEquals(auditRecord.connection, "test-123 (local), 123");
+  assertEquals(auditRecord.connection, "test-" + DB_ID + " (local), " + DB_ID);
   assertEquals(auditRecord.infra, "local");
   assertEquals(auditRecord.rtms >= 0, true);
   assertEquals(auditRecord.importSource, importSource);
@@ -185,7 +183,7 @@ async function assertAbortedAuditRecord(importSource: string, importInfra: strin
   assert(auditRecord);
   assertEquals(auditRecord.auditType, "import");
   assertEquals(auditRecord.executorId, SESSION_ID);
-  assertEquals(auditRecord.connection, "test-123 (local), 123");
+  assertEquals(auditRecord.connection, "test-" + DB_ID + " (local), " + DB_ID);
   assertEquals(auditRecord.infra, "local");
   assertEquals(auditRecord.rtms >= 0, true);
   assertEquals(auditRecord.importSource, importSource);
@@ -204,7 +202,7 @@ async function createDbs(): Promise<Deno.Kv> {
   await fromKv.set(["testKey2"], "testValue2");
   fromKv.close();
 
-  await addTestConnection(IMPORT_INTO, "123");
+  await addTestConnection(IMPORT_INTO, DB_ID);
   const intoKv = await Deno.openKv(IMPORT_INTO);
   return intoKv;
 }
