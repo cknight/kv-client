@@ -10,6 +10,7 @@ Security model
 TODO Phase 1:
 
 1. Write (lots) more tests
+2. Add client<->server integrity checks on delete data?
 
 TODO Release:
 

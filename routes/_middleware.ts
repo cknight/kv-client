@@ -9,19 +9,14 @@ export async function handler(req: Request, ctx: FreshContext) {
 
   const cookies = getCookies(req.headers);
   let session = cookies.session;
-  console.log("a");
   if (ctx.destination === "route") {
-    console.log("b");
     if (session) {
-      console.log("c");
       ctx.state.session = cookies.session;
       const deployUser = await getDeployUserData(cookies.session, true);
       if (deployUser) {
-        console.log("d");
         userNames.set(cookies.session, deployUser.login);
       }
     } else {
-      console.log("e");
       session = crypto.randomUUID();
       ctx.state.session = session;
       logDebug({ sessionId: session }, "New Session: ", session);
@@ -30,7 +25,6 @@ export async function handler(req: Request, ctx: FreshContext) {
     const resp = await ctx.next();
     
     if (!cookies.session) {
-      console.log("f");
       setCookie(resp.headers, {
         name: "session",
         value: session,

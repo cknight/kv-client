@@ -6,7 +6,7 @@ import manifest from "../../fresh.gen.ts";
 import { logout } from "../connections/denoDeploy/logout.ts";
 import { localKv } from "../kv/db.ts";
 import { _internals } from "../kv/kvQueue.ts";
-import { getUserState } from "../state/state.ts";
+import { shortHash } from "../utils.ts";
 
 /**
  * @module testUtils - a collection of utilities for unit testing
@@ -18,7 +18,7 @@ export function disableQueue() {
   _internals.enqueue = async (msg: unknown, delay: number) => {};
 }
 
-export async function addTestConnection(location: string, id: string) {
+export async function addTestConnection(location: string, id:string) {
   await localKv.set([CONNECTIONS_KEY_PREFIX, id], {
     kvLocation: location,
     environment: "local",
@@ -41,11 +41,13 @@ export function createFreshCtx(request: Request): FreshContext<
   return ctx;
 }
 
+export const DB_PATH = join(Deno.cwd(), "testDb", "test_source.db");
+export const DB_ID = await shortHash(DB_PATH);
+
 export async function createDb() {
   await Deno.mkdir("testDb");
-  const sourceDbPath = join(Deno.cwd(), "testDb", "test_source.db");
-  await addTestConnection(sourceDbPath, "123");
-  const sourceKv = await Deno.openKv(sourceDbPath);
+  await addTestConnection(DB_PATH, DB_ID);
+  const sourceKv = await Deno.openKv(DB_PATH);
   return sourceKv;
 }
 
@@ -58,6 +60,6 @@ export async function cleanup(kv?: Deno.Kv) {
     await Deno.remove(join(Deno.cwd(), "testDb"), { recursive: true });
   } catch (_e) { /* ignore */ }
 
-  await localKv.delete([CONNECTIONS_KEY_PREFIX, "123"]);
+  await localKv.delete([CONNECTIONS_KEY_PREFIX, DB_ID]);
   await logout(SESSION_ID);
 }

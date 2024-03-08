@@ -3,7 +3,7 @@ import { assertEquals } from "$std/assert/assert_equals.ts";
 import { SetAuditLog } from "../../types.ts";
 import { localKv } from "../../utils/kv/db.ts";
 import { getUserState } from "../../utils/state/state.ts";
-import { SESSION_ID, cleanup, createDb, createFreshCtx } from "../../utils/test/testUtils.ts";
+import { DB_ID, SESSION_ID, cleanup, createDb, createFreshCtx } from "../../utils/test/testUtils.ts";
 import { json5Stringify } from "../../utils/transform/stringSerialization.ts";
 import { KvSetEntry, handler } from "./setEntry.tsx";
 
@@ -16,7 +16,7 @@ Deno.test("Set entry - happy path, OK to overwrite", async () => {
       kvValue: "value0",
       valueType: "string",
       doNotOverwrite: false,
-      connectionId: "123",
+      connectionId: DB_ID,
     };
   
     await kv.set(["key0"], "PRE VALUE");
@@ -45,7 +45,7 @@ Deno.test("Set entry - happy path, do not overwrite", async () => {
       kvValue: "value0",
       valueType: "string",
       doNotOverwrite: true,
-      connectionId: "123",
+      connectionId: DB_ID,
     };
   
     const preEntry = await kv.get(["key0"]);
@@ -73,7 +73,7 @@ Deno.test("Set entry - key alread exists, do not overwrite", async () => {
       kvValue: "value0",
       valueType: "string",
       doNotOverwrite: true,
-      connectionId: "123",
+      connectionId: DB_ID,
     };
   
     await kv.set(["key0"], "PRE VALUE");
@@ -109,7 +109,7 @@ async function assertAuditRecord() {
   assert(auditRecord);
   assertEquals(auditRecord.auditType, "set");
   assertEquals(auditRecord.executorId, SESSION_ID);
-  assertEquals(auditRecord.connection, "test-123 (local), 123");
+  assertEquals(auditRecord.connection, "test-"+ DB_ID + " (local), " + DB_ID);
   assertEquals(auditRecord.infra, "local");
   assertEquals(auditRecord.rtms >= 0, true);
   assertEquals(auditRecord.setSuccessful, true);

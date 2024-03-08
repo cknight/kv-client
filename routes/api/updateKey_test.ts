@@ -21,7 +21,7 @@ Deno.test("Update Key - happy path", async () => {
     addDataToCache(state, preEntry);
 
     const requestData: UpdateKeyData = {
-      connectionId: "123",
+      connectionId: DB_ID,
       keyHash: await hashKvKey(preEntry.key),
       value: json5Stringify("new_value", true),
       prefix: "",
@@ -85,7 +85,7 @@ Deno.test("Update Key - no cached data", async () => {
 
 function addDataToCache(state: State, entry: Deno.KvEntryMaybe<string>) {
   const listResults: ListResults = {
-    connectionId: "123",
+    connectionId: DB_ID,
     prefix: "",
     start: "",
     end: "",
@@ -104,12 +104,12 @@ async function callAPI(requestData: UpdateKeyData, state: State) {
     body: JSON.stringify(requestData),
   });
   const ctx = createFreshCtx(request);
-  const connDetails = await localKv.get<KvConnection>([CONNECTIONS_KEY_PREFIX, "123"]);
+  const connDetails = await localKv.get<KvConnection>([CONNECTIONS_KEY_PREFIX, DB_ID]);
   state.connection = {
     kvLocation: connDetails.value!.kvLocation,
     environment: "local",
     name: "test-123",
-    id: "123",
+    id: DB_ID,
     infra: "local",
     size: 0,
   };
@@ -125,7 +125,7 @@ async function assertAuditRecord() {
   assert(auditRecord);
   assertEquals(auditRecord.auditType, "update");
   assertEquals(auditRecord.executorId, SESSION_ID);
-  assertEquals(auditRecord.connection, "test-123 (local), 123");
+  assertEquals(auditRecord.connection, "test-"+ DB_ID + " (local), " + DB_ID);
   assertEquals(auditRecord.infra, "local");
   assertEquals(auditRecord.rtms >= 0, true);
   assertEquals(auditRecord.updateSuccessful, true);

@@ -69,6 +69,7 @@ export async function entriesToOperateOn(
       `Operating on all ${kvEntries.length} key${kvEntries.length > 1 ? "s" : ""}`,
     );
   } else {
+    console.log("data", data);
     const { resultsPage, resultsWorkingSet } = buildResultsPage(
       data.filter,
       cachedListResults.dataRetrieved,
