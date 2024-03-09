@@ -53,12 +53,12 @@ export const handler: Handlers = {
       errorText = "A connection with this name already exists";
     } else {
       try {
-        // Check connection opens. (NOTE: If the URL is invalid, any operation will hang indefinitely)
-        // See https://github.com/denoland/deno/issues/22248
         const hashedLocation = await shortHash(connectionLocation);
         storeEncryptedString([ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX, hashedLocation], accessToken);
-        const tempKv = await openKvWithToken(connectionLocation, accessToken);
-        tempKv.close();
+      
+        // Check connection opens. (NOTE: If the URL is invalid, any operation will hang indefinitely)
+        // See https://github.com/denoland/deno/issues/22248
+        _internals.validateConnection(connectionLocation, accessToken);
 
         //add connection to KV
         const connection: KvConnection = {
@@ -77,6 +77,7 @@ export const handler: Handlers = {
           headers: { Location: "/" },
         });
       } catch (e) {
+        console.log('asdfasd')
         logError({ sessionId: session }, "Failed to add self hosted connection", e);
         error = true;
         errorText = e.message.split(":")[0];
@@ -92,7 +93,16 @@ export const handler: Handlers = {
   },
 };
 
-export default function AddLocalConnection(props: PageProps<AllLocalConnectionProps>) {
+async function validateConnection(connectionLocation: string, accessToken: string) {
+  const tempKv = await openKvWithToken(connectionLocation, accessToken);
+  tempKv.close();
+}
+
+export const _internals = {
+  validateConnection,
+};
+
+export default function AddSelfHostedConnection(props: PageProps<AllLocalConnectionProps>) {
   const isError = props.data?.error;
   const errorText = props.data?.errorText;
   const connectionName = props.data?.connectionName || "";

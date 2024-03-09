@@ -74,7 +74,7 @@ async function decryptString(
   return new TextDecoder().decode(decrypted);
 }
 
-type EncryptedData = {
+export type EncryptedData = {
   iv: Uint8Array;
   cipherText: Uint8Array;
   salt?: Uint8Array;
