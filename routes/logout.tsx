@@ -7,8 +7,8 @@ interface LogoutProps {
 }
 
 export const handler: Handlers = {
-  async POST(req, ctx) {
-    await logout(ctx.state.session as string);
+  async POST(_req, ctx) {
+    await _internals.logout(ctx.state.session as string);
 
     const headers = new Headers();
     deleteCookie(headers, "session");
@@ -18,6 +18,10 @@ export const handler: Handlers = {
       headers,
     });
   },
+};
+
+export const _internals = {
+  logout,
 };
 
 export default function Logout(props: PageProps<LogoutProps>) {
