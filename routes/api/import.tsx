@@ -2,7 +2,7 @@ import { Handlers } from "$fresh/server.ts";
 import { join } from "$std/path/join.ts";
 import { ImportAuditLog, KvListOptions } from "../../types.ts";
 import { getKvConnectionDetails } from "../../utils/connections/connections.ts";
-import { executorId } from "../../utils/connections/denoDeploy/deployUser.ts";
+import { executorId } from "../../utils/user/denoDeploy/deployUser.ts";
 import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";
 import { establishKvConnection } from "../../utils/kv/kvConnect.ts";
 import { listKv } from "../../utils/kv/kvList.ts";

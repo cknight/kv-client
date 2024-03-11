@@ -6,7 +6,7 @@ import { handler } from "./accessToken.tsx";
 import { _internals } from "./accessToken.tsx";
 import { localKv } from "../utils/kv/db.ts";
 import { DEPLOY_USER_KEY_PREFIX } from "../consts.ts";
-import { DeployUser } from "../utils/connections/denoDeploy/deployUser.ts";
+import { DeployUser } from "../utils/user/denoDeploy/deployUser.ts";
 import { userNames } from "../utils/state/state.ts";
 import { ENCRYPTED_USER_ACCESS_TOKEN_PREFIX } from "../consts.ts";
 

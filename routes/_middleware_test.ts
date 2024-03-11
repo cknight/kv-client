@@ -2,10 +2,10 @@ import { assertEquals } from "$std/assert/assert_equals.ts";
 import { assert } from "$std/assert/assert.ts";
 import { createFreshCtx, SESSION_ID } from "../utils/test/testUtils.ts";
 import { handler } from "./_middleware.ts";
-import { DeployUser } from "../utils/connections/denoDeploy/deployUser.ts";
+import { DeployUser } from "../utils/user/denoDeploy/deployUser.ts";
 import { localKv } from "../utils/kv/db.ts";
 import { DEPLOY_USER_KEY_PREFIX } from "../consts.ts";
-import { logout } from "../utils/connections/denoDeploy/logout.ts";
+import { logout } from "../utils/user/logout.ts";
 
 Deno.test("Middleware - no active session, responds with newly created session cookie", async () => {
   try {

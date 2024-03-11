@@ -1,6 +1,6 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
 import { deleteCookie } from "$std/http/cookie.ts";
-import { logout } from "../utils/connections/denoDeploy/logout.ts";
+import { logout } from "../utils/user/logout.ts";
 
 interface LogoutProps {
   isDeployUser: boolean;

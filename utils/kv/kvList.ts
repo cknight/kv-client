@@ -1,5 +1,5 @@
 import { KvListOptions, ListAuditLog, OpStats, PartialListResults, State } from "../../types.ts";
-import { executorId } from "../connections/denoDeploy/deployUser.ts";
+import { executorId } from "../user/denoDeploy/deployUser.ts";
 import { ValidationError } from "../errors.ts";
 import { logDebug } from "../log.ts";
 import { getUserState, shouldAbort } from "../state/state.ts";

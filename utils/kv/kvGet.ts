@@ -1,5 +1,5 @@
 import { GetAuditLog, KvGetOptions } from "../../types.ts";
-import { executorId } from "../connections/denoDeploy/deployUser.ts";
+import { executorId } from "../user/denoDeploy/deployUser.ts";
 import { logDebug } from "../log.ts";
 import { getUserState } from "../state/state.ts";
 import { parseKvKey } from "../transform/kvKeyParser.ts";

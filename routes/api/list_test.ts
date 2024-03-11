@@ -2,7 +2,7 @@ import { assert } from "$std/assert/assert.ts";
 import { join } from "$std/path/join.ts";
 import { assertEquals } from "$std/assert/assert_equals.ts";
 import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
-import { logout } from "../../utils/connections/denoDeploy/logout.ts";
+import { logout } from "../../utils/user/logout.ts";
 import { localKv } from "../../utils/kv/db.ts";
 import { SESSION_ID, addTestConnection, createFreshCtx } from "../../utils/test/testUtils.ts";
 import { handler } from "./list.tsx";

@@ -3,7 +3,7 @@ import { join } from "$std/path/join.ts";
 import { EXPORT_PATH } from "../../../consts.ts";
 import { ExportAuditLog, QueueDeleteExportFile } from "../../../types.ts";
 import { getKvConnectionDetails } from "../../../utils/connections/connections.ts";
-import { executorId } from "../../../utils/connections/denoDeploy/deployUser.ts";
+import { executorId } from "../../../utils/user/denoDeploy/deployUser.ts";
 import { localKv } from "../../../utils/kv/db.ts";
 import { auditAction, auditConnectionName } from "../../../utils/kv/kvAudit.ts";
 import { establishKvConnection } from "../../../utils/kv/kvConnect.ts";

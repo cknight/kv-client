@@ -3,7 +3,7 @@ import { FreshContext } from "$fresh/server.ts";
 import { join } from "$std/path/join.ts";
 import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
 import manifest from "../../fresh.gen.ts";
-import { logout } from "../connections/denoDeploy/logout.ts";
+import { logout } from "../user/logout.ts";
 import { localKv } from "../kv/db.ts";
 import { _internals } from "../kv/kvQueue.ts";
 import { shortHash } from "../utils.ts";

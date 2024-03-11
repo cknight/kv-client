@@ -1,7 +1,7 @@
 import { Handlers } from "$fresh/server.ts";
 import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
 import { CopyAuditLog, KvConnection } from "../../types.ts";
-import { executorId } from "../../utils/connections/denoDeploy/deployUser.ts";
+import { executorId } from "../../utils/user/denoDeploy/deployUser.ts";
 import { CacheInvalidationError } from "../../utils/errors.ts";
 import { localKv } from "../../utils/kv/db.ts";
 import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";

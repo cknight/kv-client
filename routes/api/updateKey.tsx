@@ -1,6 +1,6 @@
 import { Handlers } from "$fresh/server.ts";
 import { UpdateAuditLog } from "../../types.ts";
-import { executorId } from "../../utils/connections/denoDeploy/deployUser.ts";
+import { executorId } from "../../utils/user/denoDeploy/deployUser.ts";
 import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";
 import { establishKvConnection } from "../../utils/kv/kvConnect.ts";
 import { setAll, SetResult } from "../../utils/kv/kvSet.ts";

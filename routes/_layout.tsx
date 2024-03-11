@@ -6,7 +6,7 @@ import { TabBar } from "../islands/TabBar.tsx";
 import { AvatarMenu } from "../islands/avatarMenu/AvatarMenu.tsx";
 import { UnknownAvatarMenu } from "../islands/avatarMenu/UnknownAvatarMenu.tsx";
 import { KvConnection } from "../types.ts";
-import { DeployUser, getDeployUserData } from "../utils/connections/denoDeploy/deployUser.ts";
+import { DeployUser, getDeployUserData } from "../utils/user/denoDeploy/deployUser.ts";
 import { localKv } from "../utils/kv/db.ts";
 import { getUserState } from "../utils/state/state.ts";
 

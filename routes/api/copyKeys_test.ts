@@ -3,7 +3,7 @@ import { assertEquals } from "$std/assert/assert_equals.ts";
 import { join } from "$std/path/join.ts";
 import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
 import { CopyAuditLog, ListResults, State } from "../../types.ts";
-import { logout } from "../../utils/connections/denoDeploy/logout.ts";
+import { logout } from "../../utils/user/logout.ts";
 import { localKv } from "../../utils/kv/db.ts";
 import { abort, getUserState } from "../../utils/state/state.ts";
 import { addTestConnection } from "../../utils/test/testUtils.ts";

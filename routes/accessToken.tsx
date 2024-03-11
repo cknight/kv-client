@@ -1,8 +1,8 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
 import { DEPLOY_USER_KEY_PREFIX, ENCRYPTED_USER_ACCESS_TOKEN_PREFIX } from "../consts.ts";
 import { AccessTokenInput } from "../islands/AccessTokenInput.tsx";
-import { buildRemoteData } from "../utils/connections/denoDeploy/deployUser.ts";
-import { persistConnectionData } from "../utils/connections/denoDeploy/persistConnectionData.ts";
+import { buildRemoteData } from "../utils/user/denoDeploy/deployUser.ts";
+import { persistConnectionData } from "../utils/user/denoDeploy/persistConnectionData.ts";
 import { localKv } from "../utils/kv/db.ts";
 import { logDebug } from "../utils/log.ts";
 import { userNames } from "../utils/state/state.ts";
