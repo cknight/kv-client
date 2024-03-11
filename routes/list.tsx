@@ -49,7 +49,7 @@ export const handler: Handlers = {
       });
     }
 
-    const searchData = await getResults(listInputData, session);
+    const searchData = await _internals.getResults(listInputData, session);
 
     return await ctx.render(searchData);
   },
@@ -57,6 +57,15 @@ export const handler: Handlers = {
     const sp = new URL(req.url).searchParams;
     if (sp.has("prefix")) {
       const session = ctx.state.session as string;
+      const connectionId = sp.get("connectionId");
+
+      if (!connectionId) {
+        return new Response("", {
+          status: 303,
+          headers: { Location: "/" },
+        });
+      }
+
       const listInputData: ListInputData = {
         prefix: sp.get("prefix") || "",
         start: sp.get("start") || "",
@@ -67,22 +76,19 @@ export const handler: Handlers = {
         show: parseInt(sp.get("show") || "10"),
         filter: sp.get("filter") || undefined,
         disableCache: sp.get("disableCache") === "true",
-        connectionId: sp.get("connectionId") || "",
+        connectionId,
       };
 
-      if (!listInputData.connectionId) {
-        return new Response("", {
-          status: 303,
-          headers: { Location: "/" },
-        });
-      }
-
-      const searchData = await getResults(listInputData, session);
+      const searchData = await _internals.getResults(listInputData, session);
 
       return await ctx.render(searchData);
     }
     return await ctx.render({} as ListData);
   },
+};
+
+export const _internals = {
+  getResults,
 };
 
 export default async function List(req: Request, props: RouteContext<ListData>) {
