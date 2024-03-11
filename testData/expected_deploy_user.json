@@ -1,0 +1,59 @@
+{
+  "id": "95f70485-7583-abcd-e999-8d2f681c90ac",
+  "login": "joeBloggs",
+  "name": "Joe Bloggs",
+  "avatarUrl": "https://avatars.githubusercontent.com/u/123456?v=4",
+  "organisations": [
+    {
+      "id": "95f70485-1234-5678-z432-8d2f681c90ac",
+      "name": null,
+      "projects": [
+        {
+          "id": "12a515e8-825a-424b-f14d-033c442cd9c3",
+          "name": "high-chicken-79",
+          "type": "playground",
+          "productionBranch": null,
+          "kvInstances": [
+            {
+              "databaseId": "cc9a9caf-602a-4904-a1a0-1238a456331d",
+              "sizeBytes": 232750,
+              "branch": "*"
+            }
+          ]
+        },
+        {
+          "id": "0ad23b13-a1b4-4f23-4b43-123b78decc80",
+          "name": "important-goat-32",
+          "type": "git",
+          "productionBranch": null,
+          "kvInstances": [
+            {
+              "databaseId": "12345678-1f3c-4213-b97b-7fb20f5ab2ae",
+              "sizeBytes": 0,
+              "branch": "*"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "abc12fbd-1f63-4a8f-b456-999ef0d4b64b",
+      "name": "MyOrg",
+      "projects": [
+        {
+          "id": "50ab3c0b-12c9-4f73-b3aa-9f12345c19db",
+          "name": "proud-camel-62",
+          "type": "playground",
+          "productionBranch": null,
+          "kvInstances": [
+            {
+              "databaseId": "e1234567-3b86-4ab8-8a14-e41a27c123d4",
+              "sizeBytes": 0,
+              "branch": "*"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

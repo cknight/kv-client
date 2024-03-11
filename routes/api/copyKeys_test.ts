@@ -107,13 +107,7 @@ Deno.test("Copy Keys - keys mismatch causes failure", async () => {
     const allEntries = await Array.fromAsync(destKv.list({ prefix: [] }));
     assertEquals(allEntries.length, 0);
   } finally {
-    sourceKv.close();
-    destKv.close();
-    await localKv.delete([CONNECTIONS_KEY_PREFIX, SOURCE]);
-    await localKv.delete([CONNECTIONS_KEY_PREFIX, DEST]);
-
-    await Deno.remove(join(Deno.cwd(), "testDb"), { recursive: true });
-    await logout(SESSION_ID);
+    await cleanup(sourceKv, destKv);
   }
 });
 
@@ -157,15 +151,21 @@ Deno.test("Copy Keys - operation aborted", async () => {
     const allEntries = await Array.fromAsync(destKv.list({ prefix: [] }));
     assertEquals(allEntries.length, 0);
   } finally {
-    sourceKv.close();
-    destKv.close();
-    await localKv.delete([CONNECTIONS_KEY_PREFIX, SOURCE]);
-    await localKv.delete([CONNECTIONS_KEY_PREFIX, DEST]);
-
-    await Deno.remove(join(Deno.cwd(), "testDb"), { recursive: true });
-    await logout(SESSION_ID);
+    await cleanup(sourceKv, destKv);
   }
 });
+
+async function cleanup(sourceKv: Deno.Kv, destKv: Deno.Kv) {
+  sourceKv.close();
+  destKv.close();
+  await localKv.delete([CONNECTIONS_KEY_PREFIX, SOURCE]);
+  await localKv.delete([CONNECTIONS_KEY_PREFIX, DEST]);
+  await localKv.delete([CONNECTIONS_KEY_PREFIX, "123"]);
+  await localKv.delete([CONNECTIONS_KEY_PREFIX, "456"]);
+
+  await Deno.remove(join(Deno.cwd(), "testDb"), { recursive: true });
+  await logout(SESSION_ID);
+}
 
 async function callAPI(requestData: CopyKeysData, state: State) {
   assert(handler.POST);

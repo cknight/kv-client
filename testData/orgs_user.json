@@ -1,0 +1,77 @@
+{
+  "organization": {
+    "id": "95f70485-1234-5678-z432-8d2f681c90ac",
+    "name": null,
+    "pro": false,
+    "subscription": {
+      "plan": "free",
+      "currentPeriodStart": "2024-03-08T12:23:22Z",
+      "currentPeriodEnd": "2024-04-08T12:23:22Z"
+    },
+    "members": [
+      {
+        "user": {
+          "id": "95f70485-7583-abcd-e999-8d2f681c90ac",
+          "login": "joeBloggs",
+          "name": "Joe Bloggs",
+          "avatarUrl": "https://avatars.githubusercontent.com/u/123456?v=4"
+        },
+        "organizationId": "95f70485-7583-4626-b401-8d2f681c90ac",
+        "createdAt": "2021-06-08T11:57:19.786111Z",
+        "updatedAt": "2021-06-08T11:57:19.786111Z"
+      }
+    ],
+    "projects": [
+      {
+        "id": "12a515e8-825a-424b-f14d-033c442cd9c3",
+        "name": "high-chicken-79",
+        "type": "playground",
+        "playground": {
+          "snippet": "let x = 0;\n\nDeno.serve(async (req: Request) => {\n    console.log('X is ', x);\n    x++;\n    return new Response(\"Hello World \" + x);\n});\n",
+          "mediaType": "ts",
+          "isPublic": false,
+          "manifest": null,
+          "entrypoint": null,
+          "tutorialId": null
+        },
+        "hasProductionDeployment": true,
+        "organizationId": "95f70485-7583-abcd-e999-8d2f681c90ac",
+        "envVars": [],
+        "createdAt": "2023-10-16T20:42:15.664930Z",
+        "updatedAt": "2024-02-26T10:18:38.531368Z"
+      },
+      {
+        "id": "0ad23b13-a1b4-4f23-4b43-123b78decc80",
+        "name": "important-goat-32",
+        "type": "git",
+        "git": null,
+        "hasProductionDeployment": true,
+        "organizationId": "95f70485-7583-4626-b401-8d2f681c90ac",
+        "envVars": [],
+        "createdAt": "2021-04-03T08:39:41.602949Z",
+        "updatedAt": "2021-06-11T13:15:09.369636Z"
+      }
+    ],
+    "features": {
+      "database": true,
+      "orgTokens": true
+    },
+    "quotas": {
+      "members": {
+        "remaining": 9,
+        "quota": 10
+      },
+      "requests": {
+        "remaining": 4994389,
+        "quota": 5000000
+      },
+      "egressData": {
+        "remaining": 107362452995,
+        "quota": 107374182400
+      }
+    },
+    "createdAt": "2021-06-08T11:57:19.786111Z",
+    "updatedAt": "2023-06-08T12:17:36.991667Z"
+  },
+  "analyticsDuration": "24h"
+}

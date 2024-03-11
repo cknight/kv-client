@@ -1,0 +1,31 @@
+{
+  "dbList": [
+    {
+      "branch": "*",
+      "bindingName": "default",
+      "databaseId": "12345678-1f3c-4213-b97b-7fb20f5ab2ae",
+      "description": "important-goat-32 default database",
+      "sizeBytes": 0,
+      "featureFlags": [],
+      "currentState": {
+        "regions": [
+          "gcp-us-east4"
+        ],
+        "primaryRegion": "gcp-us-east4",
+        "replicationJobIds": {},
+        "s3Backups": {}
+      },
+      "ongoingModification": null,
+      "replicationTargets": [],
+      "createdAt": "2023-04-28T14:38:08.119533Z",
+      "updatedAt": "2023-04-28T14:38:08.119533Z",
+      "availableRegions": [
+        "gcp-asia-southeast1",
+        "gcp-europe-west3",
+        "gcp-southamerica-east1",
+        "gcp-us-east4",
+        "gcp-us-west2"
+      ]
+    }
+  ]
+}

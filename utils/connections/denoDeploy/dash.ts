@@ -174,38 +174,38 @@ export async function getRootData(accessToken: string): Promise<DashRootData> {
   return req.json();
 }
 
-/** For the user represented by the set access token, retrieve the projects for
- * that user. */
-export async function getUserProjects(accessToken: string): Promise<DashProject> {
-  const req = await fetch(`${DASH_BASE_URL}projects/index?_data_`, {
-    method: "GET",
-    headers: {
-      "Cookie": `token=${accessToken}`,
-    },
-  });
-  if (req.status !== 200) {
-    throw new Error(
-      `Fetching User Projects: ${req.statusText}\n\n${await req.text()}`,
-    );
-  }
-  return req.json();
-}
+// /** For the user represented by the set access token, retrieve the projects for
+//  * that user. */
+// export async function getUserProjects(accessToken: string): Promise<DashProject> {
+//   const req = await fetch(`${DASH_BASE_URL}projects/index?_data_`, {
+//     method: "GET",
+//     headers: {
+//       "Cookie": `token=${accessToken}`,
+//     },
+//   });
+//   if (req.status !== 200) {
+//     throw new Error(
+//       `Fetching User Projects: ${req.statusText}\n\n${await req.text()}`,
+//     );
+//   }
+//   return req.json();
+// }
 
 /** For a given project name, retrieve the project details. */
-export async function getProjectDetails(name: string, accessToken: string): Promise<DashProject> {
-  const req = await fetch(`${DASH_BASE_URL}projects/${name}?_data_`, {
-    method: "GET",
-    headers: {
-      "Cookie": `token=${accessToken}`,
-    },
-  });
-  if (req.status !== 200) {
-    throw new Error(
-      `Fetch Project Details: ${req.statusText}\n\n${await req.text()}`,
-    );
-  }
-  return req.json();
-}
+// export async function getProjectDetails(name: string, accessToken: string): Promise<DashProject> {
+//   const req = await fetch(`${DASH_BASE_URL}projects/${name}?_data_`, {
+//     method: "GET",
+//     headers: {
+//       "Cookie": `token=${accessToken}`,
+//     },
+//   });
+//   if (req.status !== 200) {
+//     throw new Error(
+//       `Fetch Project Details: ${req.statusText}\n\n${await req.text()}`,
+//     );
+//   }
+//   return req.json();
+// }
 
 /** For a given organization, retrieve the organization details. */
 export async function getOrganizationDetail(

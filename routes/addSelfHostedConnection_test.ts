@@ -12,15 +12,17 @@ const SELF_HOSTED_LOCATION = "https://my.site.com/db";
 const LOCATION_HASH = await shortHash(SELF_HOSTED_LOCATION);
 const ACCESS_TOKEN = "accessToken123";
 
-Deno.test("addLocalConnection - happy path submit form", async () => {
+Deno.test("addSelfHostedConnection - happy path submit form", async () => {
   _internals.validateConnection = async () => {/* Do nothing */};
-
+  console.log("chris", (await localKv.get([CONNECTIONS_KEY_PREFIX, LOCATION_HASH])).value);
   try {
-    const resp = await callPOSTHandler("connName", SELF_HOSTED_LOCATION, ACCESS_TOKEN);
+    const resp = await callPOSTHandler("connName2", SELF_HOSTED_LOCATION, ACCESS_TOKEN);
+    const body = await resp.text();
+    console.log(body);
     assertEquals(resp.status, 303);
     assertEquals(resp.headers.get("Location"), "/");
     const conn = await localKv.get<KvConnection>([CONNECTIONS_KEY_PREFIX, LOCATION_HASH]);
-    assertEquals(conn.value?.name, "connName");
+    assertEquals(conn.value?.name, "connName2");
     assertEquals(conn.value?.kvLocation, SELF_HOSTED_LOCATION);
     assertEquals(conn.value?.environment, "self-hosted");
     assertEquals(conn.value?.id, LOCATION_HASH);
@@ -32,9 +34,9 @@ Deno.test("addLocalConnection - happy path submit form", async () => {
     ]);
     assert(token.value!.cipherText.length > 0);
   } finally {
-    await cleanup();
     await localKv.delete([ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX, LOCATION_HASH]);
     await localKv.delete([CONNECTIONS_KEY_PREFIX, LOCATION_HASH]);
+    await cleanup();
   }
 });
 
@@ -82,6 +84,7 @@ Deno.test("addLocalConnection - connection name already exists", async () => {
   } finally {
     await cleanup();
     await localKv.delete([ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX, LOCATION_HASH]);
+    await localKv.delete([CONNECTIONS_KEY_PREFIX, LOCATION_HASH]);
   }
 });
 

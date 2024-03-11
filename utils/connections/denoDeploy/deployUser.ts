@@ -6,7 +6,7 @@ import {
 } from "../../../consts.ts";
 import { Environment } from "../../../types.ts";
 import { localKv } from "../../kv/db.ts";
-import { logDebug } from "../../log.ts";
+import { logDebug, logError } from "../../log.ts";
 import { getEncryptedString } from "../../transform/encryption.ts";
 import { getOrganizationDetail, getProjectDbs, getRootData } from "./dash.ts";
 import { persistConnectionData } from "./persistConnectionData.ts";
@@ -41,14 +41,20 @@ export interface DeployKvInstance {
   branch: string;
 }
 
+export const _internals = {
+  getOrganizationDetail,
+  getProjectDbs,
+  getRootData,
+};
+
 export async function buildRemoteData(accessToken: string, session: string): Promise<DeployUser> {
   const lastSessionAccess = await localKv.get<number>([DEPLOY_RATE_LIMITER_PREFIX, session]);
 
   if (lastSessionAccess.value && Date.now() - lastSessionAccess.value < 30000) {
-    throw new Error("Rate limit for session exceeded");
+    throw new Error("Rate limit for session exceeded, please try again in one minute");
   }
   //Get user details and the orgs they belong to
-  const rootData = await getRootData(accessToken);
+  const rootData = await _internals.getRootData(accessToken);
   const deployUser = {
     id: rootData.user.id,
     login: rootData.user.login,
@@ -61,7 +67,7 @@ export async function buildRemoteData(accessToken: string, session: string): Pro
   //N.b. a null org is the individual user
   const orgs = rootData.organizations;
   const orgDetails = await Promise.all(
-    orgs.map((org) => getOrganizationDetail(org.id, accessToken)),
+    orgs.map((org) => _internals.getOrganizationDetail(org.id, accessToken)),
   );
   orgDetails.forEach((o) => {
     const org = o.organization;
@@ -90,11 +96,12 @@ export async function buildRemoteData(accessToken: string, session: string): Pro
   });
 
   const projectDbs = await Promise.all(
-    projectNames.map((name) => getProjectDbs(name, accessToken)),
+    projectNames.map((name) => _internals.getProjectDbs(name, accessToken)),
   );
+
   deployUser.organisations.forEach((o) => {
     o.projects.forEach((p) => {
-      const db = projectDbs.find((db) => db.projectName === p.name);
+      const db = projectDbs.find((pDb) => pDb.projectName === p.name);
       if (db && db.dbList.length > 0) {
         p.kvInstances = db.dbList.map((d) => {
           return {
@@ -140,10 +147,10 @@ export async function getDeployUserData(
 ): Promise<DeployUser | null> {
   let deployUser: DeployUser | null =
     (await localKv.get<DeployUser>([DEPLOY_USER_KEY_PREFIX, session])).value;
-
-  if (deployUser === null && refreshIfNeeded) {
+  
+    if (deployUser === null && refreshIfNeeded) {
+    logDebug({ sessionId: session}, 'refreshing deploy user data');
     const accessToken = await getEncryptedString([ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session]);
-
     if (accessToken) {
       try {
         const newDeployUser = await buildRemoteData(accessToken, session);
@@ -156,11 +163,13 @@ export async function getDeployUserData(
           deployUser = newDeployUser;
         }
       } catch (e) {
-        console.error(`Failed to fetch Deploy user details: ${e.message}`);
+        logError({sessionId: session}, `Failed to fetch Deploy user details: ${e.message}`);
         await localKv.delete([DEPLOY_USER_KEY_PREFIX, session]);
         await localKv.delete([ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session]);
         return null;
       }
+    } else {
+      logDebug({ sessionId: session }, "No access token found for Deploy user");
     }
   }
   return deployUser;

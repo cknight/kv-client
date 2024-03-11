@@ -1,0 +1,31 @@
+{
+  "dbList": [
+    {
+      "branch": "*",
+      "bindingName": "default",
+      "databaseId": "e1234567-3b86-4ab8-8a14-e41a27c123d4",
+      "description": "proud-camel-62 default database",
+      "sizeBytes": 0,
+      "featureFlags": [],
+      "currentState": {
+        "regions": [
+          "gcp-us-east4"
+        ],
+        "primaryRegion": "gcp-us-east4",
+        "replicationJobIds": {},
+        "s3Backups": {}
+      },
+      "ongoingModification": null,
+      "replicationTargets": [],
+      "createdAt": "2023-10-25T14:16:05.480287Z",
+      "updatedAt": "2023-10-25T14:16:05.480287Z",
+      "availableRegions": [
+        "gcp-asia-southeast1",
+        "gcp-europe-west3",
+        "gcp-southamerica-east1",
+        "gcp-us-east4",
+        "gcp-us-west2"
+      ]
+    }
+  ]
+}

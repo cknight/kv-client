@@ -1,0 +1,65 @@
+{
+  "organization": {
+    "id": "abc12fbd-1f63-4a8f-b456-999ef0d4b64b",
+    "name": "MyOrg",
+    "pro": false,
+    "subscription": {
+      "plan": "free",
+      "currentPeriodStart": "2024-02-25T14:19:12Z",
+      "currentPeriodEnd": "2024-03-25T14:19:12Z"
+    },
+    "members": [
+      {
+        "user": {
+          "id": "95f70485-7583-abcd-e999-8d2f681c90ac",
+          "login": "joeBloggs",
+          "name": "Joe Bloggs",
+          "avatarUrl": "https://avatars.githubusercontent.com/u/123456?v=4"
+        },
+        "organizationId": "abc92def-1f23-1a2b-b241-999ef0d4b64b",
+        "createdAt": "2023-10-25T14:15:27.185643Z",
+        "updatedAt": "2023-10-25T14:15:27.185643Z"
+      }
+    ],
+    "projects": [
+      {
+        "id": "50ab3c0b-12c9-4f73-b3aa-9f12345c19db",
+        "name": "proud-camel-62",
+        "type": "playground",
+        "playground": {
+          "snippet": "Deno.serve((req: Request) => Response.json({ message: \"Hello World\" }));\n",
+          "mediaType": "ts",
+          "isPublic": false,
+          "manifest": null,
+          "entrypoint": null,
+          "tutorialId": null
+        },
+        "hasProductionDeployment": true,
+        "organizationId": "abc92def-1f23-1a2b-b241-999ef0d4b64b",
+        "envVars": [],
+        "createdAt": "2023-10-25T14:16:05.480287Z",
+        "updatedAt": "2023-10-25T14:16:11.075437Z"
+      }
+    ],
+    "features": {
+      "orgTokens": true
+    },
+    "quotas": {
+      "members": {
+        "remaining": 4,
+        "quota": 5
+      },
+      "requests": {
+        "remaining": 1000000,
+        "quota": 1000000
+      },
+      "egressData": {
+        "remaining": 107374182400,
+        "quota": 107374182400
+      }
+    },
+    "createdAt": "2023-10-25T14:15:27.185643Z",
+    "updatedAt": "2023-10-25T14:15:28.438260Z"
+  },
+  "analyticsDuration": "24h"
+}

@@ -1,0 +1,31 @@
+{
+  "dbList": [
+    {
+      "branch": "*",
+      "bindingName": "default",
+      "databaseId": "cc9a9caf-602a-4904-a1a0-1238a456331d",
+      "description": "high-chicken-79 default database",
+      "sizeBytes": 232750,
+      "featureFlags": [],
+      "currentState": {
+        "regions": [
+          "gcp-us-east4"
+        ],
+        "primaryRegion": "gcp-us-east4",
+        "replicationJobIds": {},
+        "s3Backups": {}
+      },
+      "ongoingModification": null,
+      "replicationTargets": [],
+      "createdAt": "2023-10-16T20:42:15.664930Z",
+      "updatedAt": "2023-10-16T20:42:15.664930Z",
+      "availableRegions": [
+        "gcp-asia-southeast1",
+        "gcp-europe-west3",
+        "gcp-southamerica-east1",
+        "gcp-us-east4",
+        "gcp-us-west2"
+      ]
+    }
+  ]
+}

@@ -41,7 +41,7 @@ export const handler: Handlers = {
       disableCache: form.get("disableCache")?.toString() === "on",
       connectionId: new URL(req.url).searchParams.get("connectionId") || "",
     };
-
+    console.log("showwww", listInputData.show)
     if (!listInputData.connectionId) {
       return new Response("", {
         status: 303,
@@ -50,7 +50,7 @@ export const handler: Handlers = {
     }
 
     const searchData = await _internals.getResults(listInputData, session);
-
+    console.log(searchData)
     return await ctx.render(searchData);
   },
   async GET(req, ctx) {
@@ -102,6 +102,7 @@ export default async function List(req: Request, props: RouteContext<ListData>) 
   const disableCache = props.data?.disableCache ||
     (sp.has("disableCache") && sp.get("disableCache") === "true") ||
     false;
+    console.log("props.data.show", props.data?.show);
   const show = props.data?.show || parseInt(sp.get("show") || "10");
   const from = props.data?.from || parseInt(sp.get("from") || "1");
   const results = props.data?.results;

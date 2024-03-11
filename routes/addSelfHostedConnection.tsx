@@ -54,11 +54,11 @@ export const handler: Handlers = {
     } else {
       try {
         const hashedLocation = await shortHash(connectionLocation);
-        storeEncryptedString([ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX, hashedLocation], accessToken);
+        await storeEncryptedString([ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX, hashedLocation], accessToken);
       
         // Check connection opens. (NOTE: If the URL is invalid, any operation will hang indefinitely)
         // See https://github.com/denoland/deno/issues/22248
-        _internals.validateConnection(connectionLocation, accessToken);
+        await _internals.validateConnection(connectionLocation, accessToken);
 
         //add connection to KV
         const connection: KvConnection = {

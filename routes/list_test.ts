@@ -13,7 +13,7 @@ Deno.test("List - happy path", async () => {
     assertEquals(inputData.limit, "20");
     assertEquals(inputData.reverse, true);
     assertEquals(inputData.disableCache, true);
-    assertEquals(inputData.show, 10);
+    assertEquals(inputData.show, 20);
     assertEquals(inputData.from, 1);
     assertEquals(inputData.filter, "filter");
     assertEquals(inputData.connectionId, "123");
@@ -34,7 +34,7 @@ Deno.test("List - happy path", async () => {
       limit: "'limit'",
       reverse: true,
       disableCache: true,
-      show: 10,
+      show: 20,
       from: 1,
       fullResultsCount: 1,
       filter: "filter",
@@ -54,7 +54,7 @@ Deno.test("List - happy path", async () => {
   formData.append("filter", "filter");
   formData.append("disableCache", "on");
 
-  const resp = await callAPI(formData);
+  const resp = await callHandler(formData);
   assertEquals(resp.status, 200);
   const body = await resp.text();
   assert(
@@ -84,7 +84,7 @@ Deno.test("List - no connectionId", async () => {
   assertEquals(resp.headers.get("Location"), "/");
 });
 
-async function callAPI(requestData: FormData) {
+async function callHandler(requestData: FormData) {
   assert(handler.POST);
 
   const request = new Request("http://localhost:8080/list?connectionId=123", {

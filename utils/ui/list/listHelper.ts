@@ -1,5 +1,5 @@
 import { ListData } from "../../../routes/list.tsx";
-import { PartialListResults, Stats } from "../../../types.ts";
+import { KvListOptions, PartialListResults, Stats } from "../../../types.ts";
 import { listKv } from "../../kv/kvList.ts";
 import { unitsConsumedToday } from "../../kv/kvUnitsConsumed.ts";
 import { getUserState } from "../../state/state.ts";
@@ -28,7 +28,7 @@ export async function getResults(
   let listComplete = false;
   let stats: Stats | undefined;
   try {
-    const searchOptions = {
+    const searchOptions:KvListOptions = {
       session,
       connectionId: listInputData.connectionId,
       prefix: listInputData.prefix,

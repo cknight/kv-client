@@ -1,0 +1,53 @@
+{
+  "user": {
+    "id": "95f70485-7583-abcd-e999-8d2f681c90ac",
+    "login": "joeBloggs",
+    "name": "Joe Bloggs",
+    "avatarUrl": "https://avatars.githubusercontent.com/u/123456?v=4",
+    "githubId": 1234567,
+    "isBlocked": false,
+    "isAdmin": false,
+    "pro": false,
+    "subscription": {
+      "plan": "free",
+      "currentPeriodStart": "2024-03-08T12:23:22Z",
+      "currentPeriodEnd": "2024-04-08T12:23:22Z"
+    },
+    "features": [
+      "database"
+    ],
+    "updatedAt": "2024-01-30T08:29:23.846098Z",
+    "createdAt": "2021-04-03T08:35:48.674814Z"
+  },
+  "organizations": [
+    {
+      "id": "95f70485-1234-5678-z432-8d2f681c90ac",
+      "name": null,
+      "pro": false,
+      "subscription": {
+        "plan": "free",
+        "currentPeriodStart": "2024-03-08T12:23:22Z",
+        "currentPeriodEnd": "2024-04-08T12:23:22Z"
+      },
+      "features": {
+        "database": true
+      },
+      "createdAt": "2021-06-08T11:57:19.786111Z",
+      "updatedAt": "2023-06-08T12:17:36.991667Z"
+    },
+    {
+      "id": "abc92def-1f23-1a2b-b241-999ef0d4b64b",
+      "name": "my-org",
+      "pro": false,
+      "subscription": {
+        "plan": "free",
+        "currentPeriodStart": "2024-02-25T14:19:12Z",
+        "currentPeriodEnd": "2024-03-25T14:19:12Z"
+      },
+      "features": {},
+      "createdAt": "2023-10-25T14:15:27.185643Z",
+      "updatedAt": "2023-10-25T14:15:28.438260Z"
+    }
+  ],
+  "sudo": false
+}

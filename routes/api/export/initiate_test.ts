@@ -50,7 +50,6 @@ test("No exportId provided returns 400", async () => {
 
 test({
   name: "Initiate export - happy path",
-  sanitizeResources: true,
   async fn() {
     const testDb = await getTestDbPath();
     let tempDbFile: string | undefined;
