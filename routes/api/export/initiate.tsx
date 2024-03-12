@@ -122,7 +122,6 @@ async function initiateExport(session: string, connectionId: string, exportId: s
         session,
       );
     }
-    console.log("Cleaning up temp dir", tempDir);
     tempDir && await Deno.remove(tempDir, { recursive: true });
     const auditRecord: ExportAuditLog = {
       auditType: "export",

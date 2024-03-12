@@ -16,7 +16,6 @@ export const handler: Handlers = {
   async POST(req, ctx) {
     const form = await req.formData();
     const session = ctx.state.session as string;
-    console.log("show", form.get("show")?.toString());
     const listInputData: ListInputData = {
       prefix: form.get("prefix")?.toString() || "",
       start: form.get("start")?.toString() || "",

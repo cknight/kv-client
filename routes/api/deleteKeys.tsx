@@ -101,7 +101,6 @@ async function deleteKeys(data: DeleteKeysData, session: string): Promise<Delete
     show,
   };
   const startTime = Date.now();
-  console.log(keyOperationData);
   //Compute which keys to delete
   const deleteEntries = await entriesToOperateOn(keyOperationData, session);
   const kvKeysToDelete = deleteEntries.map((e) => e.key);

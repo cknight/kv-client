@@ -77,7 +77,6 @@ export const handler: Handlers = {
           headers: { Location: "/" },
         });
       } catch (e) {
-        console.log('asdfasd')
         logError({ sessionId: session }, "Failed to add self hosted connection", e);
         error = true;
         errorText = e.message.split(":")[0];

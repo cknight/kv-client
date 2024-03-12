@@ -54,7 +54,6 @@ export async function createDb() {
 export async function cleanup(kv?: Deno.Kv) {
   if (kv) {
     kv.close();
-    console.log("Closed kv 1");
   }
   try {
     await Deno.remove(join(Deno.cwd(), "testDb"), { recursive: true });
