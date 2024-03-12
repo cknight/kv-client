@@ -9,7 +9,7 @@ export async function auditAction(audit: AuditRecord, session: string) {
   let auditSuccess = false;
   let attempts = 0;
   while (attempts < 10 && !auditSuccess) {
-    const key = ["audit", Date.now()];
+    const key = ["audit", new Date().toISOString() + 'Z'];
     const result = await localKv.atomic()
       .check({ key, versionstamp: null })
       .set(key, audit, {
