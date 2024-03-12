@@ -81,6 +81,7 @@ export function ListResults(props: ListResultsProps) {
   const show = useSignal(props.show);
   const listCompleteSignal = useSignal(props.listComplete);
   const statsSignal = useSignal<Stats | undefined>(props.stats);
+  const filterSignal = useSignal(filter);
 
   const to = computed(() => {
     return Math.min(from.value + show.value - 1, resultsCountSignal.value);
@@ -219,6 +220,7 @@ export function ListResults(props: ListResultsProps) {
 
   function deleteEntries(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault();
+    updateFilterSignal();
     const dialog = document.getElementById("deleteDialog") as HTMLDialogElement;
     dialog.showModal();
     dialog.classList.add("modal");
@@ -226,9 +228,14 @@ export function ListResults(props: ListResultsProps) {
 
   function copyEntries(event: JSX.TargetedEvent<HTMLButtonElement, Event>) {
     event.preventDefault();
+    updateFilterSignal();
     const dialog = document.getElementById("copyDialog") as HTMLDialogElement;
     dialog.showModal();
     dialog.classList.add("modal");
+  }
+
+  function updateFilterSignal() {
+    filterSignal.value = (document.getElementById("filter") as HTMLInputElement).value;
   }
 
   return (
@@ -410,7 +417,7 @@ export function ListResults(props: ListResultsProps) {
         show={show.value}
         resultsCount={resultsCountSignal.value}
         reverse={reverse}
-        filter={filter}
+        filter={filterSignal.value}
       />
       <CopyDataDialog
         keysSelected={selected.value}
@@ -424,7 +431,7 @@ export function ListResults(props: ListResultsProps) {
         show={show.value}
         resultsCount={resultsCountSignal.value}
         reverse={reverse}
-        filter={filter}
+        filter={filterSignal.value}
       />
       <Toast
         id="actionCompletedToast"
