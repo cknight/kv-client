@@ -21,25 +21,25 @@ const DEBUG_ENABLED = configuredLogLevels.includes("DEBUG");
 
 export function logDebug(session: { sessionId: string | null }, ...args: unknown[]) {
   if (DEBUG_ENABLED) {
-    console.debug(getPrefix(session), ...args);
+    console.debug(dateTime(), getPrefix(session), ...args);
   }
 }
 
 export function logInfo(session: { sessionId: string | null }, ...args: unknown[]) {
   if (configuredLogLevels.includes("INFO")) {
-    console.info(getPrefix(session), ...args);
+    console.info(dateTime(),getPrefix(session), ...args);
   }
 }
 
 export function logWarn(session: { sessionId: string | null }, ...args: unknown[]) {
   if (configuredLogLevels.includes("WARN")) {
-    console.warn(getPrefix(session), ...args);
+    console.warn(dateTime(),getPrefix(session), ...args);
   }
 }
 
 export function logError(session: { sessionId: string | null }, ...args: unknown[]) {
   if (configuredLogLevels.includes("ERROR")) {
-    console.error(getPrefix(session), ...args);
+    console.error(dateTime(),getPrefix(session), ...args);
   }
 }
 
@@ -53,4 +53,8 @@ function getUserId(sessionId: string | null): string {
 
 function getPrefix(session: { sessionId: string | null }) {
   return session.sessionId ? `[${session.sessionId}][${getUserId(session.sessionId)}] ` : "---";
+}
+
+function dateTime(): string {
+  return new Date().toISOString() + "Z";
 }
