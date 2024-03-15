@@ -4,7 +4,7 @@ import { assertEquals } from "$std/assert/assert_equals.ts";
 import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
 import { logout } from "../../utils/user/logout.ts";
 import { localKv } from "../../utils/kv/db.ts";
-import { SESSION_ID, addTestConnection, createFreshCtx } from "../../utils/test/testUtils.ts";
+import { addTestConnection, createFreshCtx, SESSION_ID } from "../../utils/test/testUtils.ts";
 import { handler } from "./list.tsx";
 import { ListData } from "../list.tsx";
 
@@ -24,7 +24,7 @@ Deno.test("list happy path", async () => {
   formData.append("disableCache", "false");
   formData.append("connectionId", "123");
 
-  try{
+  try {
     const resp = await callAPI(formData);
     assertEquals(resp.status, 200);
     const data = await resp.json() as ListData;
@@ -40,7 +40,7 @@ Deno.test("list happy path", async () => {
     assertEquals(data.stats!.opStats.kvResults, 3);
     assertEquals(data.stats!.opStats.opType, "read");
     assertEquals(data.stats!.opStats.unitsConsumed, 1);
-    assertEquals(data.results![0].key, "[\"key0\"]");
+    assertEquals(data.results![0].key, '["key0"]');
     assertEquals(data.results![0].value, "value0");
     assert(data.results![0].versionstamp !== null);
     assertEquals(data.results![0].valueType, "string");
@@ -82,7 +82,6 @@ async function callAPI(requestData: FormData) {
   const resp = await handler.POST(request, ctx);
   return resp;
 }
-
 
 async function createDb(): Promise<Deno.Kv> {
   await Deno.mkdir("testDb");

@@ -4,7 +4,7 @@ import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
 import { KvConnection } from "../../types.ts";
 import { logout } from "../../utils/user/logout.ts";
 import { localKv } from "../../utils/kv/db.ts";
-import { SESSION_ID, addTestConnection, createFreshCtx } from "../../utils/test/testUtils.ts";
+import { addTestConnection, createFreshCtx, SESSION_ID } from "../../utils/test/testUtils.ts";
 import { handler } from "./removeConnection.tsx";
 
 Deno.test("Remove connection - happy path", async () => {
@@ -12,10 +12,10 @@ Deno.test("Remove connection - happy path", async () => {
     await addTestConnection("some/location/kv.db", "123");
     const formData = new FormData();
     formData.append("connectionId", "123");
-  
+
     const preEntry = await localKv.get<KvConnection>([CONNECTIONS_KEY_PREFIX, "123"]);
     assertEquals(preEntry.value?.kvLocation, "some/location/kv.db");
-  
+
     const resp = await callAPI("123");
     assertEquals(resp.status, 200);
     assertEquals(await resp.text(), "");

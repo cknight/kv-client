@@ -82,7 +82,7 @@ Deno.test("Connect to secondary KV - valid connection", async () => {
 Deno.test("Connect to secondary KV - invalid connection", async () => {
   assertRejects(
     async () => await connectToSecondaryKv(SESSION_ID, "invalidId"),
-    "Connection \"madeUpConn\" does not exist",
+    'Connection "madeUpConn" does not exist',
   );
 });
 
@@ -91,7 +91,7 @@ Deno.test("Connect to secondary KV - local connection does not exist", async () 
     await addTestConnection("non-existant location", "123");
     assertRejects(
       async () => await connectToSecondaryKv(SESSION_ID, "123"),
-      "Connection \"123\" does not exist",
+      'Connection "123" does not exist',
     );
   } finally {
     await localKv.delete([CONNECTIONS_KEY_PREFIX, "123"]);

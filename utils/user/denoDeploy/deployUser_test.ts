@@ -1,9 +1,21 @@
 import { assertEquals } from "$std/assert/assert_equals.ts";
 import { assert } from "$std/assert/assert.ts";
-import { CONNECTIONS_KEY_PREFIX, DEPLOY_RATE_LIMITER_PREFIX, DEPLOY_USER_KEY_PREFIX, ENCRYPTED_USER_ACCESS_TOKEN_PREFIX } from "../../../consts.ts";
+import {
+  CONNECTIONS_KEY_PREFIX,
+  DEPLOY_RATE_LIMITER_PREFIX,
+  DEPLOY_USER_KEY_PREFIX,
+  ENCRYPTED_USER_ACCESS_TOKEN_PREFIX,
+} from "../../../consts.ts";
 import { localKv } from "../../kv/db.ts";
 import { SESSION_ID } from "../../test/testUtils.ts";
-import { buildRemoteData, DeployKvInstance, DeployProject, DeployUser, executorId, getDeployUserData } from "./deployUser.ts";
+import {
+  buildRemoteData,
+  DeployKvInstance,
+  DeployProject,
+  DeployUser,
+  executorId,
+  getDeployUserData,
+} from "./deployUser.ts";
 import { _internals } from "./deployUser.ts";
 import { deployKvEnvironment } from "./deployUser.ts";
 import { storeEncryptedString } from "../../transform/encryption.ts";
@@ -130,7 +142,7 @@ async function assertDbConnection(dbId: string, name: string, env: Environment, 
     infra: "Deploy",
     kvLocation: `https://api.deno.com/databases/${dbId}/connect`,
     environment: env,
-    size
+    size,
   });
 }
 

@@ -147,9 +147,9 @@ export async function getDeployUserData(
 ): Promise<DeployUser | null> {
   let deployUser: DeployUser | null =
     (await localKv.get<DeployUser>([DEPLOY_USER_KEY_PREFIX, session])).value;
-  
-    if (deployUser === null && refreshIfNeeded) {
-    logDebug({ sessionId: session}, 'refreshing deploy user data');
+
+  if (deployUser === null && refreshIfNeeded) {
+    logDebug({ sessionId: session }, "refreshing deploy user data");
     const accessToken = await getEncryptedString([ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session]);
     if (accessToken) {
       try {
@@ -163,7 +163,7 @@ export async function getDeployUserData(
           deployUser = newDeployUser;
         }
       } catch (e) {
-        logError({sessionId: session}, `Failed to fetch Deploy user details: ${e.message}`);
+        logError({ sessionId: session }, `Failed to fetch Deploy user details: ${e.message}`);
         await localKv.delete([DEPLOY_USER_KEY_PREFIX, session]);
         await localKv.delete([ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session]);
         return null;

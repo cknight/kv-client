@@ -125,7 +125,7 @@ async function assertAuditRecord() {
   assert(auditRecord);
   assertEquals(auditRecord.auditType, "update");
   assertEquals(auditRecord.executorId, SESSION_ID);
-  assertEquals(auditRecord.connection, "test-"+ DB_ID + " (local), " + DB_ID);
+  assertEquals(auditRecord.connection, "test-" + DB_ID + " (local), " + DB_ID);
   assertEquals(auditRecord.infra, "local");
   assertEquals(auditRecord.rtms >= 0, true);
   assertEquals(auditRecord.updateSuccessful, true);

@@ -3,26 +3,32 @@ import { assertEquals } from "$std/assert/assert_equals.ts";
 import { SetAuditLog } from "../../types.ts";
 import { localKv } from "../../utils/kv/db.ts";
 import { getUserState } from "../../utils/state/state.ts";
-import { DB_ID, SESSION_ID, cleanup, createDb, createFreshCtx } from "../../utils/test/testUtils.ts";
+import {
+  cleanup,
+  createDb,
+  createFreshCtx,
+  DB_ID,
+  SESSION_ID,
+} from "../../utils/test/testUtils.ts";
 import { json5Stringify } from "../../utils/transform/stringSerialization.ts";
-import { KvSetEntry, handler } from "./setEntry.tsx";
+import { handler, KvSetEntry } from "./setEntry.tsx";
 
 Deno.test("Set entry - happy path, OK to overwrite", async () => {
   const kv = await createDb();
 
   try {
     const requestData: KvSetEntry = {
-      key: "\"key0\"",
+      key: '"key0"',
       kvValue: "value0",
       valueType: "string",
       doNotOverwrite: false,
       connectionId: DB_ID,
     };
-  
+
     await kv.set(["key0"], "PRE VALUE");
     const preEntry = await kv.get(["key0"]);
     assertEquals(preEntry.value, "PRE VALUE");
-    
+
     const resp = await callAPI(requestData);
 
     assertEquals(resp.status, 200);
@@ -41,16 +47,16 @@ Deno.test("Set entry - happy path, do not overwrite", async () => {
 
   try {
     const requestData: KvSetEntry = {
-      key: "\"key0\"",
+      key: '"key0"',
       kvValue: "value0",
       valueType: "string",
       doNotOverwrite: true,
       connectionId: DB_ID,
     };
-  
+
     const preEntry = await kv.get(["key0"]);
     assertEquals(preEntry.value, null);
-    
+
     const resp = await callAPI(requestData);
 
     assertEquals(resp.status, 200);
@@ -69,17 +75,17 @@ Deno.test("Set entry - key alread exists, do not overwrite", async () => {
 
   try {
     const requestData: KvSetEntry = {
-      key: "\"key0\"",
+      key: '"key0"',
       kvValue: "value0",
       valueType: "string",
       doNotOverwrite: true,
       connectionId: DB_ID,
     };
-  
+
     await kv.set(["key0"], "PRE VALUE");
     const preEntry = await kv.get(["key0"]);
     assertEquals(preEntry.value, "PRE VALUE");
-    
+
     const resp = await callAPI(requestData);
 
     assertEquals(resp.status, 500);
@@ -109,13 +115,12 @@ async function assertAuditRecord() {
   assert(auditRecord);
   assertEquals(auditRecord.auditType, "set");
   assertEquals(auditRecord.executorId, SESSION_ID);
-  assertEquals(auditRecord.connection, "test-"+ DB_ID + " (local), " + DB_ID);
+  assertEquals(auditRecord.connection, "test-" + DB_ID + " (local), " + DB_ID);
   assertEquals(auditRecord.infra, "local");
   assertEquals(auditRecord.rtms >= 0, true);
   assertEquals(auditRecord.setSuccessful, true);
-  assertEquals(auditRecord.key, "\"key0\"");
+  assertEquals(auditRecord.key, '"key0"');
   assertEquals(auditRecord.value, json5Stringify("value0", true));
   assertEquals(auditRecord.writeUnitsConsumed, 1);
   assert(auditRecord.versionstamp);
 }
-  

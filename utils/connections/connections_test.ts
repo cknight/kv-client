@@ -4,7 +4,12 @@ import { CONNECTIONS_KEY_PREFIX, DEPLOY_USER_KEY_PREFIX } from "../../consts.ts"
 import { KvConnection } from "../../types.ts";
 import { localKv } from "../kv/db.ts";
 import { cleanup, createDb, DB_ID, DB_PATH, SESSION_ID } from "../test/testUtils.ts";
-import { getConnections, getKvConnectionDetails, getLocalConnections, getSelfHostedConnections } from "./connections.ts";
+import {
+  getConnections,
+  getKvConnectionDetails,
+  getLocalConnections,
+  getSelfHostedConnections,
+} from "./connections.ts";
 import { assert } from "$std/assert/assert.ts";
 import { fail } from "$std/assert/fail.ts";
 

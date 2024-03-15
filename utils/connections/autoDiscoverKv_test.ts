@@ -5,7 +5,7 @@ import { SESSION_ID } from "../test/testUtils.ts";
 import { peekAtLocalKvInstances } from "./autoDiscoverKv.ts";
 import { assertEquals } from "$std/assert/assert_equals.ts";
 
-Deno.test("autoDiscoverKv - happy path", async() => {
+Deno.test("autoDiscoverKv - happy path", async () => {
   //set top 4 entries
   await localKv.set([new Uint8Array([0])], "first");
   await localKv.set([new Uint8Array([1])], "second");

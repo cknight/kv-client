@@ -3,7 +3,7 @@ import { assertEquals } from "$std/assert/assert_equals.ts";
 import { CONNECTIONS_KEY_PREFIX } from "../consts.ts";
 import { KvConnection } from "../types.ts";
 import { localKv } from "../utils/kv/db.ts";
-import { DB_ID, DB_PATH, cleanup, createDb, createFreshCtx } from "../utils/test/testUtils.ts";
+import { cleanup, createDb, createFreshCtx, DB_ID, DB_PATH } from "../utils/test/testUtils.ts";
 import { shortHash } from "../utils/utils.ts";
 import { handler } from "./addLocalConnection.tsx";
 

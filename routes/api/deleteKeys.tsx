@@ -88,7 +88,8 @@ export const handler: Handlers = {
 };
 
 async function deleteKeys(data: DeleteKeysData, session: string): Promise<DeleteOpResult> {
-  const { connectionId, keysToDelete, filter, prefix, start, end, reverse, from, show, abortId } = data;
+  const { connectionId, keysToDelete, filter, prefix, start, end, reverse, from, show, abortId } =
+    data;
   const keyOperationData = {
     connectionId,
     keysSelected: keysToDelete,

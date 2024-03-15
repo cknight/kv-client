@@ -20,11 +20,11 @@ export const handler: Handlers = {
       if (accessToken.length < 10) {
         return ctx.render({ error: true });
       }
-      
+
       const start = Date.now();
       try {
         const deployUser = await _internals.buildRemoteData(accessToken, session);
-  
+
         if (deployUser) {
           /*
            * Store:
@@ -41,14 +41,14 @@ export const handler: Handlers = {
             accessToken,
           );
           await persistConnectionData(deployUser);
-  
+
           logDebug({ sessionId: session }, `Fetched deploy user data in ${Date.now() - start}ms`);
-  
+
           return new Response("", {
             status: 303,
             headers: { Location: "/" },
           });
-        }        
+        }
       } catch (e) {
         return ctx.render({ error: true });
       }
@@ -58,8 +58,8 @@ export const handler: Handlers = {
 };
 
 export const _internals = {
-  buildRemoteData
-}
+  buildRemoteData,
+};
 
 export default function AccessToken(data: PageProps<boolean>) {
   const state = getUserState(data);

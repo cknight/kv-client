@@ -21,9 +21,9 @@ export async function handler(req: Request, ctx: FreshContext) {
       ctx.state.session = session;
       logDebug({ sessionId: session }, "New Session: ", session);
     }
-    
+
     const resp = await ctx.next();
-    
+
     if (!cookies.session) {
       setCookie(resp.headers, {
         name: "session",

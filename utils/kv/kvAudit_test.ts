@@ -54,19 +54,19 @@ Deno.test("Audit successful on second attempt", async () => {
       .set(["audit", new Date(now + 6).toISOString() + "Z"], "test!")
       .commit();
 
-      await auditAction(getAuditRecord, SESSION_ID);
+    await auditAction(getAuditRecord, SESSION_ID);
 
-      const audits = await Array.fromAsync(localKv.list({ prefix: ["audit"] }));
-      testAudits = audits.filter((audit) => (audit.value as EveryAuditLog).executorId === "test!");
-      assertEquals(testAudits.length, 1);
-    } finally {
-      const audits = await Array.fromAsync(localKv.list({ prefix: ["audit"] }));
-      testAudits = testAudits.concat(audits.filter((audit) => audit.value === "test!"));
-      
-      for (const audit of testAudits) {
-        await localKv.delete(audit.key);
-      }
+    const audits = await Array.fromAsync(localKv.list({ prefix: ["audit"] }));
+    testAudits = audits.filter((audit) => (audit.value as EveryAuditLog).executorId === "test!");
+    assertEquals(testAudits.length, 1);
+  } finally {
+    const audits = await Array.fromAsync(localKv.list({ prefix: ["audit"] }));
+    testAudits = testAudits.concat(audits.filter((audit) => audit.value === "test!"));
+
+    for (const audit of testAudits) {
+      await localKv.delete(audit.key);
     }
+  }
 });
 
 Deno.test("auditConnectionName", () => {

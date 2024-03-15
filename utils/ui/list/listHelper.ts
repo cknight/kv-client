@@ -28,7 +28,7 @@ export async function getResults(
   let listComplete = false;
   let stats: Stats | undefined;
   try {
-    const searchOptions:KvListOptions = {
+    const searchOptions: KvListOptions = {
       session,
       connectionId: listInputData.connectionId,
       prefix: listInputData.prefix,

@@ -18,7 +18,7 @@ export function disableQueue() {
   _internals.enqueue = async (msg: unknown, delay: number) => {};
 }
 
-export async function addTestConnection(location: string, id:string) {
+export async function addTestConnection(location: string, id: string) {
   await localKv.set([CONNECTIONS_KEY_PREFIX, id], {
     kvLocation: location,
     environment: "local",

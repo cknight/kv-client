@@ -1,7 +1,7 @@
 import { assert } from "$std/assert/assert.ts";
 import { assertEquals } from "$std/assert/assert_equals.ts";
 import { FreshContext } from "$fresh/server.ts";
-import { SESSION_ID, cleanup, createFreshCtx } from "../utils/test/testUtils.ts";
+import { cleanup, createFreshCtx, SESSION_ID } from "../utils/test/testUtils.ts";
 import { handler } from "./accessToken.tsx";
 import { _internals } from "./accessToken.tsx";
 import { localKv } from "../utils/kv/db.ts";

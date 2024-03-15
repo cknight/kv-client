@@ -33,6 +33,6 @@ async function assertDbConnection(dbId: string, name: string, env: Environment, 
     infra: "Deploy",
     kvLocation: `https://api.deno.com/databases/${dbId}/connect`,
     environment: env,
-    size
+    size,
   });
 }

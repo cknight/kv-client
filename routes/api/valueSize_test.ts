@@ -27,7 +27,7 @@ async function callAPI(valueString: string, valueType: string = "string") {
 
   const request = new Request("http://localhost:8080/api/valueSize", {
     method: "POST",
-    body: JSON.stringify({valueString, valueType} as KvValueJson),
+    body: JSON.stringify({ valueString, valueType } as KvValueJson),
   });
   const ctx = createFreshCtx(request);
   const resp = await handler.POST(request, ctx);
