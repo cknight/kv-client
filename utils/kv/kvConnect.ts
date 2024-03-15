@@ -102,8 +102,8 @@ export async function connectToSecondaryKv(
   const connection: KvConnection | null = conn.value;
 
   if (!connection) {
-    console.error(`Connection ${connectionId} does not exist in connections in KV`);
-    throw new Error(`Connection ${connectionId} does not exist`);
+    console.error(`Connection "${connectionId}" does not exist in connections in KV`);
+    throw new Error(`Connection "${connectionId}" does not exist`);
   }
 
   const location = connection.kvLocation;
