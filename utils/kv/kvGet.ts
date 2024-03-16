@@ -3,9 +3,10 @@ import { executorId } from "../user/denoDeploy/deployUser.ts";
 import { logDebug } from "../log.ts";
 import { getUserState } from "../state/state.ts";
 import { parseKvKey } from "../transform/kvKeyParser.ts";
-import { auditAction } from "./kvAudit.ts";
+import { auditAction, auditConnectionName } from "./kvAudit.ts";
 import { establishKvConnection } from "./kvConnect.ts";
 import { computeSize, readUnitsConsumed } from "./kvUnitsConsumed.ts";
+import { getKvConnectionDetails } from "../connections/connections.ts";
 
 export async function kvGet(getOptions: KvGetOptions): Promise<Deno.KvEntryMaybe<unknown>> {
   const { session, connectionId, key } = getOptions;
@@ -25,10 +26,11 @@ export async function kvGet(getOptions: KvGetOptions): Promise<Deno.KvEntryMaybe
     size = computeSize(entry.key, entry.value);
   }
 
+  const conn = await getKvConnectionDetails(connectionId);
   const audit: GetAuditLog = {
     auditType: "get",
     executorId: await executorId(session),
-    connection: connectionId,
+    connection: auditConnectionName(conn!),
     infra: state.connection!.infra,
     rtms: queryTime,
     key: `[${key}]`,
