@@ -1,14 +1,21 @@
-import { KvListOptions, ListAuditLog, OpStats, PartialListResults, State } from "../../types.ts";
-import { executorId } from "../user/denoDeploy/deployUser.ts";
+import { KvListOptions, ListAuditLog, OpStats, PartialListResults } from "../../types.ts";
 import { ValidationError } from "../errors.ts";
 import { logDebug } from "../log.ts";
 import { getUserState, shouldAbort } from "../state/state.ts";
 import { parseKvKey } from "../transform/kvKeyParser.ts";
+import { executorId } from "../user/denoDeploy/deployUser.ts";
 import { toJSON } from "../utils.ts";
 import { auditAction, auditConnectionName } from "./kvAudit.ts";
 import { establishKvConnection } from "./kvConnect.ts";
 import { computeSize, readUnitsConsumed } from "./kvUnitsConsumed.ts";
 
+/**
+ * Perform a list operation on a KV instance.  When allowed, the results will be served from a list criteria specific
+ * cache rather than the KV instance.  Cache results are held for up to 24 hours and are shared across users of the same connection.
+ *
+ * @param KvListOptions
+ * @returns PartialListResults - matching the supplied list criteria, but not necessarily all matching results.
+ */
 export async function listKv(
   listOptions: KvListOptions,
 ): Promise<PartialListResults> {
@@ -26,7 +33,7 @@ export async function listKv(
     abortId,
   } = listOptions;
 
-  await establishKvConnection(session, connectionId);
+  const kv = await establishKvConnection(session, connectionId);
 
   const state = getUserState(session);
   const cachedListResults = !disableCache &&
@@ -85,7 +92,7 @@ export async function listKv(
   const startKey = parseKvKey(start);
   const endKey = parseKvKey(end);
 
-  validateInputs(state, prefix, start, end);
+  validateInputs(prefix, start, end);
 
   const selector = createListSelector(startKey, endKey, prefixKey);
   const options = {
@@ -94,7 +101,7 @@ export async function listKv(
     cursor,
     batchSize: maxEntries > 500 ? 500 : maxEntries,
   };
-  const listIterator = state.kv!.list(selector, options);
+  const listIterator = kv.list(selector, options);
   logDebug(
     { sessionId: session },
     "kv.list(" + toJSON(selector) + ", " + JSON.stringify(options) + ")",
@@ -127,9 +134,9 @@ export async function listKv(
   newCursor = listIterator.cursor === "" ? false : newCursor;
 
   /**
-   * Caching is always used if the user edits, deletes or copies a key(s) as the results from
+   * Caching is always used if the user edits, deletes or copies entries as the results from
    * the cache are used to determine which keys to operate on.  However, if the cache is disabled
-   * by the user then any results from this list op are set in the cache (overwriting any previously)
+   * by the user then any results from this list op are set in the cache (overwriting any previously
    * cached data), not added to any existing results already in the cache.
    */
   if (disableCache) {
@@ -200,11 +207,18 @@ export async function listKv(
   return { results: finalResults, cursor: newCursor, opStats, aborted };
 }
 
+/**
+ * See https://deno.land/api@v1.41.3?s=Deno.KvListSelector&unstable=
+ * @param startKey
+ * @param endKey
+ * @param prefixKey
+ * @returns Deno.KvListSelector
+ */
 function createListSelector(
   startKey: Deno.KvKey,
   endKey: Deno.KvKey,
   prefixKey: Deno.KvKey,
-) {
+): Deno.KvListSelector {
   let selector: Deno.KvListSelector;
   if (startKey.length > 0 && endKey.length > 0) {
     selector = { start: startKey, end: endKey };
@@ -219,17 +233,10 @@ function createListSelector(
 }
 
 function validateInputs(
-  state: State,
   prefix: string,
   start: string,
   end: string,
-) {
-  if (!state.kv) {
-    throw new ValidationError(
-      "Please connect to a KV instance first",
-    );
-  }
-
+): void {
   if (prefix.length > 0 && start.length > 0 && end.length > 0) {
     throw new ValidationError(
       "Cannot specify a prefix, start and end key.",
