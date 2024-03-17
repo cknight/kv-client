@@ -4,7 +4,7 @@ import { assertGreater } from "$std/assert/assert_greater.ts";
 import { assertGreaterOrEqual } from "$std/assert/assert_greater_or_equal.ts";
 import { assertRejects } from "$std/assert/assert_rejects.ts";
 import { KvListOptions, ListAuditLog, ListResults } from "../../types.ts";
-import { getUserState } from "../state/state.ts";
+import { abort, getUserState } from "../state/state.ts";
 import { cleanup, createDb, DB_ID, SESSION_ID } from "../test/testUtils.ts";
 import { localKv } from "./db.ts";
 import { listKv } from "./kvList.ts";
@@ -444,6 +444,43 @@ Deno.test("kvList - cache disabled", async () => {
   }
 });
 
+Deno.test("kvList - no results in cache, user aborts", async () => {
+  const kv = await createDb();
+  await setupData(kv);
+  try {
+    const options: KvListOptions = {
+      session: SESSION_ID,
+      connectionId: DB_ID,
+      prefix: "",
+      start: "",
+      end: "",
+      limit: "10",
+      reverse: false,
+      disableCache: false,
+      disableAudit: false,
+      abortId: "abort",
+    };
+
+    await abort("abort");
+    const result = await listKv(options);
+
+    assertEquals(result.results?.length, 1);
+    assertEquals(result.results![0].key, ["prefix", "testKey-0"]);
+    assertEquals(result.results![0].value, "testValue-0");
+    assert(result.cursor);
+    assertEquals(result.aborted, true);
+    assertEquals(result.opStats.cachedResults, 0);
+    assertEquals(result.opStats.kvResults, 1);
+    assertEquals(result.opStats.opType, "read");
+    assertEquals(result.opStats.unitsConsumed, 1);
+    assertGreaterOrEqual(result.opStats.rtms, 0);
+
+    await assertAuditRecord("", "", "", "10", 1, false, true);
+  } finally {
+    await cleanup(kv);
+  }
+});
+
 async function setupData(kv: Deno.Kv) {
   for (let i = 0; i < 10; i++) {
     await kv.set([`prefix`, `testKey-${i}`], `testValue-${i}`);
@@ -481,6 +518,7 @@ async function assertAuditRecord(
   limit: string,
   numResults: number,
   reverse = false,
+  aborted = false,
 ) {
   const auditRecordEntry = await Array.fromAsync(
     localKv.list<ListAuditLog>({ prefix: ["audit"] }, { limit: 1, reverse: true }),
@@ -499,5 +537,5 @@ async function assertAuditRecord(
   assertEquals(auditRecord.connection, "test-" + DB_ID + " (local), " + DB_ID);
   assertEquals(auditRecord.infra, "local");
   assertEquals(auditRecord.rtms >= 0, true);
-  assertEquals(auditRecord.aborted, false);
+  assertEquals(auditRecord.aborted, aborted);
 }
