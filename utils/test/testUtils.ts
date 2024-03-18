@@ -62,3 +62,7 @@ export async function cleanup(kv?: Deno.Kv) {
   await localKv.delete([CONNECTIONS_KEY_PREFIX, DB_ID]);
   await logout(SESSION_ID);
 }
+
+export async function lengthOf(kv: Deno.Kv): Promise<number> {
+  return (await Array.fromAsync(kv.list({ prefix: [] }))).length;
+}

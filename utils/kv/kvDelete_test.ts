@@ -2,7 +2,7 @@ import { assertEquals } from "$std/assert/assert_equals.ts";
 import { assertGreaterOrEqual } from "$std/assert/assert_greater_or_equal.ts";
 import { deleteAbortId } from "../state/state.ts";
 import { abort } from "../state/state.ts";
-import { cleanup, createDb } from "../test/testUtils.ts";
+import { cleanup, createDb, lengthOf } from "../test/testUtils.ts";
 import { deleteAll, DeleteResult } from "./kvDelete.ts";
 import { _internals } from "./kvQueue.ts";
 
@@ -66,10 +66,6 @@ Deno.test("deleteAll - abort", async () => {
     await cleanup(kv);
   }
 });
-
-async function lengthOf(kv: Deno.Kv): Promise<number> {
-  return (await Array.fromAsync(kv.list({ prefix: [] }))).length;
-}
 
 async function assertResult(
   kv: Deno.Kv,

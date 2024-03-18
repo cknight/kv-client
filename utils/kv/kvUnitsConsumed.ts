@@ -23,8 +23,8 @@ export function computeSize(key: Deno.KvKey, value?: unknown): number {
   }
 }
 
-export function readUnitsConsumed(bytesSent: number): number {
-  return Math.ceil(bytesSent / BYTES_PER_READ_UNIT);
+export function readUnitsConsumed(bytesRead: number): number {
+  return Math.ceil(bytesRead / BYTES_PER_READ_UNIT);
 }
 
 export function writeUnitsConsumed(bytesSent: number): number {
