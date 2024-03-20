@@ -4,11 +4,6 @@ import { registerQueueListener } from "./kv/kvQueue.ts";
 // Setup logging
 const log_level = Deno.env.get(env.LOG_LEVEL);
 
-if (log_level !== "DEBUG") {
-  // Disable debug logging
-  console.debug = () => {};
-}
-
 // Error out if running in Deno Deploy
 const isRunningInDeploy = Deno.env.get("DENO_REGION");
 if (isRunningInDeploy) {
