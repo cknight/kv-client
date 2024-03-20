@@ -21,4 +21,5 @@ Deno.test("typeIdentifier", () => {
   assertEquals(identifyType(new RegExp("a")), "RegExp");
   assertEquals(identifyType(new Uint8Array()), "Uint8Array");
   assertEquals(identifyType(new Deno.KvU64(1234n)), "KvU64");
+  assertEquals(identifyType(() => {}), "function");
 });
