@@ -2,25 +2,26 @@ import { env } from "../consts.ts";
 import { userNames } from "./state/state.ts";
 
 type LOG_LEVELS = "DEBUG" | "INFO" | "WARN" | "ERROR";
+let configuredLogLevels: LOG_LEVELS[] = [];
 
-const LOG_LEVEL = Deno.env.get(env.LOG_LEVEL) || "INFO";
+export function initializeLogging() {
+  const LOG_LEVEL = Deno.env.get(env.LOG_LEVEL) || "INFO";
 
-const allowedLogLevels: LOG_LEVELS[] = ["DEBUG", "INFO", "WARN", "ERROR"];
+  const allowedLogLevels: LOG_LEVELS[] = ["DEBUG", "INFO", "WARN", "ERROR"];
 
-if (!allowedLogLevels.includes(LOG_LEVEL as LOG_LEVELS)) {
-  throw new Error(
-    `Invalid LOG_LEVEL: ${LOG_LEVEL}. Allowed values are: ${allowedLogLevels.join(", ")}`,
+  if (!allowedLogLevels.includes(LOG_LEVEL as LOG_LEVELS)) {
+    throw new Error(
+      `Invalid LOG_LEVEL: ${LOG_LEVEL}. Allowed values are: ${allowedLogLevels.join(", ")}`,
+    );
+  }
+
+  configuredLogLevels = allowedLogLevels.slice(
+    allowedLogLevels.indexOf(LOG_LEVEL as LOG_LEVELS),
   );
 }
 
-const configuredLogLevels = allowedLogLevels.slice(
-  allowedLogLevels.indexOf(LOG_LEVEL as LOG_LEVELS),
-);
-
-const DEBUG_ENABLED = configuredLogLevels.includes("DEBUG");
-
 export function logDebug(session: { sessionId: string | null }, ...args: unknown[]) {
-  if (DEBUG_ENABLED) {
+  if (configuredLogLevels.includes("DEBUG")) {
     console.debug(dateTime(), getPrefix(session), ...args);
   }
 }
@@ -56,5 +57,5 @@ function getPrefix(session: { sessionId: string | null }) {
 }
 
 function dateTime(): string {
-  return new Date().toISOString() + "Z";
+  return new Date().toISOString();
 }

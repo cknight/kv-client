@@ -1,8 +1,9 @@
 import { env } from "../consts.ts";
 import { registerQueueListener } from "./kv/kvQueue.ts";
+import { initializeLogging } from "./log.ts";
 
 // Setup logging
-const log_level = Deno.env.get(env.LOG_LEVEL);
+initializeLogging();
 
 // Error out if running in Deno Deploy
 const isRunningInDeploy = Deno.env.get("DENO_REGION");
