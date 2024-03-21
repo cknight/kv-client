@@ -70,26 +70,37 @@ Deno.test("log - error level logs error", async () => {
 
 Deno.test("log - invalid log level throws error", () => {
   Deno.env.set(env.LOG_LEVEL, "INVALID");
-  assertThrows(() => initializeLogging(), Error, "Invalid LOG_LEVEL: INVALID. Allowed values are: DEBUG, INFO, WARN, ERROR");
+  assertThrows(
+    () => initializeLogging(),
+    Error,
+    "Invalid LOG_LEVEL: INVALID. Allowed values are: DEBUG, INFO, WARN, ERROR",
+  );
 });
 
 function logMessages() {
-  logDebug({sessionId: SESSION_ID}, "debug message");
-  logInfo({sessionId: SESSION_ID}, "info message");
-  logWarn({sessionId: SESSION_ID}, "warn message");
-  logError({sessionId: SESSION_ID}, "error message");
-
+  logDebug({ sessionId: SESSION_ID }, "debug message");
+  logInfo({ sessionId: SESSION_ID }, "info message");
+  logWarn({ sessionId: SESSION_ID }, "warn message");
+  logError({ sessionId: SESSION_ID }, "error message");
 }
 function stubConsoleLogging() {
-   const recordedLogs = {
+  const recordedLogs = {
     error: [] as string[],
     warn: [] as string[],
     info: [] as string[],
     debug: [] as string[],
-   };
-  console.error = (...msg:string[]) => { recordedLogs.error.push(msg.join(" "))};
-  console.warn = (...msg:string[]) => {recordedLogs.warn.push(msg.join(" "))};
-  console.info = (...msg:string[]) => {recordedLogs.info.push(msg.join(" "))};
-  console.debug = (...msg:string[]) => {recordedLogs.debug.push(msg.join(" "))};
+  };
+  console.error = (...msg: string[]) => {
+    recordedLogs.error.push(msg.join(" "));
+  };
+  console.warn = (...msg: string[]) => {
+    recordedLogs.warn.push(msg.join(" "));
+  };
+  console.info = (...msg: string[]) => {
+    recordedLogs.info.push(msg.join(" "));
+  };
+  console.debug = (...msg: string[]) => {
+    recordedLogs.debug.push(msg.join(" "));
+  };
   return recordedLogs;
 }

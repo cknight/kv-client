@@ -9,7 +9,6 @@ export class CacheManager implements I_CacheManager {
   }
 
   /**
-   * 
    * @returns the number of keys in the cache (not the number of cached results)
    */
   size(): number {

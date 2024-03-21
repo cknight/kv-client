@@ -8,7 +8,7 @@ Deno.test("computeSize", () => {
   size = computeSize(["test key"], null);
   assertEquals(size, 20);
 
-  size = computeSize([new Uint8Array([1,2,3])], new Uint8Array([4,5,6]));
+  size = computeSize([new Uint8Array([1, 2, 3])], new Uint8Array([4, 5, 6]));
   assertEquals(size, 29);
 });
 

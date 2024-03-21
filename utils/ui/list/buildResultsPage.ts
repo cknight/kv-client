@@ -5,7 +5,7 @@ import { hashKvKey, toJSON } from "../../utils.ts";
 
 export interface KeyOperationData {
   connectionId: string;
-  keysSelected: string[];  //hash of Deno.KvKey
+  keysSelected: string[]; //hash of Deno.KvKey
   filter?: string;
   prefix: string;
   start: string;

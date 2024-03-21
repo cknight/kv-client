@@ -1,8 +1,16 @@
 import { assertEquals } from "$std/assert/assert_equals.ts";
 import { assert } from "$std/assert/assert.ts";
 import { _internals } from "../kv/kvQueue.ts";
-import { abort, deleteAbortId, deleteUserState, getExportStatus, getUserState, shouldAbort, updateExportStatus } from "./state.ts";
-import { SESSION_ID, cleanup, createDb } from "../test/testUtils.ts";
+import {
+  abort,
+  deleteAbortId,
+  deleteUserState,
+  getExportStatus,
+  getUserState,
+  shouldAbort,
+  updateExportStatus,
+} from "./state.ts";
+import { cleanup, createDb, SESSION_ID } from "../test/testUtils.ts";
 import { ExportStatus, KvConnection } from "../../types.ts";
 
 Deno.test("state abort", async () => {
@@ -10,13 +18,13 @@ Deno.test("state abort", async () => {
 
   let queueCalled = false;
   _internals.enqueue = async (msg: unknown, delay: number) => {
-    assertEquals(msg, {channel: "DeleteAbortId", message: { abortId: "abort"}});
+    assertEquals(msg, { channel: "DeleteAbortId", message: { abortId: "abort" } });
     assertEquals(delay, 1000 * 60 * 10);
     queueCalled = true;
   };
   await abort("abort");
   assertEquals(queueCalled, true);
-  
+
   assert(shouldAbort("abort"));
   deleteAbortId("abort");
   assert(!shouldAbort("abort"));
@@ -30,11 +38,15 @@ Deno.test("stats export status", async () => {
     throw new Error("Should not be called");
   };
 
-  const initiatingStatus: ExportStatus = {status: "initiating", keysProcessed: 0, bytesProcessed: 0};
-  const inProgress: ExportStatus = {status: "in progress", keysProcessed: 0, bytesProcessed: 0};
-  const complete: ExportStatus = {status: "complete", keysProcessed: 0, bytesProcessed: 0};
-  const aborted: ExportStatus = {status: "aborted", keysProcessed: 0, bytesProcessed: 0};
-  const failed: ExportStatus = {status: "failed", keysProcessed: 0, bytesProcessed: 0};
+  const initiatingStatus: ExportStatus = {
+    status: "initiating",
+    keysProcessed: 0,
+    bytesProcessed: 0,
+  };
+  const inProgress: ExportStatus = { status: "in progress", keysProcessed: 0, bytesProcessed: 0 };
+  const complete: ExportStatus = { status: "complete", keysProcessed: 0, bytesProcessed: 0 };
+  const aborted: ExportStatus = { status: "aborted", keysProcessed: 0, bytesProcessed: 0 };
+  const failed: ExportStatus = { status: "failed", keysProcessed: 0, bytesProcessed: 0 };
   await updateExportStatus(id, initiatingStatus, SESSION_ID);
   assertEquals(getExportStatus(id), initiatingStatus);
 
@@ -43,7 +55,7 @@ Deno.test("stats export status", async () => {
 
   let queueCalled = false;
   _internals.enqueue = async (msg: unknown, delay: number) => {
-    assertEquals(msg, {channel: "DeleteStatus", message: { exportId: id}});
+    assertEquals(msg, { channel: "DeleteStatus", message: { exportId: id } });
     assertEquals(delay, 1000 * 60 * 10);
     queueCalled = true;
   };
