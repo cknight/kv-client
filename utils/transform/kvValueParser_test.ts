@@ -1,5 +1,6 @@
 import { assertEquals } from "$std/assert/assert_equals.ts";
 import { assertThrows } from "$std/assert/assert_throws.ts";
+import { assert } from "$std/assert/assert.ts";
 import { ValidationError } from "../errors.ts";
 import { buildKvValue } from "./kvValueParser.ts";
 
@@ -85,11 +86,8 @@ Deno.test("Date", () => {
 
 Deno.test("Date reject", () => {
   assertThrows(() => buildKvValue("abc", "Date"), ValidationError, "Value is not a valid Date");
-  assertThrows(
-    () => buildKvValue('{ type: "Date", value: "2020-99-01T00:00:00.000Z"}', "Date"),
-    ValidationError,
-    "Value is not a valid Date",
-  );
+  const invalidDate = buildKvValue('{ type: "Date", value: "2020-99-01T00:00:00.000Z"}', "Date");
+  assert(invalidDate instanceof Date && isNaN(invalidDate.getTime()));
 });
 
 Deno.test("JSON", () => {

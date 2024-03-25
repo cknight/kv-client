@@ -1,4 +1,5 @@
 import { assertEquals } from "$std/assert/assert_equals.ts";
+import { assert } from "$std/assert/assert.ts";
 import { asString, json5Parse, json5Stringify, keyAsString } from "./stringSerialization.ts";
 
 Deno.test("String serialization/deserialization", () => {
@@ -101,6 +102,41 @@ Deno.test("Simple object serialization/deserialization", () => {
   assertSerialization({ a: "a", b: 1, c: true });
 });
 
+Deno.test("BigInt parsing", () => {
+  const arr = json5Parse(`{ type: "bigint", value: "1234n" }`);
+  assertEquals(typeof arr, "bigint");
+
+  const arr2 = json5Parse(`{ type: "bigint", value: "1234" }`);
+  assertEquals(typeof arr2, "bigint");
+});
+
+Deno.test("Date string parsing", () => {
+  const val = json5Parse(`"1995-12-17T03:24:00"`);
+  assertEquals(val, "1995-12-17T03:24:00");
+  assertEquals(typeof val, "string");
+
+  const val2 = json5Parse(`{
+    type: "Date",
+    value: "1995-12-17T03:24:00.000Z",
+  }`);
+  assertEquals(val2, new Date("1995-12-17T03:24:00.000Z"));
+  assertEquals(val2 instanceof Date, true);
+
+  const val3 = json5Parse(`{
+    type: "Date",
+    value: "1995-12-17T03:24",
+  }`);
+  assertEquals(val3, new Date("1995-12-17T03:24:00.000Z"));
+  assertEquals(val3 instanceof Date, true);
+
+  const val4 = json5Parse(`{
+    type: "Date",
+    value: 628021800000,
+  }`);
+  assertEquals(val4, new Date("1989-11-25T18:30:00.000Z"));
+  assertEquals(val4 instanceof Date, true);
+});
+
 Deno.test("Complex object serialization/deserialization", () => {
   //Map with Date
   assertSerialization(new Map([["c", new Date()]]));
@@ -196,6 +232,7 @@ Deno.test("asString", () => {
   assertEquals(asString(new RegExp("a")), "/a/");
   assertEquals(asString(new Uint8Array([1, 2, 3])), "[\n  1,\n  2,\n  3,\n]");
   assertEquals(asString(new Deno.KvU64(1234n)), "1234n");
+  assertEquals(asString(new Date("1995-99-17T03:24:00.000Z")), "Invalid date");
 });
 
 Deno.test("keyPart to string", () => {

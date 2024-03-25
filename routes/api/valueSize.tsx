@@ -17,6 +17,9 @@ export const handler: Handlers = {
     const session = ctx.state.session as string;
     try {
       const kvValue: unknown = buildKvValue(value.valueString, value.valueType);
+      if (value.valueType === "Date" && isNaN((kvValue as Date).getTime())) {
+        throw new Error("Invalid date");
+      }
       const size = readableSize(approximateSize(kvValue));
       return new Response(size, {
         status: 200,

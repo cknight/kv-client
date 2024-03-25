@@ -47,7 +47,9 @@ export function buildKvValue(valueInput: string, valueType: SupportedValueTypes)
       if (value === "") throw new ValidationError(`Value is not a ${valueType}`);
       let typedValue = value;
       if (valueType === "Map" || valueType === "Set") {
-        typedValue = `{ type: "${valueType}", value: ${value} }`;
+        if (!/^\s*\{\s*type\s*:\s*"/.test(value)) {
+          typedValue = `{ type: "${valueType}", value: ${value} }`;
+        }
       }
       try {
         const result = json5Parse(typedValue) as object | Array<unknown>;
@@ -69,7 +71,8 @@ export function buildKvValue(valueInput: string, valueType: SupportedValueTypes)
         try {
           const parsedDate = json5Parse(value) as Date;
           if (notType(parsedDate, "Date") || isNaN(parsedDate.getTime())) {
-            throw new ValidationError(`Value is not a valid Date`);
+            // last attempt to parse date
+            return new Date(parsedDate);
           }
           return parsedDate;
         } catch (_e) {

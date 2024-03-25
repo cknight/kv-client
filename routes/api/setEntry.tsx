@@ -46,7 +46,18 @@ export const handler: Handlers = {
         }
       }
 
-      const kvValue: unknown = buildKvValue(valueString, valueType);
+      let adjustedValueString = valueString;
+      if (
+        valueType === "Date" &&
+        !/^\s*\{\s*type\s*:\s*"/.test(valueString) && // doesn't start with '{ type: "'
+        /\D/.test(valueString) // contains non-digit characters
+      ) { 
+        adjustedValueString = `{ type: "Date", value: "${valueString}" }`;
+      }
+      const kvValue: unknown = buildKvValue(adjustedValueString, valueType);
+      if (valueType === "Date" && isNaN((kvValue as Date).getTime())) {
+        throw new Error("Invalid date");
+      }
       const entry: Deno.KvEntry<unknown> = { key: kvKey, value: kvValue, versionstamp: "1" };
       const result = await setAll([entry], kv, "");
       const { setKeyCount, writeUnitsConsumed, lastSuccessfulVersionstamp } = result;

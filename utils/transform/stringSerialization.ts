@@ -80,7 +80,12 @@ function reviver(_key: unknown, value: unknown) {
       } else {
         throw new Error("Invalid Set value");
       }
-    } else if (value.type === "bigint" && typeof value.value === "string") {
+    } else if (
+      value.type === "bigint" &&
+      (typeof value.value === "string" ||
+        typeof value.value === "number" ||
+        typeof value.value === "bigint")
+    ) {
       return BigInt(value.value);
     } else if (value.type === "undefined") {
       return undefined;
@@ -98,7 +103,9 @@ function reviver(_key: unknown, value: unknown) {
       return new Deno.KvU64(BigInt(value.value));
     } else if (value.type === "Symbol" && typeof value.value === "string") {
       return Symbol(value.value.slice("Symbol(".length, -1));
-    } else if (value.type === "Date" && typeof value.value === "string") {
+    } else if (
+      value.type === "Date" && (typeof value.value === "string" || typeof value.value === "number")
+    ) {
       return new Date(value.value);
     }
   } else if (typeof value === "string" && /^-?\d+n$/.test(value)) {
@@ -214,7 +221,7 @@ export function asString(value: unknown): string {
   if (value instanceof Set) return json5Stringify(Array.from(value.keys()));
   if (value instanceof RegExp) return value.toString();
   if (value instanceof Uint8Array) return json5Stringify(Array.from(value));
-  if (value instanceof Date) return value.toISOString();
+  if (value instanceof Date) return isNaN(value.getTime()) ? "Invalid date" : value.toISOString();
   if (value instanceof Deno.KvU64) return String(value) + "n";
 
   return json5Stringify(value);
