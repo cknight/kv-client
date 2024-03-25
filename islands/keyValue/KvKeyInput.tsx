@@ -27,7 +27,7 @@ export function KvKeyInput(props: KvKeyInputProps) {
       });
   }, []);
 
-  function handleInput(event: JSX.TargetedEvent<HTMLInputElement, Event>) {
+  function handleInput(event: JSX.TargetedInputEvent<HTMLInputElement>) {
     event.preventDefault();
     if (disableTypes) return;
 
@@ -55,7 +55,7 @@ export function KvKeyInput(props: KvKeyInputProps) {
     // Call the onInput handler defined in a parent component, if defined
     // E.g. <KvKeyInput onInput={debouncedUpdateKeyLength} ... />
     if (parentOnInput) {
-      parentOnInput(event);
+      parentOnInput(event as JSX.TargetedInputEvent<HTMLInputElement>);
     }
   }
 
