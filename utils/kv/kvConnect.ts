@@ -43,16 +43,17 @@ export async function establishKvConnection(
 
   if (connection && connection.infra === "Deploy") {
     // Remote KV access
-    const accessToken = await getEncryptedString([ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session]);
+    let accessToken = await getEncryptedString([ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session]);
     if (!accessToken) {
       throw new ValidationError("No access token available");
     }
 
     userState.kv = await openKvWithToken(connection.kvLocation, accessToken);
+    accessToken = null;
     userState.connection = conn.value;
   } else if (connection && connection.infra === "self-hosted") {
     // Self-hosted KV access
-    const accessToken = await getEncryptedString([
+    let accessToken = await getEncryptedString([
       ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX,
       connection.id,
     ]);
@@ -60,6 +61,7 @@ export async function establishKvConnection(
       throw new ValidationError("No access token available");
     }
     userState.kv = await openKvWithToken(connection.kvLocation, accessToken);
+    accessToken = null;
     userState.connection = conn.value;
   } else if (connection) {
     // Local KV file
@@ -108,16 +110,18 @@ export async function connectToSecondaryKv(
 
   const location = connection.kvLocation;
   if (connection.infra === "Deploy") {
-    const accessToken = await getEncryptedString([ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session]);
+    let accessToken = await getEncryptedString([ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session]);
     const kv = await openKvWithToken(location, accessToken);
+    accessToken = null;
     return kv;
   } else if (connection.infra === "self-hosted") {
-    const accessToken = await getEncryptedString([
+    let accessToken = await getEncryptedString([
       ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX,
       connection.id,
     ]);
 
     const kv = await openKvWithToken(location, accessToken);
+    accessToken = null;
     return kv;
   } else {
     // Local KV file
@@ -148,6 +152,7 @@ export async function openKvWithToken(location: string, token: string | null): P
   Deno.env.set(env.DENO_KV_ACCESS_TOKEN, token);
   const kv = await Deno.openKv(location);
   Deno.env.delete(env.DENO_KV_ACCESS_TOKEN);
+  token = null;
   release();
   return kv;
 }

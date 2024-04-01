@@ -25,7 +25,7 @@ export const handler: Handlers = {
     const formData = await req.formData();
     const connectionName = formData.get("connectionName");
     const connectionLocation = formData.get("connectionLocation");
-    const accessToken = formData.get("accessToken");
+    let accessToken: FormDataEntryValue | null = formData.get("accessToken");
     const session = ctx.state.session as string;
     let error = false;
     let errorText: string | undefined;
@@ -62,6 +62,7 @@ export const handler: Handlers = {
         // Check connection opens. (NOTE: If the URL is invalid, any operation will hang indefinitely)
         // See https://github.com/denoland/deno/issues/22248
         await _internals.validateConnection(connectionLocation, accessToken);
+        accessToken = null;
 
         //add connection to KV
         const connection: KvConnection = {
@@ -95,8 +96,9 @@ export const handler: Handlers = {
   },
 };
 
-async function validateConnection(connectionLocation: string, accessToken: string) {
+async function validateConnection(connectionLocation: string, accessToken: string | null) {
   const tempKv = await openKvWithToken(connectionLocation, accessToken);
+  accessToken = null;
   tempKv.close();
 }
 
