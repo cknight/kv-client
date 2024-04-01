@@ -108,7 +108,7 @@ export const handler: Handlers = {
           end: "",
           limit: "all",
           reverse: false,
-          disableCache: false,
+          disableCache: true,
           disableAudit: true,
           abortId,
         };
