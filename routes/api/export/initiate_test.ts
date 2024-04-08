@@ -15,6 +15,7 @@ import {
 } from "../../../utils/test/testUtils.ts";
 import { handler } from "./initiate.tsx";
 
+const TEST_DB_PATH = "testDb" + crypto.randomUUID();
 const test = Deno.test;
 
 test("No connectionId provided returns 400", async () => {
@@ -217,12 +218,12 @@ test({
 });
 
 async function deleteTempDbFolder() {
-  await Deno.remove(join(Deno.cwd(), "testDb"), { recursive: true });
+  await Deno.remove(join(Deno.cwd(), TEST_DB_PATH), { recursive: true });
 }
 
 async function getTestDbPath() {
-  await Deno.mkdir("testDb");
-  const testDb = join(Deno.cwd(), "testDb", "test.db");
+  await Deno.mkdir(TEST_DB_PATH);
+  const testDb = join(Deno.cwd(), TEST_DB_PATH, "test.db");
   return testDb;
 }
 

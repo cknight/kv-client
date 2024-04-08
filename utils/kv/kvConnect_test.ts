@@ -4,6 +4,7 @@ import { join } from "$std/path/join.ts";
 import { CONNECTIONS_KEY_PREFIX, env } from "../../consts.ts";
 import { KvConnection } from "../../types.ts";
 import { getUserState } from "../state/state.ts";
+import { TEST_DB_DIR } from "../test/testUtils.ts";
 import { addTestConnection, createDb, DB_ID, DB_PATH, SESSION_ID } from "../test/testUtils.ts";
 import { logout } from "../user/logout.ts";
 import { localKv } from "./db.ts";
@@ -128,14 +129,14 @@ async function cleanup() {
   await localKv.delete([CONNECTIONS_KEY_PREFIX, "123"]);
   await localKv.delete([CONNECTIONS_KEY_PREFIX, "456"]);
   await localKv.delete([CONNECTIONS_KEY_PREFIX, DB_ID]);
-  await Deno.remove(join(Deno.cwd(), "testDb"), { recursive: true });
+  await Deno.remove(join(Deno.cwd(), TEST_DB_DIR), { recursive: true });
   await logout(SESSION_ID);
 }
 
 async function addSourceAndDestDbs(): Promise<{ oldConnection: Deno.Kv }> {
-  await Deno.mkdir("testDb");
-  const sourceDbPath = join(Deno.cwd(), "testDb", "test_source.db");
-  const destDbPath = join(Deno.cwd(), "testDb", "test_dest.db");
+  await Deno.mkdir(TEST_DB_DIR);
+  const sourceDbPath = join(Deno.cwd(), TEST_DB_DIR, "test_source.db");
+  const destDbPath = join(Deno.cwd(), TEST_DB_DIR, "test_dest.db");
   await addTestConnection(sourceDbPath, "123");
   await addTestConnection(destDbPath, "456");
   const oldConnection = await Deno.openKv(sourceDbPath);

@@ -1,15 +1,10 @@
 import { assert } from "$std/assert/assert.ts";
 import { assertEquals } from "$std/assert/assert_equals.ts";
-import { join } from "$std/path/join.ts";
 import { DeleteAuditLog, ListResults, State } from "../../types.ts";
 import { localKv } from "../../utils/kv/db.ts";
 import { abort, getUserState } from "../../utils/state/state.ts";
-import {
-  addTestConnection,
-  cleanup,
-  createFreshCtx,
-  SESSION_ID,
-} from "../../utils/test/testUtils.ts";
+import { DB_ID } from "../../utils/test/testUtils.ts";
+import { cleanup, createDb, createFreshCtx, SESSION_ID } from "../../utils/test/testUtils.ts";
 import { hashKvKey } from "../../utils/utils.ts";
 import { DeleteKeysData, handler } from "./deleteKeys.tsx";
 
@@ -31,7 +26,7 @@ Deno.test("Delete keys - happy path deleting selected keys", async () => {
     const entryToCache2 = await kv.get([KEY_TO_DELETE_2]);
     const entryToCache3 = await kv.get([KEY_TO_KEEP]);
     const listResults: ListResults = {
-      connectionId: "123",
+      connectionId: DB_ID,
       prefix: "",
       start: "",
       end: "",
@@ -46,7 +41,7 @@ Deno.test("Delete keys - happy path deleting selected keys", async () => {
     state.cache.add(listResults, SESSION_ID);
 
     const requestData: DeleteKeysData = {
-      connectionId: "123",
+      connectionId: DB_ID,
       keysToDelete: [await hashKvKey([KEY_TO_DELETE_1]), await hashKvKey([KEY_TO_DELETE_2])],
       filter: "",
       prefix: "",
@@ -95,7 +90,7 @@ Deno.test("Delete keys - happy path deleting filtered results", async () => {
     const entryToCache2 = await kv.get([KEY_TO_DELETE_2]);
     const entryToCache3 = await kv.get([KEY_TO_KEEP]);
     const listResults: ListResults = {
-      connectionId: "123",
+      connectionId: DB_ID,
       prefix: "",
       start: "",
       end: "",
@@ -110,7 +105,7 @@ Deno.test("Delete keys - happy path deleting filtered results", async () => {
     state.cache.add(listResults, SESSION_ID);
 
     const requestData: DeleteKeysData = {
-      connectionId: "123",
+      connectionId: DB_ID,
       keysToDelete: [],
       filter: "delete", //will match key_to_delete1 and key_to_delete2
       prefix: "",
@@ -159,7 +154,7 @@ Deno.test("Delete keys - happy path deleting all results", async () => {
     const entryToCache2 = await kv.get([KEY_TO_DELETE_2]);
     const entryToCache3 = await kv.get([KEY_TO_DELETE_3]);
     const listResults: ListResults = {
-      connectionId: "123",
+      connectionId: DB_ID,
       prefix: "",
       start: "",
       end: "",
@@ -174,7 +169,7 @@ Deno.test("Delete keys - happy path deleting all results", async () => {
     state.cache.add(listResults, SESSION_ID);
 
     const requestData: DeleteKeysData = {
-      connectionId: "123",
+      connectionId: DB_ID,
       keysToDelete: [],
       filter: "",
       prefix: "",
@@ -219,7 +214,7 @@ Deno.test("Delete keys - abort delete", async () => {
     await kv.set([KEY_TO_DELETE_1], "value_to_copy");
     const entryToCache1 = await kv.get([KEY_TO_DELETE_1]);
     const listResults: ListResults = {
-      connectionId: "123",
+      connectionId: DB_ID,
       prefix: "",
       start: "",
       end: "",
@@ -230,7 +225,7 @@ Deno.test("Delete keys - abort delete", async () => {
     state.cache.add(listResults, SESSION_ID);
 
     const requestData: DeleteKeysData = {
-      connectionId: "123",
+      connectionId: DB_ID,
       keysToDelete: [await hashKvKey([KEY_TO_DELETE_1])],
       filter: "",
       prefix: "",
@@ -269,8 +264,8 @@ async function callAPI(requestData: DeleteKeysData, state: State) {
   state.connection = {
     kvLocation: SOURCE,
     environment: "local",
-    name: "test-123",
-    id: "123",
+    name: "test-" + DB_ID,
+    id: DB_ID,
     infra: "local",
     size: 0,
   };
@@ -286,7 +281,7 @@ async function assertAuditRecord(keysDeleted = 2) {
   assert(auditRecord);
   assertEquals(auditRecord.auditType, "delete");
   assertEquals(auditRecord.executorId, SESSION_ID);
-  assertEquals(auditRecord.connection, "test-123 (local), 123");
+  assertEquals(auditRecord.connection, "test-" + DB_ID + " (local), " + DB_ID);
   assertEquals(auditRecord.infra, "local");
   assertEquals(auditRecord.rtms >= 0, true);
   assertEquals(auditRecord.keysDeleted, keysDeleted);
@@ -303,19 +298,11 @@ async function assertAbortedAuditRecord() {
   assert(auditRecord);
   assertEquals(auditRecord.auditType, "delete");
   assertEquals(auditRecord.executorId, SESSION_ID);
-  assertEquals(auditRecord.connection, "test-123 (local), 123");
+  assertEquals(auditRecord.connection, "test-" + DB_ID + " (local), " + DB_ID);
   assertEquals(auditRecord.infra, "local");
   assertEquals(auditRecord.rtms >= 0, true);
   assertEquals(auditRecord.keysDeleted, 0);
   assertEquals(auditRecord.keysFailed, 0);
   assertEquals(auditRecord.aborted, true);
   assertEquals(auditRecord.writeUnitsConsumed, 0);
-}
-
-async function createDb(): Promise<Deno.Kv> {
-  await Deno.mkdir("testDb");
-  const sourceDbPath = join(Deno.cwd(), "testDb", "test_source.db");
-  await addTestConnection(sourceDbPath, "123");
-  const sourceKv = await Deno.openKv(sourceDbPath);
-  return sourceKv;
 }

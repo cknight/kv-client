@@ -71,7 +71,9 @@ Deno.test("addLocalConnection - connection name already exists", async () => {
 Deno.test("addLocalConnection - invalid connection location", async () => {
   const resp = await callPOSTHandler("connName", "invalidPath");
   assertEquals(resp.status, 200);
-  assert((await resp.text()).includes("No such file or directory"));
+  const html = await resp.text();
+  console.log(html);
+  assert(html.includes("No such file or directory"));
 });
 
 Deno.test("addLocalConnection - invalid connection location - not a KV store", async () => {

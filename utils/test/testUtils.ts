@@ -41,11 +41,12 @@ export function createFreshCtx(request: Request): FreshContext<
   return ctx;
 }
 
-export const DB_PATH = join(Deno.cwd(), "testDb", "test_source.db");
+export const TEST_DB_DIR = "testDb" + crypto.randomUUID();
+export const DB_PATH = join(Deno.cwd(), TEST_DB_DIR, "test_source.db");
 export const DB_ID = await shortHash(DB_PATH);
 
 export async function createDb() {
-  await Deno.mkdir("testDb");
+  await Deno.mkdir(TEST_DB_DIR);
   await addTestConnection(DB_PATH, DB_ID);
   const sourceKv = await Deno.openKv(DB_PATH);
   return sourceKv;
@@ -56,7 +57,7 @@ export async function cleanup(kv?: Deno.Kv) {
     kv.close();
   }
   try {
-    await Deno.remove(join(Deno.cwd(), "testDb"), { recursive: true });
+    await Deno.remove(join(Deno.cwd(), TEST_DB_DIR), { recursive: true });
   } catch (_e) { /* ignore */ }
 
   await localKv.delete([CONNECTIONS_KEY_PREFIX, DB_ID]);

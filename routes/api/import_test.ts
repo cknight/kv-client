@@ -15,8 +15,9 @@ import {
 import { shortHash } from "../../utils/utils.ts";
 import { handler } from "../api/import.tsx";
 
-const IMPORT_FROM = join(Deno.cwd(), "testDb", "import_from.db");
-const IMPORT_INTO = join(Deno.cwd(), "testDb", "import_into.db");
+const TEST_DB_PATH = "testDb" + crypto.randomUUID();
+const IMPORT_FROM = join(Deno.cwd(), TEST_DB_PATH, "import_from.db");
+const IMPORT_INTO = join(Deno.cwd(), TEST_DB_PATH, "import_into.db");
 const FROM_ID = await shortHash(IMPORT_FROM);
 
 Deno.test("Import file to KV - happy path file", async () => {
@@ -24,7 +25,7 @@ Deno.test("Import file to KV - happy path file", async () => {
   try {
     //'from' db is used to create the file to import
     intoKv = await createDbs();
-    const fromFile = Deno.readFileSync(join(Deno.cwd(), "testDb", "import_from.db"));
+    const fromFile = Deno.readFileSync(join(Deno.cwd(), TEST_DB_PATH, "import_from.db"));
     const formData = new FormData();
     formData.append("importFile", new Blob([fromFile], { type: "application/octet-stream" }));
     formData.append("connectionId", DB_ID);
@@ -45,6 +46,9 @@ Deno.test("Import file to KV - happy path file", async () => {
   } finally {
     await cleanup(intoKv);
     await localKv.delete([CONNECTIONS_KEY_PREFIX, FROM_ID]);
+    try {
+      await Deno.remove(join(Deno.cwd(), TEST_DB_PATH), { recursive: true });
+    } catch (_e) { /* ignore */ }
   }
 });
 
@@ -74,6 +78,9 @@ Deno.test("Import file to KV - happy path connection", async () => {
   } finally {
     await cleanup(intoKv);
     await localKv.delete([CONNECTIONS_KEY_PREFIX, FROM_ID]);
+    try {
+      await Deno.remove(join(Deno.cwd(), TEST_DB_PATH), { recursive: true });
+    } catch (_e) { /* ignore */ }
   }
 });
 
@@ -82,7 +89,7 @@ Deno.test("Import file to KV - File aborted", async () => {
   try {
     //'from' db is used to create the file to import
     intoKv = await createDbs();
-    const fromFile = Deno.readFileSync(join(Deno.cwd(), "testDb", "import_from.db"));
+    const fromFile = Deno.readFileSync(join(Deno.cwd(), TEST_DB_PATH, "import_from.db"));
     const formData = new FormData();
     formData.append("importFile", new Blob([fromFile], { type: "application/octet-stream" }));
     formData.append("connectionId", DB_ID);
@@ -106,6 +113,9 @@ Deno.test("Import file to KV - File aborted", async () => {
   } finally {
     await cleanup(intoKv);
     await localKv.delete([CONNECTIONS_KEY_PREFIX, FROM_ID]);
+    try {
+      await Deno.remove(join(Deno.cwd(), TEST_DB_PATH), { recursive: true });
+    } catch (_e) { /* ignore */ }
   }
 });
 
@@ -138,6 +148,9 @@ Deno.test("Import file to KV - Connection aborted", async () => {
   } finally {
     await cleanup(intoKv);
     await localKv.delete([CONNECTIONS_KEY_PREFIX, FROM_ID]);
+    try {
+      await Deno.remove(join(Deno.cwd(), TEST_DB_PATH), { recursive: true });
+    } catch (_e) { /* ignore */ }
   }
 });
 
@@ -202,7 +215,7 @@ async function assertAbortedAuditRecord(importSource: string, importInfra: strin
 }
 
 async function createDbs(): Promise<Deno.Kv> {
-  await Deno.mkdir("testDb");
+  await Deno.mkdir(TEST_DB_PATH);
   const fromKv = await Deno.openKv(IMPORT_FROM);
   await fromKv.set(["testKey"], "testValue");
   await fromKv.set(["testKey2"], "testValue2");

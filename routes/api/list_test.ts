@@ -8,6 +8,7 @@ import { addTestConnection, createFreshCtx, SESSION_ID } from "../../utils/test/
 import { handler } from "./list.tsx";
 import { ListData } from "../list.tsx";
 
+const TEST_DB_PATH = "testDb" + crypto.randomUUID();
 const SOURCE = "test_source.db";
 
 Deno.test("list happy path", async () => {
@@ -49,7 +50,7 @@ Deno.test("list happy path", async () => {
   } finally {
     kv.close();
     await localKv.delete([CONNECTIONS_KEY_PREFIX, SOURCE]);
-    await Deno.remove(join(Deno.cwd(), "testDb"), { recursive: true });
+    await Deno.remove(join(Deno.cwd(), TEST_DB_PATH), { recursive: true });
     await logout(SESSION_ID);
   }
 });
@@ -84,8 +85,8 @@ async function callAPI(requestData: FormData) {
 }
 
 async function createDb(): Promise<Deno.Kv> {
-  await Deno.mkdir("testDb");
-  const sourceDbPath = join(Deno.cwd(), "testDb", SOURCE);
+  await Deno.mkdir(TEST_DB_PATH);
+  const sourceDbPath = join(Deno.cwd(), TEST_DB_PATH, SOURCE);
   await addTestConnection(sourceDbPath, "123");
   const sourceKv = await Deno.openKv(sourceDbPath);
 

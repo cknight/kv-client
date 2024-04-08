@@ -11,6 +11,7 @@ import { createFreshCtx, SESSION_ID } from "../../utils/test/testUtils.ts";
 import { hashKvKey } from "../../utils/utils.ts";
 import { CopyKeysData, handler } from "./copyKeys.tsx";
 
+const TEST_DB_PATH = "testDb" + crypto.randomUUID();
 const SOURCE = "test_source.db";
 const DEST = "test_dest.db";
 const KEY_TO_COPY = "key_to_copy";
@@ -62,7 +63,7 @@ Deno.test("Copy Keys - happy path", async () => {
     await localKv.delete([CONNECTIONS_KEY_PREFIX, SOURCE]);
     await localKv.delete([CONNECTIONS_KEY_PREFIX, DEST]);
 
-    await Deno.remove(join(Deno.cwd(), "testDb"), { recursive: true });
+    await Deno.remove(join(Deno.cwd(), TEST_DB_PATH), { recursive: true });
     await logout(SESSION_ID);
   }
 });
@@ -163,7 +164,7 @@ async function cleanup(sourceKv: Deno.Kv, destKv: Deno.Kv) {
   await localKv.delete([CONNECTIONS_KEY_PREFIX, "123"]);
   await localKv.delete([CONNECTIONS_KEY_PREFIX, "456"]);
 
-  await Deno.remove(join(Deno.cwd(), "testDb"), { recursive: true });
+  await Deno.remove(join(Deno.cwd(), TEST_DB_PATH), { recursive: true });
   await logout(SESSION_ID);
 }
 
@@ -207,9 +208,9 @@ async function assertAuditRecord() {
 }
 
 async function addSourceAndDestDbs(): Promise<{ sourceKv: Deno.Kv; destKv: Deno.Kv }> {
-  await Deno.mkdir("testDb");
-  const sourceDbPath = join(Deno.cwd(), "testDb", "test_source.db");
-  const destDbPath = join(Deno.cwd(), "testDb", "test_dest.db");
+  await Deno.mkdir(TEST_DB_PATH);
+  const sourceDbPath = join(Deno.cwd(), TEST_DB_PATH, "test_source.db");
+  const destDbPath = join(Deno.cwd(), TEST_DB_PATH, "test_dest.db");
   await addTestConnection(sourceDbPath, "123");
   await addTestConnection(destDbPath, "456");
   const sourceKv = await Deno.openKv(sourceDbPath);

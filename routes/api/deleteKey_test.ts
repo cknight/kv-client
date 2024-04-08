@@ -9,6 +9,7 @@ import { getUserState } from "../../utils/state/state.ts";
 import { addTestConnection, createFreshCtx, SESSION_ID } from "../../utils/test/testUtils.ts";
 import { DeleteKeyData, handler } from "./deleteKey.tsx";
 
+const TEST_DB_PATH = "testDb" + crypto.randomUUID();
 const SOURCE = "test_source.db";
 const KEY_TO_DELETE = "key_to_delete";
 
@@ -48,7 +49,7 @@ Deno.test("Delete key - happy path", async () => {
   } finally {
     kv.close();
     await localKv.delete([CONNECTIONS_KEY_PREFIX, SOURCE]);
-    await Deno.remove(join(Deno.cwd(), "testDb"), { recursive: true });
+    await Deno.remove(join(Deno.cwd(), TEST_DB_PATH), { recursive: true });
     await logout(SESSION_ID);
   }
 });
@@ -91,8 +92,8 @@ async function assertAuditRecord() {
 }
 
 async function createDb(): Promise<Deno.Kv> {
-  await Deno.mkdir("testDb");
-  const sourceDbPath = join(Deno.cwd(), "testDb", "test_source.db");
+  await Deno.mkdir(TEST_DB_PATH);
+  const sourceDbPath = join(Deno.cwd(), TEST_DB_PATH, "test_source.db");
   await addTestConnection(sourceDbPath, "123");
   const sourceKv = await Deno.openKv(sourceDbPath);
   return sourceKv;
