@@ -44,8 +44,8 @@ async function cleanup(sourceKv: Deno.Kv, destKv: Deno.Kv) {
   await localKv.delete([CONNECTIONS_KEY_PREFIX, "123"]);
   await localKv.delete([CONNECTIONS_KEY_PREFIX, "456"]);
 
-  await Deno.remove(join(Deno.cwd(), TEST_DB_PATH), { recursive: true });
   await logout(SESSION_ID);
+  await Deno.remove(join(Deno.cwd(), TEST_DB_PATH), { recursive: true });
 }
 
 async function addSourceAndDestDbs(): Promise<{ sourceKv: Deno.Kv; destKv: Deno.Kv }> {
