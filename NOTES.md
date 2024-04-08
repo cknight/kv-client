@@ -9,17 +9,15 @@ Security model
 
 TODO Phase 1:
 
-1. Write (lots) more tests
-2. Add client<->server integrity checks on delete data? E.g. number of keys check
+1. Add client<->server integrity checks on delete data? E.g. number of keys check
 
 TODO Release:
 
-1. Documentation/Website
-2. Testing
+1. Documentation/Website ✓
+2. Testing ✓
 3. How to distribute
-4. Clean up every module (document, imports, formatting)
-5. TODO/FIXMEs
-6. Implement CI
+4. TODO/FIXMEs
+5. Implement CI
 
 Blocked:
 

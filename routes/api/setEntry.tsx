@@ -51,7 +51,7 @@ export const handler: Handlers = {
         valueType === "Date" &&
         !/^\s*\{\s*type\s*:\s*"/.test(valueString) && // doesn't start with '{ type: "'
         /\D/.test(valueString) // contains non-digit characters
-      ) { 
+      ) {
         adjustedValueString = `{ type: "Date", value: "${valueString}" }`;
       }
       const kvValue: unknown = buildKvValue(adjustedValueString, valueType);

@@ -237,7 +237,10 @@ Deno.test("asString", () => {
   const map = new Map<string, bigint>();
   map.set("a", 1n);
   console.log(asString(map));
-  assertEquals(asString(map), '[\n  [\n    "a",\n    {\n      type: "bigint",\n      value: "1n",\n    },\n  ],\n]');
+  assertEquals(
+    asString(map),
+    '[\n  [\n    "a",\n    {\n      type: "bigint",\n      value: "1n",\n    },\n  ],\n]',
+  );
 });
 
 Deno.test("keyPart to string", () => {
