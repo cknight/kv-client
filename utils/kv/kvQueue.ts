@@ -41,10 +41,10 @@ localKv.listenQueue(async (msg: unknown) => {
       logError(listenQueueUser, "Unable to delete file:", e.message);
     }
   } else if (isDeleteExportStatus(msg)) {
-    logDebug(listenQueueUser, "Deleting export status", msg.message.exportId);
+    logDebug(listenQueueUser, "Deleting expired export status", msg.message.exportId);
     deleteExportStatus(msg.message.exportId);
   } else if (isDeleteAbortId(msg)) {
-    logDebug(listenQueueUser, "Deleting abort id", msg.message.abortId);
+    logDebug(listenQueueUser, "Deleting expired abort id", msg.message.abortId);
     deleteAbortId(msg.message.abortId);
   } else {
     logError(listenQueueUser, "Unknown queue message", msg);
