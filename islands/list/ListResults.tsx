@@ -210,7 +210,6 @@ export function ListResults(props: ListResultsProps) {
     }
   }
 
-  //TODO doe this need to be computed as well?
   function scopeText() {
     if (selected.value.length > 0) {
       return selected.value.length + " selected";
