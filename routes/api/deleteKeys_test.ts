@@ -16,11 +16,10 @@ import { DeleteKeysData, handler } from "./deleteKeys.tsx";
 const SOURCE = "test_source.db";
 const KEY_TO_DELETE_1 = "key_to_delete1";
 const KEY_TO_DELETE_2 = "key_to_delete2";
+const KEY_TO_DELETE_3 = "key_to_delete3";
 const KEY_TO_KEEP = "key_to_keep";
 
-// TODO - Write test for delete of several keys from filtered results
-
-Deno.test("Delete keys - happy path", async () => {
+Deno.test("Delete keys - happy path deleting selected keys", async () => {
   const kv = await createDb();
 
   try {
@@ -30,13 +29,14 @@ Deno.test("Delete keys - happy path", async () => {
     await kv.set([KEY_TO_KEEP], "value_to_copy");
     const entryToCache1 = await kv.get([KEY_TO_DELETE_1]);
     const entryToCache2 = await kv.get([KEY_TO_DELETE_2]);
+    const entryToCache3 = await kv.get([KEY_TO_KEEP]);
     const listResults: ListResults = {
       connectionId: "123",
       prefix: "",
       start: "",
       end: "",
       reverse: false,
-      results: [entryToCache1 as Deno.KvEntry<string>, entryToCache2 as Deno.KvEntry<string>],
+      results: [entryToCache1 as Deno.KvEntry<string>, entryToCache2 as Deno.KvEntry<string>, entryToCache3 as Deno.KvEntry<string>],
       cursor: false,
     };
     state.cache.add(listResults, SESSION_ID);
@@ -74,6 +74,126 @@ Deno.test("Delete keys - happy path", async () => {
     assert(entry3.versionstamp);
 
     await assertAuditRecord();
+  } finally {
+    await cleanup(kv);
+  }
+});
+
+Deno.test("Delete keys - happy path deleting filtered results", async () => {
+  const kv = await createDb();
+
+  try {
+    const state = getUserState(SESSION_ID);
+    await kv.set([KEY_TO_DELETE_1], "value_to_copy");
+    await kv.set([KEY_TO_DELETE_2], "value_to_copy");
+    await kv.set([KEY_TO_KEEP], "value_to_copy");
+    const entryToCache1 = await kv.get([KEY_TO_DELETE_1]);
+    const entryToCache2 = await kv.get([KEY_TO_DELETE_2]);
+    const entryToCache3 = await kv.get([KEY_TO_KEEP]);
+    const listResults: ListResults = {
+      connectionId: "123",
+      prefix: "",
+      start: "",
+      end: "",
+      reverse: false,
+      results: [entryToCache1 as Deno.KvEntry<string>, entryToCache2 as Deno.KvEntry<string>, entryToCache3 as Deno.KvEntry<string>],
+      cursor: false,
+    };
+    state.cache.add(listResults, SESSION_ID);
+
+    const requestData: DeleteKeysData = {
+      connectionId: "123",
+      keysToDelete: [],
+      filter: "delete", //will match key_to_delete1 and key_to_delete2
+      prefix: "",
+      start: "",
+      end: "",
+      from: 1,
+      show: 10,
+      reverse: false,
+      abortId: "",
+    };
+
+    const resp = await callAPI(requestData, state);
+    assertEquals(resp.status, 200);
+    assertEquals(await resp.text(), "2 KV entries successfully deleted");
+
+    //validate key 1 deleted
+    const entry = await kv.get([KEY_TO_DELETE_1]);
+    assertEquals(entry.value, null);
+    assertEquals(entry.versionstamp, null);
+
+    //validate key 2 deleted
+    const entry2 = await kv.get([KEY_TO_DELETE_2]);
+    assertEquals(entry2.value, null);
+    assertEquals(entry2.versionstamp, null);
+
+    //validate key 3 is kept
+    const entry3 = await kv.get([KEY_TO_KEEP]);
+    assertEquals(entry3.value, "value_to_copy");
+    assert(entry3.versionstamp);
+
+    await assertAuditRecord();
+  } finally {
+    await cleanup(kv);
+  }
+});
+
+Deno.test("Delete keys - happy path deleting all results", async () => {
+  const kv = await createDb();
+
+  try {
+    const state = getUserState(SESSION_ID);
+    await kv.set([KEY_TO_DELETE_1], "value_to_copy");
+    await kv.set([KEY_TO_DELETE_2], "value_to_copy");
+    await kv.set([KEY_TO_DELETE_3], "value_to_copy");
+    const entryToCache1 = await kv.get([KEY_TO_DELETE_1]);
+    const entryToCache2 = await kv.get([KEY_TO_DELETE_2]);
+    const entryToCache3 = await kv.get([KEY_TO_DELETE_3]);
+    const listResults: ListResults = {
+      connectionId: "123",
+      prefix: "",
+      start: "",
+      end: "",
+      reverse: false,
+      results: [entryToCache1 as Deno.KvEntry<string>, entryToCache2 as Deno.KvEntry<string>, entryToCache3 as Deno.KvEntry<string>],
+      cursor: false,
+    };
+    state.cache.add(listResults, SESSION_ID);
+
+    const requestData: DeleteKeysData = {
+      connectionId: "123",
+      keysToDelete: [],
+      filter: "",
+      prefix: "",
+      start: "",
+      end: "",
+      from: 1,
+      show: 10,
+      reverse: false,
+      abortId: "",
+    };
+
+    const resp = await callAPI(requestData, state);
+    assertEquals(resp.status, 200);
+    assertEquals(await resp.text(), "3 KV entries successfully deleted");
+
+    //validate key 1 deleted
+    const entry = await kv.get([KEY_TO_DELETE_1]);
+    assertEquals(entry.value, null);
+    assertEquals(entry.versionstamp, null);
+
+    //validate key 2 deleted
+    const entry2 = await kv.get([KEY_TO_DELETE_2]);
+    assertEquals(entry2.value, null);
+    assertEquals(entry2.versionstamp, null);
+
+    //validate key 3 is deleted
+    const entry3 = await kv.get([KEY_TO_DELETE_3]);
+    assertEquals(entry3.value, null);
+    assertEquals(entry3.versionstamp, null);
+
+    await assertAuditRecord(3);
   } finally {
     await cleanup(kv);
   }
@@ -129,7 +249,7 @@ Deno.test("Delete keys - abort delete", async () => {
 async function callAPI(requestData: DeleteKeysData, state: State) {
   assert(handler.POST);
 
-  const request = new Request("http://localhost:8080/api/export/deleteKeys", {
+  const request = new Request("http://localhost:8080/api/deleteKeys", {
     method: "POST",
     body: JSON.stringify(requestData),
   });
@@ -146,7 +266,7 @@ async function callAPI(requestData: DeleteKeysData, state: State) {
   return resp;
 }
 
-async function assertAuditRecord() {
+async function assertAuditRecord(keysDeleted = 2) {
   const auditRecordEntry = await Array.fromAsync(
     localKv.list<DeleteAuditLog>({ prefix: ["audit"] }, { limit: 1, reverse: true }),
   );
@@ -157,7 +277,7 @@ async function assertAuditRecord() {
   assertEquals(auditRecord.connection, "test-123 (local), 123");
   assertEquals(auditRecord.infra, "local");
   assertEquals(auditRecord.rtms >= 0, true);
-  assertEquals(auditRecord.keysDeleted, 2);
+  assertEquals(auditRecord.keysDeleted, keysDeleted);
   assertEquals(auditRecord.keysFailed, 0);
   assertEquals(auditRecord.aborted, false);
   assertEquals(auditRecord.writeUnitsConsumed, 1);
