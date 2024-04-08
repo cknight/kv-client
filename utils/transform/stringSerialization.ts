@@ -33,7 +33,7 @@ function replacer(_key: unknown, value: unknown) {
       value: Array.from(value.keys()),
     };
   } else if (typeof value === "bigint") {
-    return String(value) + "n";
+    return { type: "bigint", value: String(value) + "n"};
   } else if (typeof value === "undefined") {
     /**
      * 'undefined' does not serialize/deserialize properly.

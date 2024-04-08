@@ -1,6 +1,7 @@
 import { assertEquals } from "$std/assert/assert_equals.ts";
 import { assert } from "$std/assert/assert.ts";
 import { asString, json5Parse, json5Stringify, keyAsString } from "./stringSerialization.ts";
+import { ManipulationSettingsContainer } from "https://deno.land/x/ts_morph@21.0.1/ts_morph.js";
 
 Deno.test("String serialization/deserialization", () => {
   //string
@@ -233,6 +234,10 @@ Deno.test("asString", () => {
   assertEquals(asString(new Uint8Array([1, 2, 3])), "[\n  1,\n  2,\n  3,\n]");
   assertEquals(asString(new Deno.KvU64(1234n)), "1234n");
   assertEquals(asString(new Date("1995-99-17T03:24:00.000Z")), "Invalid date");
+  const map = new Map<string, bigint>();
+  map.set("a", 1n);
+  console.log(asString(map));
+  assertEquals(asString(map), '[\n  [\n    "a",\n    {\n      type: "bigint",\n      value: "1n",\n    },\n  ],\n]');
 });
 
 Deno.test("keyPart to string", () => {
