@@ -14,6 +14,15 @@ const SOURCE = "test_source.db";
 const DEST = "test_dest.db";
 const KEY_TO_COPY = "key_to_copy";
 
+Deno.test("Copy - silly test", async () => {
+  const { sourceKv, destKv } = await addSourceAndDestDbs();
+  try {
+    assert(true);
+  } finally {
+    await cleanup(sourceKv, destKv);
+  }
+});
+
 Deno.test("Copy Key - happy path", async () => {
   assert(handler.POST);
 
