@@ -17,7 +17,7 @@ const KEY_TO_COPY = "key_to_copy";
 Deno.test("Copy - silly test", async () => {
   const { sourceKv, destKv } = await addSourceAndDestDbs();
   try {
-    assert(true);
+    await sourceKv.set([KEY_TO_COPY], "value_to_copy");
   } finally {
     await cleanup(sourceKv, destKv);
   }
