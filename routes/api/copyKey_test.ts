@@ -103,6 +103,8 @@ async function cleanup(sourceKv: Deno.Kv, destKv: Deno.Kv) {
   await localKv.delete([CONNECTIONS_KEY_PREFIX, "123"]);
   await localKv.delete([CONNECTIONS_KEY_PREFIX, "456"]);
 
+  //wait one second
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   await Deno.remove(join(Deno.cwd(), TEST_DB_PATH), { recursive: true });
   await logout(SESSION_ID);
 }
