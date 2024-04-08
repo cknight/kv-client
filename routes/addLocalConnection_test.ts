@@ -11,8 +11,10 @@ Deno.test("addLocalConnection - happy path load page", async () => {
   const resp = await callGETHandler();
   assertEquals(resp.status, 200);
 
+  const html = await resp.text();
+  console.log(html);
   // Check output contains at least one radio button
-  assert((await resp.text()).includes(`name="localLocation"`));
+  assert(html.includes(`name="localLocation"`));
 });
 
 Deno.test("addLocalConnection - happy path submit form", async () => {
