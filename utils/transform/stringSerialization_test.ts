@@ -1,7 +1,5 @@
 import { assertEquals } from "$std/assert/assert_equals.ts";
-import { assert } from "$std/assert/assert.ts";
 import { asString, json5Parse, json5Stringify, keyAsString } from "./stringSerialization.ts";
-import { ManipulationSettingsContainer } from "https://deno.land/x/ts_morph@21.0.1/ts_morph.js";
 
 Deno.test("String serialization/deserialization", () => {
   //string

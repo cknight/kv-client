@@ -1,7 +1,6 @@
 import { assertEquals } from "$std/assert/assert_equals.ts";
 import { assertRejects } from "$std/assert/assert_rejects.ts";
 import { join } from "$std/path/join.ts";
-import { assert } from "$std/assert/assert.ts";
 import { CONNECTIONS_KEY_PREFIX, env } from "../../consts.ts";
 import { KvConnection } from "../../types.ts";
 import { getUserState } from "../state/state.ts";
@@ -11,7 +10,7 @@ import { localKv } from "./db.ts";
 import { openKvWithToken } from "./kvConnect.ts";
 import { connectToSecondaryKv, establishKvConnection } from "./kvConnect.ts";
 
-Deno.test("establishKvConnection - no user state throws", async () => {
+Deno.test("establishKvConnection - no user state throws", () => {
   assertRejects(
     async () => await establishKvConnection("session", "connectionId"),
     "Invalid session",
@@ -79,7 +78,7 @@ Deno.test("Connect to secondary KV - valid connection", async () => {
   }
 });
 
-Deno.test("Connect to secondary KV - invalid connection", async () => {
+Deno.test("Connect to secondary KV - invalid connection", () => {
   assertRejects(
     async () => await connectToSecondaryKv(SESSION_ID, "invalidId"),
     'Connection "madeUpConn" does not exist',
@@ -117,7 +116,7 @@ Deno.test("Open with token - valid token", async () => {
   }
 });
 
-Deno.test("Open with token - no token supplied", async () => {
+Deno.test("Open with token - no token supplied", () => {
   assertRejects(
     async () => await openKvWithToken(DB_PATH, null),
     "No access token available",

@@ -6,6 +6,7 @@ export default {
     "{routes,islands,components}/**/*.{ts,tsx}",
   ],
   //@ts-ignore - Unsure how to enable types for this library
+  // deno-lint-ignore no-explicit-any
   plugins: [daisyui as any],
   daisyui: {
     themes: [

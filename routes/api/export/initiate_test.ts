@@ -56,7 +56,6 @@ test({
     let enqueueCount = 1;
 
     try {
-      // deno-lint-ignore require-await
       _internals.enqueue = async (
         msg: unknown,
         delay: number,
@@ -124,8 +123,8 @@ test({
     try {
       // deno-lint-ignore require-await
       _internals.enqueue = async (
-        msg: unknown,
-        delay: number,
+        _msg: unknown,
+        _delay: number,
       ) => {
         if (!thrown) {
           thrown = true;
@@ -227,7 +226,7 @@ async function getTestDbPath() {
   return testDb;
 }
 
-async function waitForExportToComplete(
+function waitForExportToComplete(
   expectedStatus: string,
   exportId: string,
   attempt: number,

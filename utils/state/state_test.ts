@@ -17,6 +17,7 @@ Deno.test("state abort", async () => {
   assert(!shouldAbort("abort"));
 
   let queueCalled = false;
+  // deno-lint-ignore require-await
   _internals.enqueue = async (msg: unknown, delay: number) => {
     assertEquals(msg, { channel: "DeleteAbortId", message: { abortId: "abort" } });
     assertEquals(delay, 1000 * 60 * 10);
@@ -34,7 +35,8 @@ Deno.test("stats export status", async () => {
   const id = "exportId";
   assertEquals(getExportStatus(id), undefined);
 
-  _internals.enqueue = async (msg: unknown, delay: number) => {
+  // deno-lint-ignore require-await
+  _internals.enqueue = async (_msg: unknown, _delay: number) => {
     throw new Error("Should not be called");
   };
 
@@ -54,6 +56,7 @@ Deno.test("stats export status", async () => {
   assertEquals(getExportStatus(id), inProgress);
 
   let queueCalled = false;
+  // deno-lint-ignore require-await
   _internals.enqueue = async (msg: unknown, delay: number) => {
     assertEquals(msg, { channel: "DeleteStatus", message: { exportId: id } });
     assertEquals(delay, 1000 * 60 * 10);

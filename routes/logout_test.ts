@@ -5,6 +5,7 @@ import { _internals, handler } from "./logout.tsx";
 
 Deno.test("Logout - happy path", async () => {
   let logoutSessionId = "";
+  // deno-lint-ignore require-await
   _internals.logout = async (sessionId: string) => {
     logoutSessionId = sessionId;
   };

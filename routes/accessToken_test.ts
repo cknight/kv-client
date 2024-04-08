@@ -1,6 +1,5 @@
 import { assert } from "$std/assert/assert.ts";
 import { assertEquals } from "$std/assert/assert_equals.ts";
-import { FreshContext } from "$fresh/server.ts";
 import { cleanup, createFreshCtx, SESSION_ID } from "../utils/test/testUtils.ts";
 import { handler } from "./accessToken.tsx";
 import { _internals } from "./accessToken.tsx";
@@ -22,6 +21,7 @@ Deno.test("accessToken - short access token errors out", async () => {
 });
 
 Deno.test("accessToken - no user found", async () => {
+  // deno-lint-ignore require-await
   _internals.buildRemoteData = async (_accessToken: string, _session: string) => {
     throw new Error("User not found");
   };
@@ -71,7 +71,8 @@ async function callAPI(accessToken: string) {
   return resp;
 }
 
-async function mockBuildRemoteData(accessToken: string, session: string) {
+// deno-lint-ignore require-await
+async function mockBuildRemoteData(_accessToken: string, _session: string) {
   return {
     id: "user id",
     login: "user login",

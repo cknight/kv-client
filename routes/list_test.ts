@@ -6,6 +6,7 @@ import { ListInputData } from "../utils/ui/list/listHelper.ts";
 import { _internals, handler } from "./list.tsx";
 
 Deno.test("List - happy path", async () => {
+  // deno-lint-ignore require-await
   _internals.getResults = async (inputData: ListInputData, session: string) => {
     assertEquals(inputData.prefix, "'prefix'");
     assertEquals(inputData.start, "'start'");

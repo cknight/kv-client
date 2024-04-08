@@ -11,8 +11,6 @@ import { getEncryptedString } from "../../transform/encryption.ts";
 import { getOrganizationDetail, getProjectDbs, getRootData } from "./dash.ts";
 import { persistConnectionData } from "./persistConnectionData.ts";
 
-const rateLimits: Map<string, number> = new Map();
-
 export interface DeployUser {
   id: string;
   login: string;

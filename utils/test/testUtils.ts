@@ -15,7 +15,7 @@ import { shortHash } from "../utils.ts";
 export const SESSION_ID = "session_1234";
 
 export function disableQueue() {
-  _internals.enqueue = async (msg: unknown, delay: number) => {};
+  _internals.enqueue = async (_msg: unknown, _delay: number) => {};
 }
 
 export async function addTestConnection(location: string, id: string) {

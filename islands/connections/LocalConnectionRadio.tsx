@@ -4,7 +4,7 @@ interface LocalConnectionRadioButtonProps {
 
 export function LocalConnectionRadioButton(props: LocalConnectionRadioButtonProps) {
   function smoothScrollTo(y: number, duration: number, callback: () => void) {
-    const start = window.scrollY;
+    const start = globalThis.scrollY;
     const change = y - start;
     const startTime = performance.now();
 
@@ -12,7 +12,7 @@ export function LocalConnectionRadioButton(props: LocalConnectionRadioButtonProp
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const amountScrolled = change * progress;
-      window.scrollTo(0, start + amountScrolled);
+      globalThis.scrollTo(0, start + amountScrolled);
 
       if (elapsed < duration) {
         self.requestAnimationFrame(animateScroll);

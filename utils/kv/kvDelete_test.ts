@@ -10,7 +10,7 @@ Deno.test("kvDelete - delete key", async () => {
   const kv = await createDb();
   try {
     assertEquals(await lengthOf(kv), 0);
-    let keysToDelete = [];
+    const keysToDelete = [];
     for (let i = 0; i < 1005; i++) {
       await kv.set(["testKey-" + i], "testValue-" + i);
       keysToDelete.push(["testKey-" + i]);

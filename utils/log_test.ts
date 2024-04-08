@@ -8,7 +8,7 @@ import { assertThrows } from "$std/assert/assert_throws.ts";
 
 const SESSION_ID = "session_1234";
 
-Deno.test("log - no log level set defaults to info", async () => {
+Deno.test("log - no log level set defaults to info", () => {
   _internals.enqueue = async (_msg: unknown, _delay: number) => {};
   const logs = stubConsoleLogging();
   Deno.env.delete(env.LOG_LEVEL);
@@ -20,7 +20,7 @@ Deno.test("log - no log level set defaults to info", async () => {
   assert(logs.error[0].endsWith("[session_1234][Anonymous]  error message"));
 });
 
-Deno.test("log - debug level logs all", async () => {
+Deno.test("log - debug level logs all", () => {
   _internals.enqueue = async (_msg: unknown, _delay: number) => {};
   const logs = stubConsoleLogging();
   Deno.env.set(env.LOG_LEVEL, "DEBUG");
@@ -32,7 +32,7 @@ Deno.test("log - debug level logs all", async () => {
   assert(logs.error[0].endsWith("[session_1234][Anonymous]  error message"));
 });
 
-Deno.test("log - info level logs info, warn, error", async () => {
+Deno.test("log - info level logs info, warn, error", () => {
   _internals.enqueue = async (_msg: unknown, _delay: number) => {};
   const logs = stubConsoleLogging();
   Deno.env.set(env.LOG_LEVEL, "INFO");
@@ -44,7 +44,7 @@ Deno.test("log - info level logs info, warn, error", async () => {
   assert(logs.error[0].endsWith("[session_1234][Anonymous]  error message"));
 });
 
-Deno.test("log - warn level logs warn, error", async () => {
+Deno.test("log - warn level logs warn, error", () => {
   _internals.enqueue = async (_msg: unknown, _delay: number) => {};
   const logs = stubConsoleLogging();
   Deno.env.set(env.LOG_LEVEL, "WARN");
@@ -56,7 +56,7 @@ Deno.test("log - warn level logs warn, error", async () => {
   assert(logs.error[0].endsWith("[session_1234][Anonymous]  error message"));
 });
 
-Deno.test("log - error level logs error", async () => {
+Deno.test("log - error level logs error", () => {
   _internals.enqueue = async (_msg: unknown, _delay: number) => {};
   const logs = stubConsoleLogging();
   Deno.env.set(env.LOG_LEVEL, "ERROR");
