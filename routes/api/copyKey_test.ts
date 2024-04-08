@@ -18,6 +18,19 @@ Deno.test("Copy - silly test", async () => {
   const { sourceKv, destKv } = await addSourceAndDestDbs();
   try {
     await sourceKv.set([KEY_TO_COPY], "value_to_copy");
+    const requestData: CopyKeyData = {
+      sourceConnectionId: "123",
+      destConnectionId: "456",
+      keyToCopy: `"${KEY_TO_COPY}"`,
+    };
+
+    const request = new Request("http://localhost:8080/api/export/copyKey", {
+      method: "POST",
+      body: JSON.stringify(requestData),
+    });
+    const ctx = createFreshCtx(request);
+    assert(handler.POST);
+    const resp = await handler.POST(request, ctx);
   } finally {
     await cleanup(sourceKv, destKv);
   }
