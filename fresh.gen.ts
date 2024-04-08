@@ -12,6 +12,7 @@ import * as $addLocalConnection from "./routes/addLocalConnection.tsx";
 import * as $addSelfHostedConnection from "./routes/addSelfHostedConnection.tsx";
 import * as $api_abort from "./routes/api/abort.tsx";
 import * as $api_copyKey from "./routes/api/copyKey.tsx";
+import * as $api_copyKey_ci_windows from "./routes/api/copyKey_ci_windows.ts";
 import * as $api_copyKeys from "./routes/api/copyKeys.tsx";
 import * as $api_deleteKey from "./routes/api/deleteKey.tsx";
 import * as $api_deleteKeys from "./routes/api/deleteKeys.tsx";
@@ -72,6 +73,7 @@ const manifest = {
     "./routes/addSelfHostedConnection.tsx": $addSelfHostedConnection,
     "./routes/api/abort.tsx": $api_abort,
     "./routes/api/copyKey.tsx": $api_copyKey,
+    "./routes/api/copyKey_ci_windows.ts": $api_copyKey_ci_windows,
     "./routes/api/copyKeys.tsx": $api_copyKeys,
     "./routes/api/deleteKey.tsx": $api_deleteKey,
     "./routes/api/deleteKeys.tsx": $api_deleteKeys,
