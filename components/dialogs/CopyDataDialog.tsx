@@ -226,7 +226,7 @@ export function CopyDataDialog(props: CopyDeleteMultiProps) {
                   // 12 keys at 2kb/key, 64kb/value = 792kb, max transaction size is 800kb
                   <li>
                     Consistency may not be guaranteed (<a
-                      href="TODO"
+                      href="https://kv-client.dev/docs/consistency-and-caching"
                       target="_blank"
                       class="link text-blue-400"
                     >

@@ -155,7 +155,7 @@ export function ExportCriteria(props: ExportCriteriaProps) {
         <Caution>
           <p class="text-yellow-500 ml-2">
             Caution: This export does not provide consistency guarantees for KV stores with more
-            than 500 keys. See TODO for more info.
+            than 500 keys. See <a href="https://kv-client.dev/docs/consistency-and-caching" target="_blank" class="link">docs</a> for more info.
           </p>
         </Caution>
       </div>

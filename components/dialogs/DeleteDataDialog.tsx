@@ -200,7 +200,7 @@ export function DeleteDataDialog(props: CopyDeleteMultiProps) {
                   // 40 keys at 2kb/key = 80kb, which is the maximum allowed in a single transaction
                   <li>
                     Consistency may not be guaranteed (<a
-                      href="TODO"
+                      href="https://kv-client.dev/docs/consistency-and-caching"
                       target="_blank"
                       class="link text-blue-400"
                     >

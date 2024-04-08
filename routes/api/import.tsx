@@ -29,8 +29,6 @@ export const handler: Handlers = {
       return new Response("No connectionId provided", { status: 400 });
     }
 
-    //TODO - Support abort
-
     try {
       if (inputFileFormEntry && inputFileFormEntry instanceof File) {
         logDebug({ sessionId: session }, "  writing import file to disk");
