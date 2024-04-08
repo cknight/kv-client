@@ -1,12 +1,13 @@
 import { Handlers } from "$fresh/server.ts";
 import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
-import { CopyAuditLog, KvConnection } from "../../types.ts";
+import { CopyAuditLog, KvConnection, KvGetOptions } from "../../types.ts";
 import { executorId } from "../../utils/user/denoDeploy/deployUser.ts";
 import { localKv } from "../../utils/kv/db.ts";
 import { auditAction, auditConnectionName } from "../../utils/kv/kvAudit.ts";
 import { SetResult } from "../../utils/kv/kvSet.ts";
 import { logDebug } from "../../utils/log.ts";
 import { getUserState } from "../../utils/state/state.ts";
+import { kvGet } from "../../utils/kv/kvGet.ts";
 
 export interface CopyKeyData {
   sourceConnectionId: string;
@@ -84,15 +85,15 @@ async function copyKey(data: CopyKeyData, _session: string): Promise<CopyOpResul
 
   const startTime = Date.now();
 
-  // const getKvOptions: KvGetOptions = {
-  //   session: _session,
-  //   connectionId: _sourceConnectionId,
-  //   key: _keyToCopy,
-  // };
-  // const copyEntry = await kvGet(getKvOptions);
-  // if (copyEntry.versionstamp === null) {
-  //   throw new Error(`Key [${_keyToCopy}] does not exist`);
-  // }
+  const getKvOptions: KvGetOptions = {
+    session: _session,
+    connectionId: _sourceConnectionId,
+    key: _keyToCopy,
+  };
+  const copyEntry = await kvGet(getKvOptions);
+  if (copyEntry.versionstamp === null) {
+    throw new Error(`Key [${_keyToCopy}] does not exist`);
+  }
 
   // const destKv = await connectToSecondaryKv(session, destConnectionId);
   // let copyResult: SetResult;
