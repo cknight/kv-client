@@ -22,25 +22,25 @@ export function initializeLogging() {
 
 export function logDebug(session: { sessionId: string | null }, ...args: unknown[]) {
   if (configuredLogLevels.includes("DEBUG")) {
-    console.debug(dateTime(), getPrefix(session), ...args);
+    console.debug("[DEBUG]", dateTime(), getPrefix(session), ...args);
   }
 }
 
 export function logInfo(session: { sessionId: string | null }, ...args: unknown[]) {
   if (configuredLogLevels.includes("INFO")) {
-    console.info(dateTime(), getPrefix(session), ...args);
+    console.info("[INFO ]", dateTime(), getPrefix(session), ...args);
   }
 }
 
 export function logWarn(session: { sessionId: string | null }, ...args: unknown[]) {
   if (configuredLogLevels.includes("WARN")) {
-    console.warn(dateTime(), getPrefix(session), ...args);
+    console.warn("[WARN ]", dateTime(), getPrefix(session), ...args);
   }
 }
 
 export function logError(session: { sessionId: string | null }, ...args: unknown[]) {
   if (configuredLogLevels.includes("ERROR")) {
-    console.error(dateTime(), getPrefix(session), ...args);
+    console.error("[ERROR]", dateTime(), getPrefix(session), ...args);
   }
 }
 
