@@ -10,14 +10,15 @@ Security model
 TODO Phase 1:
 
 1. Add client<->server integrity checks on delete data? E.g. number of keys check
+2. Prepare for JSR a. migrate dependencies b. test Deno.serve() app in jsr c. if b works, then test
+   install script around it
+3. Adopt Fresh alpha release
 
 TODO Release:
 
-1. Documentation/Website ✓
 2. Testing ✓
-3. How to distribute
-4. TODO/FIXMEs
-5. Implement CI
+3. How to distribute (jsr hopefully!)
+4. Implement CI
 
 Blocked:
 

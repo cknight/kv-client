@@ -36,7 +36,11 @@ Deno.test("Delete keys - happy path deleting selected keys", async () => {
       start: "",
       end: "",
       reverse: false,
-      results: [entryToCache1 as Deno.KvEntry<string>, entryToCache2 as Deno.KvEntry<string>, entryToCache3 as Deno.KvEntry<string>],
+      results: [
+        entryToCache1 as Deno.KvEntry<string>,
+        entryToCache2 as Deno.KvEntry<string>,
+        entryToCache3 as Deno.KvEntry<string>,
+      ],
       cursor: false,
     };
     state.cache.add(listResults, SESSION_ID);
@@ -96,7 +100,11 @@ Deno.test("Delete keys - happy path deleting filtered results", async () => {
       start: "",
       end: "",
       reverse: false,
-      results: [entryToCache1 as Deno.KvEntry<string>, entryToCache2 as Deno.KvEntry<string>, entryToCache3 as Deno.KvEntry<string>],
+      results: [
+        entryToCache1 as Deno.KvEntry<string>,
+        entryToCache2 as Deno.KvEntry<string>,
+        entryToCache3 as Deno.KvEntry<string>,
+      ],
       cursor: false,
     };
     state.cache.add(listResults, SESSION_ID);
@@ -156,7 +164,11 @@ Deno.test("Delete keys - happy path deleting all results", async () => {
       start: "",
       end: "",
       reverse: false,
-      results: [entryToCache1 as Deno.KvEntry<string>, entryToCache2 as Deno.KvEntry<string>, entryToCache3 as Deno.KvEntry<string>],
+      results: [
+        entryToCache1 as Deno.KvEntry<string>,
+        entryToCache2 as Deno.KvEntry<string>,
+        entryToCache3 as Deno.KvEntry<string>,
+      ],
       cursor: false,
     };
     state.cache.add(listResults, SESSION_ID);
