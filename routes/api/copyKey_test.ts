@@ -31,6 +31,7 @@ Deno.test("Copy - silly test", async () => {
     const ctx = createFreshCtx(request);
     assert(handler.POST);
     const resp = await handler.POST(request, ctx);
+    assertEquals(resp.status, 200);
   } finally {
     await cleanup(sourceKv, destKv);
   }
