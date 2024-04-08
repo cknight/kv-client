@@ -42,7 +42,7 @@ export const handler: Handlers = {
         connection: "silly",
         destinationConnection: conn.value ? auditConnectionName(conn.value) : "<unknown>",
         destinationInfra: conn.value ? conn.value.infra : "unknown",
-        infra: state.connection!.infra,
+        infra: "local",
         rtms: result.duration,
         keysCopied: copyResult.setKeyCount,
         keysFailed: copyResult.failedKeys.length,
