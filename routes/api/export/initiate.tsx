@@ -122,6 +122,8 @@ async function initiateExport(session: string, connectionId: string, exportId: s
         session,
       );
     }
+    tempKv && tempKv.close();
+    tempKv = undefined;
     tempDir && await Deno.remove(tempDir, { recursive: true });
     const auditRecord: ExportAuditLog = {
       auditType: "export",

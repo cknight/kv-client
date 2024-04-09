@@ -92,7 +92,7 @@ export async function listKv(
   const startKey = parseKvKey(start);
   const endKey = parseKvKey(end);
 
-  validateInputs(prefix, start, end);
+  validateInputs(kv, prefix, start, end);
 
   const selector = createListSelector(startKey, endKey, prefixKey);
   const options = {
@@ -232,12 +232,9 @@ function createListSelector(
   return selector;
 }
 
-function validateInputs(
-  prefix: string,
-  start: string,
-  end: string,
-): void {
+function validateInputs(kv: Deno.Kv, prefix: string, start: string, end: string): void {
   if (prefix.length > 0 && start.length > 0 && end.length > 0) {
+    kv.close();
     throw new ValidationError(
       "Cannot specify a prefix, start and end key.",
     );
