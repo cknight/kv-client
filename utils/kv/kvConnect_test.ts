@@ -126,11 +126,11 @@ Deno.test("Open with token - no token supplied", () => {
 
 async function cleanup() {
   //old KV is closed when establishing new connection, new KV is closed in logout below
+  await logout(SESSION_ID);
   await localKv.delete([CONNECTIONS_KEY_PREFIX, "123"]);
   await localKv.delete([CONNECTIONS_KEY_PREFIX, "456"]);
   await localKv.delete([CONNECTIONS_KEY_PREFIX, DB_ID]);
   await Deno.remove(join(Deno.cwd(), TEST_DB_DIR), { recursive: true });
-  await logout(SESSION_ID);
 }
 
 async function addSourceAndDestDbs(): Promise<{ oldConnection: Deno.Kv }> {

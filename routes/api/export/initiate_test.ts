@@ -105,11 +105,11 @@ test({
 
       await assertAuditRecord();
     } finally {
-      tempDbFile && await Deno.remove(tempDbFile);
-      await deleteTempDbFolder();
       await localKv.delete([EXPORT_PATH, SESSION_ID, "456"]);
       await localKv.delete([CONNECTIONS_KEY_PREFIX, "123"]);
       await logout(SESSION_ID);
+      tempDbFile && await Deno.remove(tempDbFile);
+      await deleteTempDbFolder();
     }
   },
 });
@@ -160,11 +160,11 @@ test({
 
       await assertAuditRecord();
     } finally {
-      tempDbFile && await Deno.remove(tempDbFile);
-      await deleteTempDbFolder();
       await localKv.delete([EXPORT_PATH, SESSION_ID, "456"]);
       await localKv.delete([CONNECTIONS_KEY_PREFIX, "123"]);
       await logout(SESSION_ID);
+      tempDbFile && await Deno.remove(tempDbFile);
+      await deleteTempDbFolder();
     }
   },
 });
@@ -208,11 +208,11 @@ test({
 
       await assertAbortedAuditRecord();
     } finally {
-      tempDbFile && await Deno.remove(tempDbFile);
-      await deleteTempDbFolder();
       await localKv.delete([EXPORT_PATH, SESSION_ID, "456"]);
       await localKv.delete([CONNECTIONS_KEY_PREFIX, "123"]);
       await logout(SESSION_ID);
+      tempDbFile && await Deno.remove(tempDbFile);
+      await deleteTempDbFolder();
     }
   },
 });

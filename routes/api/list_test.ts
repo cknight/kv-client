@@ -49,9 +49,9 @@ Deno.test("list happy path", async () => {
     assert(data.results![0].keyHash.length > 0);
   } finally {
     kv.close();
+    await logout(SESSION_ID);
     await localKv.delete([CONNECTIONS_KEY_PREFIX, SOURCE]);
     await Deno.remove(join(Deno.cwd(), TEST_DB_PATH), { recursive: true });
-    await logout(SESSION_ID);
   }
 });
 
