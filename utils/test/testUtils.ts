@@ -56,12 +56,15 @@ export async function cleanup(kv?: Deno.Kv) {
   if (kv) {
     kv.close();
   }
-  try {
-    await Deno.remove(join(Deno.cwd(), TEST_DB_DIR), { recursive: true });
-  } catch (_e) { /* ignore */ }
 
   await logout(SESSION_ID);
   await localKv.delete([CONNECTIONS_KEY_PREFIX, DB_ID]);
+
+  try {
+    await Deno.remove(join(Deno.cwd(), TEST_DB_DIR), { recursive: true });
+  } catch (_e) {
+    console.error(_e);
+  }
 }
 
 export async function lengthOf(kv: Deno.Kv): Promise<number> {
