@@ -60,8 +60,8 @@ export async function cleanup(kv?: Deno.Kv) {
     await Deno.remove(join(Deno.cwd(), TEST_DB_DIR), { recursive: true });
   } catch (_e) { /* ignore */ }
 
-  await localKv.delete([CONNECTIONS_KEY_PREFIX, DB_ID]);
   await logout(SESSION_ID);
+  await localKv.delete([CONNECTIONS_KEY_PREFIX, DB_ID]);
 }
 
 export async function lengthOf(kv: Deno.Kv): Promise<number> {
