@@ -1,4 +1,4 @@
-import { assertEquals, assertThrows } from "$std/assert/mod.ts";
+import { assertEquals, assertThrows } from "@std/assert";
 import { parseKvKey } from "../transform/kvKeyParser.ts";
 
 Deno.test("kvKeyParser - no input", () => {

@@ -18,7 +18,6 @@ TODO Release:
 
 2. Testing ✓
 3. How to distribute (jsr hopefully!)
-4. Implement CI
 
 Blocked:
 

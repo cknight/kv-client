@@ -1,6 +1,6 @@
-import { assert } from "$std/assert/assert.ts";
-import { assertEquals } from "$std/assert/assert_equals.ts";
-import { join } from "$std/path/join.ts";
+import { assert } from "@std/assert";
+import { assertEquals } from "@std/assert/assert-equals";
+import { join } from "@std/path";
 import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
 import { ImportAuditLog } from "../../types.ts";
 import { localKv } from "../../utils/kv/db.ts";

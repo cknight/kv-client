@@ -3,6 +3,7 @@ import { CONNECTIONS_KEY_PREFIX } from "../../../consts.ts";
 import { Environment, KvConnection } from "../../../types.ts";
 import { localKv } from "../../kv/db.ts";
 import { persistConnectionData } from "./persistConnectionData.ts";
+import { SESSION_ID } from "../../test/testUtils.ts";
 
 const HIGH_CHICKEN_79_DB_ID = "cc9a9caf-602a-4904-a1a0-1238a456331d";
 const IMPORTANT_GOAT_32_DB_ID = "12345678-1f3c-4213-b97b-7fb20f5ab2ae";
@@ -13,7 +14,7 @@ Deno.test("persistConnectionData", async () => {
     const deployUser = JSON.parse(
       await Deno.readTextFile("./testData/expected_deploy_user.json"),
     );
-    await persistConnectionData(deployUser);
+    await persistConnectionData(deployUser, SESSION_ID);
 
     await assertDbConnection(HIGH_CHICKEN_79_DB_ID, "high-chicken-79", "Deploy playground", 232750);
     await assertDbConnection(IMPORTANT_GOAT_32_DB_ID, "important-goat-32", "Deploy preview", 0);

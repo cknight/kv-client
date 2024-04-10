@@ -1,4 +1,4 @@
-import { assertEquals } from "$std/assert/assert_equals.ts";
+import { assertEquals } from "@std/assert/assert-equals";
 import { fromJSON, toJSON } from "./utils.ts";
 
 Deno.test("unit8 serialisation", () => {

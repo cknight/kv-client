@@ -1,5 +1,5 @@
-import { walk } from "$std/fs/walk.ts";
-import { join } from "$std/path/mod.ts";
+import { walk } from "@std/fs";
+import { join } from "@std/path";
 import { env } from "../../consts.ts";
 import { KvInstance, KvUIEntry } from "../../types.ts";
 import { logDebug } from "../log.ts";

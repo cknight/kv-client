@@ -1,4 +1,4 @@
-import { delay } from "$std/async/delay.ts";
+import { delay } from "@std/async";
 import { AuditRecord, KvConnection } from "../../types.ts";
 import { logDebug, logError } from "../log.ts";
 import { localKv } from "./db.ts";

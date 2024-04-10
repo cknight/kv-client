@@ -1,5 +1,5 @@
-import { assertEquals } from "$std/assert/assert_equals.ts";
-import { assert } from "$std/assert/assert.ts";
+import { assertEquals } from "@std/assert/assert-equals";
+import { assert } from "@std/assert";
 import { KvConnection, ListResults, State, UpdateAuditLog } from "../../types.ts";
 import { getUserState } from "../../utils/state/state.ts";
 import { cleanup, createDb, createFreshCtx, SESSION_ID } from "../../utils/test/testUtils.ts";

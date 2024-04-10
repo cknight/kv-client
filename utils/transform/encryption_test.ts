@@ -1,4 +1,4 @@
-import { assertEquals } from "$std/assert/mod.ts";
+import { assertEquals } from "@std/assert";
 import { env } from "../../consts.ts";
 import { localKv } from "../kv/db.ts";
 import { _setKv, getEncryptedString, storeEncryptedString } from "../transform/encryption.ts";

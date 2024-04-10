@@ -1,4 +1,4 @@
-import { assertEquals } from "$std/assert/assert_equals.ts";
+import { assertEquals } from "@std/assert/assert-equals";
 import { SESSION_ID } from "../test/testUtils.ts";
 import { CacheManager } from "./cache.ts";
 

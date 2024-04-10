@@ -1,5 +1,5 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
-import { deleteCookie } from "$std/http/cookie.ts";
+import { deleteCookie } from "@std/http";
 import { logout } from "../utils/user/logout.ts";
 
 interface LogoutProps {

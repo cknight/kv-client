@@ -1,5 +1,5 @@
-import { assertEquals } from "$std/assert/assert_equals.ts";
-import { assert } from "$std/assert/assert.ts";
+import { assertEquals } from "@std/assert/assert-equals";
+import { assert } from "@std/assert";
 import { createFreshCtx, SESSION_ID } from "../utils/test/testUtils.ts";
 import { handler } from "./_middleware.ts";
 import { DeployUser } from "../utils/user/denoDeploy/deployUser.ts";

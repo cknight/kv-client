@@ -1,6 +1,6 @@
-import { assert } from "$std/assert/assert.ts";
-import { assertEquals } from "$std/assert/assert_equals.ts";
-import { assertFalse } from "$std/assert/assert_false.ts";
+import { assert } from "@std/assert";
+import { assertEquals } from "@std/assert/assert-equals";
+import { assertFalse } from "@std/assert";
 import { shouldAbort } from "../../utils/state/state.ts";
 import { createFreshCtx, disableQueue } from "../../utils/test/testUtils.ts";
 import { handler } from "./abort.tsx";

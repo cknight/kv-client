@@ -1,5 +1,5 @@
-import { assertEquals } from "$std/assert/assert_equals.ts";
-import { assert } from "$std/assert/assert.ts";
+import { assertEquals } from "@std/assert/assert-equals";
+import { assert } from "@std/assert";
 import {
   CONNECTIONS_KEY_PREFIX,
   DEPLOY_RATE_LIMITER_PREFIX,

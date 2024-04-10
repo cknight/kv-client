@@ -1,5 +1,5 @@
-import { encodeHex } from "$std/encoding/hex.ts";
-import { format } from "$std/fmt/bytes.ts";
+import { encodeHex } from "@std/encoding/hex";
+import { format } from "@std/fmt/bytes";
 import { KvUIEntry } from "../types.ts";
 import { asString, keyAsString } from "./transform/stringSerialization.ts";
 import { identifyType } from "./transform/typeIdentifier.ts";

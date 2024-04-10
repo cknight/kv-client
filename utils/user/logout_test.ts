@@ -1,4 +1,4 @@
-import { assertEquals } from "$std/assert/assert_equals.ts";
+import { assertEquals } from "@std/assert/assert-equals";
 import { DEPLOY_USER_KEY_PREFIX, ENCRYPTED_USER_ACCESS_TOKEN_PREFIX } from "../../consts.ts";
 import { KvConnection } from "../../types.ts";
 import { localKv } from "../kv/db.ts";

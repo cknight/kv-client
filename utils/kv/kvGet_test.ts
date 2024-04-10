@@ -1,5 +1,5 @@
-import { assertEquals } from "$std/assert/assert_equals.ts";
-import { assert } from "$std/assert/assert.ts";
+import { assertEquals } from "@std/assert/assert-equals";
+import { assert } from "@std/assert";
 import { GetAuditLog } from "../../types.ts";
 import { DB_ID } from "../test/testUtils.ts";
 import { SESSION_ID } from "../test/testUtils.ts";

@@ -1,6 +1,6 @@
-import { assertEquals } from "$std/assert/assert_equals.ts";
-import { assertRejects } from "$std/assert/assert_rejects.ts";
-import { join } from "$std/path/join.ts";
+import { assertEquals } from "@std/assert/assert-equals";
+import { assertRejects } from "@std/assert";
+import { join } from "@std/path";
 import { CONNECTIONS_KEY_PREFIX, env } from "../../consts.ts";
 import { KvConnection } from "../../types.ts";
 import { getUserState } from "../state/state.ts";

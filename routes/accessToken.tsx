@@ -40,7 +40,7 @@ export const handler: Handlers = {
             [ENCRYPTED_USER_ACCESS_TOKEN_PREFIX, session],
             accessToken,
           );
-          await persistConnectionData(deployUser);
+          await persistConnectionData(deployUser, session);
 
           logDebug({ sessionId: session }, `Fetched deploy user data in ${Date.now() - start}ms`);
 

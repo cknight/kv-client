@@ -1,4 +1,4 @@
-import { assertEquals } from "$std/assert/assert_equals.ts";
+import { assertEquals } from "@std/assert/assert-equals";
 import { GetAuditLog, KvConnection } from "../../types.ts";
 import { SESSION_ID } from "../test/testUtils.ts";
 import { localKv } from "./db.ts";

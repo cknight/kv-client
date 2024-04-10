@@ -1,11 +1,10 @@
-import { assertRejects } from "$std/assert/assert_rejects.ts";
-import { assertEquals } from "$std/assert/assert_equals.ts";
+import { assertEquals, assertRejects } from "@std/assert";
 import { State } from "../../../types.ts";
 import { CacheInvalidationError } from "../../errors.ts";
 import { getUserState } from "../../state/state.ts";
 import { DB_ID, SESSION_ID } from "../../test/testUtils.ts";
-import { buildResultsPage, entriesToOperateOn, KeyOperationData } from "./buildResultsPage.ts";
 import { hashKvKey } from "../../utils.ts";
+import { buildResultsPage, entriesToOperateOn, KeyOperationData } from "./buildResultsPage.ts";
 
 const defaultOperationData: KeyOperationData = {
   connectionId: DB_ID,

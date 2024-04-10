@@ -1,5 +1,5 @@
-import { assert } from "$std/assert/assert.ts";
-import { assertEquals } from "$std/assert/assert_equals.ts";
+import { assert } from "@std/assert";
+import { assertEquals } from "@std/assert/assert-equals";
 import { EXPORT_PATH } from "../../../consts.ts";
 import { localKv } from "../../../utils/kv/db.ts";
 import { updateExportStatus } from "../../../utils/state/state.ts";

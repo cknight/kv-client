@@ -1,6 +1,6 @@
 import { createFreshContext } from "$fresh-testing-library/server.ts";
 import { FreshContext } from "$fresh/server.ts";
-import { join } from "$std/path/join.ts";
+import { join } from "@std/path";
 import { CONNECTIONS_KEY_PREFIX } from "../../consts.ts";
 import manifest from "../../fresh.gen.ts";
 import { logout } from "../user/logout.ts";
@@ -62,9 +62,7 @@ export async function cleanup(kv?: Deno.Kv) {
 
   try {
     await Deno.remove(join(Deno.cwd(), TEST_DB_DIR), { recursive: true });
-  } catch (_e) {
-    console.error(_e);
-  }
+  } catch (_e) { /* No op */ }
 }
 
 export async function lengthOf(kv: Deno.Kv): Promise<number> {

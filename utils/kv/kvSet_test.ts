@@ -1,6 +1,6 @@
-import { assertEquals } from "$std/assert/assert_equals.ts";
-import { assertGreaterOrEqual } from "$std/assert/assert_greater_or_equal.ts";
-import { assert } from "$std/assert/assert.ts";
+import { assertEquals } from "@std/assert";
+import { assertGreaterOrEqual } from "@std/assert";
+import { assert } from "@std/assert";
 import { cleanup, createDb, lengthOf } from "../test/testUtils.ts";
 import { setAll } from "./kvSet.ts";
 import { _internals } from "./kvQueue.ts";

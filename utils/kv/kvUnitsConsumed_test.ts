@@ -1,4 +1,4 @@
-import { assertEquals } from "$std/assert/assert_equals.ts";
+import { assertEquals } from "@std/assert/assert-equals";
 import { computeSize, readUnitsConsumed, writeUnitsConsumed } from "./kvUnitsConsumed.ts";
 
 Deno.test("computeSize", () => {

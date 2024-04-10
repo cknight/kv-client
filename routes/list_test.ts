@@ -1,5 +1,5 @@
-import { assert } from "$std/assert/assert.ts";
-import { assertEquals } from "$std/assert/assert_equals.ts";
+import { assert } from "@std/assert";
+import { assertEquals } from "@std/assert/assert-equals";
 import { KvUIEntry } from "../types.ts";
 import { createFreshCtx, SESSION_ID } from "../utils/test/testUtils.ts";
 import { ListInputData } from "../utils/ui/list/listHelper.ts";

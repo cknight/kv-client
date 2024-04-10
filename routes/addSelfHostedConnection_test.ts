@@ -1,5 +1,5 @@
-import { assert } from "$std/assert/assert.ts";
-import { assertEquals } from "$std/assert/assert_equals.ts";
+import { assert } from "@std/assert";
+import { assertEquals } from "@std/assert/assert-equals";
 import { CONNECTIONS_KEY_PREFIX, ENCRYPTED_SELF_HOSTED_TOKEN_PREFIX } from "../consts.ts";
 import { KvConnection } from "../types.ts";
 import { localKv } from "../utils/kv/db.ts";

@@ -1,5 +1,5 @@
-import { assert } from "$std/assert/assert.ts";
-import { assertEquals } from "$std/assert/assert_equals.ts";
+import { assert } from "@std/assert";
+import { assertEquals } from "@std/assert/assert-equals";
 import { updateExportStatus } from "../../../utils/state/state.ts";
 import { createFreshCtx, SESSION_ID } from "../../../utils/test/testUtils.ts";
 import { handler } from "./status.tsx";

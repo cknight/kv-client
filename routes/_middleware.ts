@@ -1,5 +1,5 @@
 import { FreshContext } from "$fresh/server.ts";
-import { getCookies, setCookie } from "$std/http/cookie.ts";
+import { getCookies, setCookie } from "@std/http";
 import { getDeployUserData } from "../utils/user/denoDeploy/deployUser.ts";
 import { logDebug, logInfo } from "../utils/log.ts";
 import { userNames } from "../utils/state/state.ts";

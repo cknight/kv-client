@@ -1,5 +1,5 @@
-import { assertEquals } from "$std/assert/assert_equals.ts";
-import { assertGreaterOrEqual } from "$std/assert/assert_greater_or_equal.ts";
+import { assertEquals } from "@std/assert";
+import { assertGreaterOrEqual } from "@std/assert";
 import { deleteAbortId } from "../state/state.ts";
 import { abort } from "../state/state.ts";
 import { cleanup, createDb, lengthOf } from "../test/testUtils.ts";

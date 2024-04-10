@@ -157,7 +157,7 @@ export async function getDeployUserData(
           await localKv.set([DEPLOY_USER_KEY_PREFIX, session], newDeployUser, {
             expireIn: _24_HOURS_IN_MS,
           });
-          await persistConnectionData(newDeployUser);
+          await persistConnectionData(newDeployUser, session);
           deployUser = newDeployUser;
         }
       } catch (e) {

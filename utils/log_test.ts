@@ -1,10 +1,10 @@
-import { assertEquals } from "$std/assert/assert_equals.ts";
-import { assert } from "$std/assert/assert.ts";
+import { assertEquals } from "@std/assert/assert-equals";
+import { assert } from "@std/assert";
 import { env } from "../consts.ts";
 import { _internals } from "./kv/kvQueue.ts";
 import { logDebug, logError, logInfo, logWarn } from "./log.ts";
 import { initializeLogging } from "./log.ts";
-import { assertThrows } from "$std/assert/assert_throws.ts";
+import { assertThrows } from "@std/assert";
 
 const SESSION_ID = "session_1234";
 

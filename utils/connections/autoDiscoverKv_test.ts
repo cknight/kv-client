@@ -1,9 +1,9 @@
-import { assertGreaterOrEqual } from "$std/assert/assert_greater_or_equal.ts";
-import { assert } from "$std/assert/assert.ts";
+import { assertGreaterOrEqual } from "@std/assert";
+import { assert } from "@std/assert";
 import { localKv } from "../kv/db.ts";
 import { SESSION_ID } from "../test/testUtils.ts";
 import { peekAtLocalKvInstances } from "./autoDiscoverKv.ts";
-import { assertEquals } from "$std/assert/assert_equals.ts";
+import { assertEquals } from "@std/assert/assert-equals";
 
 Deno.test("autoDiscoverKv - happy path", async () => {
   //set top 4 entries

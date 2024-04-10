@@ -1,4 +1,4 @@
-import { assertEquals } from "$std/assert/assert_equals.ts";
+import { assertEquals } from "@std/assert/assert-equals";
 import { asString, json5Parse, json5Stringify, keyAsString } from "./stringSerialization.ts";
 
 Deno.test("String serialization/deserialization", () => {

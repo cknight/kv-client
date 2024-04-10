@@ -1,6 +1,6 @@
-import { assertEquals } from "$std/assert/assert_equals.ts";
-import { assertThrows } from "$std/assert/assert_throws.ts";
-import { assert } from "$std/assert/assert.ts";
+import { assertEquals } from "@std/assert";
+import { assertThrows } from "@std/assert";
+import { assert } from "@std/assert";
 import { ValidationError } from "../errors.ts";
 import { buildKvValue } from "./kvValueParser.ts";
 

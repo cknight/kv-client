@@ -1,8 +1,8 @@
-import { assert } from "$std/assert/assert.ts";
-import { assertEquals } from "$std/assert/assert_equals.ts";
-import { assertGreater } from "$std/assert/assert_greater.ts";
-import { assertGreaterOrEqual } from "$std/assert/assert_greater_or_equal.ts";
-import { assertRejects } from "$std/assert/assert_rejects.ts";
+import { assert } from "@std/assert";
+import { assertEquals } from "@std/assert";
+import { assertGreater } from "@std/assert";
+import { assertGreaterOrEqual } from "@std/assert";
+import { assertRejects } from "@std/assert";
 import { KvListOptions, ListAuditLog, ListResults } from "../../types.ts";
 import { abort, getUserState } from "../state/state.ts";
 import { cleanup, createDb, DB_ID, SESSION_ID } from "../test/testUtils.ts";
