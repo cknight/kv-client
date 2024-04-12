@@ -42,6 +42,7 @@ Phase 2:
     disappearing.
 11. Abortable list
 12. Light mode
+13. Analytics (key count tree, min/max sizes?)
 
 Config
 
