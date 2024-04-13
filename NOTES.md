@@ -70,13 +70,3 @@ EE - Role based access - Enterprise capability
   if no admin user. Need recovery option
 - Need UI screen to allocate roles to user
 - OAuth logins
-
-# DOCS
-
-Installation Connections Keys Values Operations
-
-- Get
-- List -- filtering -- search all data
-- Set
-- Import
-- Export Consistency Security
