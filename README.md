@@ -1,7 +1,12 @@
-<img src="./img/logo_stroked.png" alt="KV Client logo" width="400" style="margin-bottom: 15px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./img/logo_stroked.png">
+  <source media="(prefers-color-scheme: light)" srcset="./static/logo.png">
+  <img alt="KV Client logo" src="./img/logo_stroked.png" width="400">
+</picture>
 
 KV Client is a UI interface to your Deno KV databases. This repository hosts the application code
-for the client. Documentation for KV Client may be found at https://kv-client.dev.
+for the client. Documentation and installation instructions for KV Client may be found at
+https://kv-client.dev.
 
 ## Contributing
 
