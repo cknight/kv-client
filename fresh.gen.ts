@@ -33,6 +33,7 @@ import * as $list from "./routes/list.tsx";
 import * as $logout from "./routes/logout.tsx";
 import * as $set from "./routes/set.tsx";
 import * as $AccessTokenInput from "./islands/AccessTokenInput.tsx";
+import * as $ConnectionFilter from "./islands/ConnectionFilter.tsx";
 import * as $DarkMode from "./islands/DarkMode.tsx";
 import * as $EntryEditor from "./islands/EntryEditor.tsx";
 import * as $Help from "./islands/Help.tsx";
@@ -95,6 +96,7 @@ const manifest = {
   },
   islands: {
     "./islands/AccessTokenInput.tsx": $AccessTokenInput,
+    "./islands/ConnectionFilter.tsx": $ConnectionFilter,
     "./islands/DarkMode.tsx": $DarkMode,
     "./islands/EntryEditor.tsx": $EntryEditor,
     "./islands/Help.tsx": $Help,

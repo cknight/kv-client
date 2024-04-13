@@ -6,13 +6,20 @@ import { ConnectButton } from "../islands/connections/ConnectButton.tsx";
 import { ConnectionCard } from "../islands/connections/ConnectionCard.tsx";
 import { RemoveLocalConnectionDialog } from "../islands/connections/RemoveLocalConnectionDialog.tsx";
 import { getConnections } from "../utils/connections/connections.ts";
+import { ConnectionFilter } from "../islands/ConnectionFilter.tsx";
 
 export default async function Connections(_req: Request, ctx: RouteContext) {
   const { local, remote, selfHosted } = await getConnections(ctx.state.session as string);
+  const hasConnections = local.length > 0 || remote.length > 0 || selfHosted.length > 0;
   const fadeSignal = signal(false);
 
   return (
     <div class="w-full">
+      {hasConnections && (
+        <div class="flex">
+          <ConnectionFilter />
+        </div>
+      )}
       <div id="localConnections" class="flex p-5">
         <div class="flex justify-center items-center mr-8">
           <p class="w-24 text-2xl font-bold">Local</p>

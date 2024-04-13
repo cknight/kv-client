@@ -64,7 +64,7 @@ export function ConnectionCard(props: ConnectionCardProps) {
   }
 
   return (
-    <>
+    <div class="connectionCard">
       <button
         onClick={useConnection}
       >
@@ -112,6 +112,6 @@ export function ConnectionCard(props: ConnectionCardProps) {
         </div>
       </button>
       <ConnectionInfoDialog {...props} />
-    </>
+    </div>
   );
 }
