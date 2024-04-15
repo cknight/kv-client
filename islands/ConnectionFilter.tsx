@@ -6,7 +6,7 @@ export function ConnectionFilter() {
     const filterText = filter.value;
     console.log("Filter text:", filterText);
     const connections = document.querySelectorAll(".connectionCard") as NodeListOf<HTMLDivElement>;
-    for (const connection of connections) {
+    connections.forEach((connection) => {
       if (filterText === "") {
         connection.style.display = "block";
       } else {
@@ -16,7 +16,7 @@ export function ConnectionFilter() {
           connection.style.display = "none";
         }
       }
-    }
+    });
   }
 
   function clearFilter() {
@@ -26,7 +26,7 @@ export function ConnectionFilter() {
   }
 
   return (
-    <div class="relative ml-40">
+    <div class="relative m-auto">
       <input
         id="connectionFilter"
         type="text"
