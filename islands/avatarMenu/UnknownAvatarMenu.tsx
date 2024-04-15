@@ -55,6 +55,15 @@ export function UnknownAvatarMenu(props: { path: string }) {
                     Deploy access tokens
                   </a>
                 </li>
+                <li class="border-t border-gray-700 flex rounded-none hover:bg-[#404040]">
+                  <a
+                    href="https://kv-client.dev/docs/category/connections"
+                    target="_blank"
+                    class="py-2.5 flex-1 rounded-none"
+                  >
+                    Docs
+                  </a>
+                </li>
                 {
                   /* <li class="border-t border-gray-700 rounded-none flex hover:bg-[#404040]">
                   <a href="/settings" class="py-2.5 flex-1 rounded-none">Settings</a>
